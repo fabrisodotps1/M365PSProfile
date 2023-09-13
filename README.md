@@ -11,11 +11,32 @@ We've created a flexible Module, that simplifies the Installation and Updatemana
 - Parameter for Modules that should be installed and updated
 - Fast and configurable
 
+## Installation
+
+You need to install the Module
+
+```pwsh
+Install-Module M365PSProfile
+```
+
+## Usage
+
+Open the PowerShell Profile add the following Line
+
+```
+#Current user, Current Host
+#Windows - $HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
+#Linux - ~/.config/powershell/Microsoft.PowerShell_profile.ps1
+#macOS - ~/.config/powershell/Microsoft.PowerShell_profile.ps1
+```
+
+> Note:  Command might still Change
+
 ```pwsh
 Update-ModuleCustom -Modules @("MSOnline", "AzureADPreview", "ExchangeOnlineManagement", "Icewolf.EXO.SpamAnalyze", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell" , "ORCA", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "Microsoft.Graph.Beta", "MSAL.PS", "MSIdentityTools" )
 ```
 
-> Note:  Command might still Change
+
 
 ## Modules 
 
