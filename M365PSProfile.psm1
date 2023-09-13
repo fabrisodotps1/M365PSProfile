@@ -1,45 +1,14 @@
 ###############################################################################
 # M365 PS Profle 
+# Installs and Updates the Required PowerShell Modules for M365 Management
 ###############################################################################
-#Zielvorstellung
-#•	Im Profil nur noch das Modul laden
-#•	Parameter für die zu installierenden Module
-#•	Soll PowerShell 5 / 7 Unterstützen (Allenfalls https://github.com/JustinGrote/ModuleFast für PowerShell 7)
-#•	https://blog.icewolf.ch/archive/2023/08/12/PowerShellGet-will-be-renamed-to-Microsoft-PowerShell-PSResourceGet/
-#•	Soll keine Admin Rechte brauchten > Sondern im CurrentUser Kontext funktionieren
-#•	Aktuell dauert AZ Installation ewig. Evtl müssen wir da die installierten Module mit den Dependencys prüfen. Allenfalls kann man die Installation auch paralellisieren
-###############################################################################
-# PowerShell Profile
-# https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-7.3
-###############################################################################
-#All Users, All Hosts
-#Windows - $PSHOME\Profile.ps1
-#Linux - /opt/microsoft/powershell/7/profile.ps1
-#macOS - /usr/local/microsoft/powershell/7/profile.ps1
-#All Users, Current Host
-#Windows - $PSHOME\Microsoft.PowerShell_profile.ps1
-#Linux - /opt/microsoft/powershell/7/Microsoft.PowerShell_profile.ps1
-#macOS - /usr/local/microsoft/powershell/7/Microsoft.PowerShell_profile.ps1
-#Current User, All Hosts
-#Windows - $HOME\Documents\PowerShell\Profile.ps1
-#Linux - ~/.config/powershell/profile.ps1
-#macOS - ~/.config/powershell/profile.ps1
-#Current user, Current Host
-#Windows - $HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
-#Linux - ~/.config/powershell/Microsoft.PowerShell_profile.ps1
-#macOS - ~/.config/powershell/Microsoft.PowerShell_profile.ps1
+# Zielvorstellung
+# Moved to README.md
 
 ###############################################################################
 # ToDo
 ###############################################################################
-# Funktionen Parametriesieren -> Fabrice
-# Nachfolger PowerShellGes -> Andres
-# ModuleFast Youtube Video anschauen -> Fabrice
-# Microsoft.Graph Module Depenency paralellisierung > Fabrice
-# 	$Module = Find-Module Microsoft.graph
-# 	$Module.Dependencies
-# Initiales Readme erstellen -> Andres
-# Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope Process
+# Moved to README.md
 
 ##############################################################################
 # Update-AZModules
@@ -222,7 +191,7 @@ Function Update-ModuleCustom {
 	If ($IsAdmin -eq $true) {
 		#Check for newer Versions of PS Modules
 		Write-host "Would you like to Check for newer Versions of PS Modules? (Default is Yes)" -ForegroundColor Yellow 
-		$Readhost = Read-Host " ( y / n ) " 
+		$Readhost = Read-Host " ( y / n ) "
 		Switch ($ReadHost) { 
 			Y { Write-Host "You selected: Updating Modules"; $UpdateCheck = $true }
 			N { Write-Host "You selected: Skip Updating Modules" }
@@ -281,7 +250,7 @@ Function Update-ModuleCustom {
 											Write-Host "INFO: Uninstall Module $Version"
 											Uninstall-Module $Module -Force
 										} 
-										#Install newest Module			  
+										#Install newest Module
 										Write-Host "INFO: Install newest Module $VersionGallerymodule"
 										Install-Module $Module
 									}
@@ -336,7 +305,7 @@ Function Update-ModuleCustom {
 										Write-Host "INFO: Uninstall Module $Version"
 										Uninstall-Module $Module -Force
 									} 
-									#Install newest Module			  
+									#Install newest Module
 									Write-Host "INFO: Install newest Module $VersionGallerymodule"
 									Install-Module $Module
 								}
@@ -439,7 +408,7 @@ Function Update-ModuleCustom {
 ##############################################################################
 Function dcon-all {
 	Get-PSSession | Remove-PSSession
-	Try {		
+	Try {
 		Disconnect-AzureAD -ErrorAction SilentlyContinue
 		Disconnect-MsolService -ErrorAction SilentlyContinue
 		Disconnect-SPOService -ErrorAction SilentlyContinue

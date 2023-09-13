@@ -4,12 +4,31 @@ If you're an Microsoft 365 Administrator, you need to have several PowerShell Mo
 
 We've created a flexible Module, that simplifies the Installation and Updatemanagement of these Modules.
 
+## ToDo
+### Andres
+- Initiales Readme erstellen > done 13.09.2023
+- Nachfolger PowerShellGet
+- Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope Process
+
+### Fabrice
+- Funktionen Parametriesieren
+- ModuleFast Youtube Video anschauen
+- Microsoft.Graph Module Depenency paralellisierung 
+```pwsh
+# 	$Module = Find-Module Microsoft.graph
+# 	$Module.Dependencies
+```
+
+
 ## Goals
 - Simple One-Liner in the [PowerShell Profile](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-7.3)
 - No Admin Rights required
 - Support for PowerShell 5 and 7 (Install in CurrentUser)
 - Parameter for Modules that should be installed and updated
 - Fast and configurable
+- Today the installation of AZ and Microsoft.Graph takes a long time.
+  - Maybe try to analyze the dependency
+  - Can the Installation be paralellized?
 
 ## Installation
 
