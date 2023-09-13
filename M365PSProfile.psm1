@@ -9,6 +9,37 @@
 #•	Soll keine Admin Rechte brauchten > Sondern im CurrentUser Kontext funktionieren
 #•	Aktuell dauert AZ Installation ewig. Evtl müssen wir da die installierten Module mit den Dependencys prüfen. Allenfalls kann man die Installation auch paralellisieren
 ###############################################################################
+# PowerShell Profile
+# https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-7.3
+###############################################################################
+#All Users, All Hosts
+#Windows - $PSHOME\Profile.ps1
+#Linux - /opt/microsoft/powershell/7/profile.ps1
+#macOS - /usr/local/microsoft/powershell/7/profile.ps1
+#All Users, Current Host
+#Windows - $PSHOME\Microsoft.PowerShell_profile.ps1
+#Linux - /opt/microsoft/powershell/7/Microsoft.PowerShell_profile.ps1
+#macOS - /usr/local/microsoft/powershell/7/Microsoft.PowerShell_profile.ps1
+#Current User, All Hosts
+#Windows - $HOME\Documents\PowerShell\Profile.ps1
+#Linux - ~/.config/powershell/profile.ps1
+#macOS - ~/.config/powershell/profile.ps1
+#Current user, Current Host
+#Windows - $HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
+#Linux - ~/.config/powershell/Microsoft.PowerShell_profile.ps1
+#macOS - ~/.config/powershell/Microsoft.PowerShell_profile.ps1
+
+###############################################################################
+# ToDo
+###############################################################################
+# Funktionen Parametriesieren -> Fabrice
+# Nachfolger PowerShellGes -> Andres
+# ModuleFast Youtube Video anschauen -> Fabrice
+# Microsoft.Graph Module Depenency paralellisierung > Fabrice
+# 	$Module = Find-Module Microsoft.graph
+# 	$Module.Dependencies
+# Initiales Readme erstellen -> Andres
+# Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope Process
 
 ##############################################################################
 # Update-AZModules
