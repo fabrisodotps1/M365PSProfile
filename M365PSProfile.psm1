@@ -128,6 +128,45 @@ Function Update-GraphModules {
 # Remove old Module instead of only install new Version
 ##############################################################################
 Function Update-ModuleCustom {
+	<#
+		.SYNOPSIS
+		Update M365 modules
+
+		.DESCRIPTION
+		Update and cleanup of all defined M365 modules
+
+		.PARAMETER Modules
+		Modules to manage
+
+		.EXAMPLE
+		PS> Update-ModuleCustom
+
+		.EXAMPLE
+		PS> Update-ModuleCustom -Modules "Az","MSOnline","PnP.PowerShell","Microsoft.Graph"
+
+		.LINK
+		https://github.com/fabrisodotps1/M365PSProfile
+	#>
+	param (
+		[Parameter(Mandatory=$false)]
+		[array]$Modules = @(
+			"MSOnline",
+			"AzureADPreview",
+			"ExchangeOnlineManagement",
+			"Icewolf.EXO.SpamAnalyze",
+			"MicrosoftTeams",
+			"Microsoft.Online.SharePoint.PowerShell",
+			"PnP.PowerShell",
+			"ORCA",
+			"O365CentralizedAddInDeployment",
+			"MSCommerce",
+			"WhiteboardAdmin",
+			"Microsoft.Graph",
+			"Microsoft.Graph.Beta",
+			"MSAL.PS",
+			"MSIdentityTools"
+		)
+	)
 
 	$currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 	$IsAdmin = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
