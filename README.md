@@ -8,6 +8,8 @@ We've created a flexible Module, that simplifies the Installation and Updatemana
 ### Andres
 - Initiales Readme erstellen > done 13.09.2023
 - Nachfolger PowerShellGet
+  - Get-InstalledModule throws Error #44 https://github.com/PowerShell/PowerShellGet/issues/44
+  - Get-Module does not find AZ Module in PowerShell 5.1 #45 https://github.com/PowerShell/PowerShellGet/issues/45
 - Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope Process
 
 ### Fabrice
