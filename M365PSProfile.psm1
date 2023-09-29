@@ -14,6 +14,15 @@
 # Update-AZModules
 # Remove old Module instead of only install new Version
 ##############################################################################
+Function Update-AZModules2 {
+	$AZModule = Find-Module AZ
+	$Dependency = $AZModule.dependency
+	Foreach ($Module in $Dependency)
+	{
+		#Check each Module if it needs to be updated
+	}
+}
+
 Function Update-AZModules {
 	#Remove loaded az.* Modules
 	Remove-Module az.*
