@@ -9,11 +9,13 @@
 # ToDo
 ###############################################################################
 # Moved to README.md
+#Requires -Modules ExchangeOnlineManagement
 
 ##############################################################################
 # Update-AZModules
 # Remove old Module instead of only install new Version
 ##############################################################################
+
 Function Update-AZModules2 {
 	$AZModule = Find-Module AZ
 	$Dependency = $AZModule.dependency
@@ -172,7 +174,7 @@ Function Update-ModuleCustom {
 			"WhiteboardAdmin",
 			"Microsoft.Graph",
 			"Microsoft.Graph.Beta",
-			"MSAL.PS",
+			#"MSAL.PS",
 			"MSIdentityTools"
 		)
 	)
@@ -482,46 +484,81 @@ Function Set-WindowTitle {
 ##############################################################################
 # Main Program
 ##############################################################################
-Write-Host "Loading M365PSProfile Module..."
-$pshost = get-host
-$pswindow = $pshost.ui.rawui
-$LanguageMode = $ExecutionContext.SessionState.LanguageMode
-If ($LanguageMode -eq "Fulllanguage") {
-	if ($pswindow.WindowSize.Width -lt 220) {
-		if ($env:WT_SESSION) {
-			#Windows Terminal
-			$Buffersize = $pswindow.buffersize
-			$Buffersize.height = 8500
-			$Buffersize.width = 220
-			$pswindow.buffersize = $Buffersize
-			$Windowsize = $pswindow.windowsize
-			$Windowsize.width = 150
-			$windowsize.height = 40
-			$pswindow.windowsize = $windowsize
-			#$pswindow
-		}
-		else {
-			if ($env:TERM_PROGRAM -eq 'vscode') {
-				#If vscode do nothing
-			}
-			else {
-				#Normal PowerShell Window
+
+function Install-M365Modules {
+
+
+<# 
+.SYNOPSIS
+	M365PSProfile installs and keeps the PowerShell Modules needed for Microsoft 365 Management up to date.
+	It provides a simple way to add it to the PowerShell Profile
+	
+.DESCRIPTION
+	M365PSProfile installs and keeps the PowerShell Modules needed for Microsoft 365 Management up to date.
+	It provides a simple way to add it to the PowerShell Profile
+
+.PARAMETER Modules
+	[array]$Modules = @(<ModuleName1>,<Modulename2>)
+	[array]$Modules = @("AZ", "MSOnline", "AzureADPreview", "ExchangeOnlineManagement", "Icewolf.EXO.SpamAnalyze", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell" , "ORCA", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "Microsoft.Graph.Beta", "MSAL.PS", "MSIdentityTools" )
+
+.EXAMPLE	
+	Here are some examples:
+
+	#Installs and updates the Default Modules
+	Install-M365Modules
+
+	#Installs and updates the specified Modules
+	Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell")
+
+#>
+
+	#Parameter for the Module
+	param(
+		[parameter(mandatory=$false)][array]$Modules = @("AZ", "MSOnline", "AzureADPreview", "ExchangeOnlineManagement", "Icewolf.EXO.SpamAnalyze", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell" , "ORCA", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "Microsoft.Graph.Beta", "MSAL.PS", "MSIdentityTools" )
+		)
+
+
+	Write-Host "Loading M365PSProfile Module..."
+	$pshost = get-host
+	$pswindow = $pshost.ui.rawui
+	$LanguageMode = $ExecutionContext.SessionState.LanguageMode
+	If ($LanguageMode -eq "Fulllanguage") {
+		if ($pswindow.WindowSize.Width -lt 220) {
+			if ($env:WT_SESSION) {
+				#Windows Terminal
 				$Buffersize = $pswindow.buffersize
 				$Buffersize.height = 8500
 				$Buffersize.width = 220
 				$pswindow.buffersize = $Buffersize
 				$Windowsize = $pswindow.windowsize
 				$Windowsize.width = 150
-				$windowsize.height = 60
+				$windowsize.height = 40
 				$pswindow.windowsize = $windowsize
+				#$pswindow
+			}
+			else {
+				if ($env:TERM_PROGRAM -eq 'vscode') {
+					#If vscode do nothing
+				}
+				else {
+					#Normal PowerShell Window
+					$Buffersize = $pswindow.buffersize
+					$Buffersize.height = 8500
+					$Buffersize.width = 220
+					$pswindow.buffersize = $Buffersize
+					$Windowsize = $pswindow.windowsize
+					$Windowsize.width = 150
+					$windowsize.height = 60
+					$pswindow.windowsize = $windowsize
+				}
 			}
 		}
-	}
 
-	#Call Function to Load/Install Modules
-	#$Modules = @("MSOnline", "AzureADPreview", "ExchangeOnlineManagement", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell","SharePointPnPPowerShellOnline" , "ORCA", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "MSAL.PS" )
-	$Modules = @("AZ", "MSOnline", "AzureADPreview", "ExchangeOnlineManagement", "Icewolf.EXO.SpamAnalyze", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell" , "ORCA", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "Microsoft.Graph.Beta", "MSAL.PS", "MSIdentityTools" )
-	#Install-Modules
-	Update-ModuleCustom
+		#Call Function to Load/Install Modules
+		#$Modules = @("MSOnline", "AzureADPreview", "ExchangeOnlineManagement", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell","SharePointPnPPowerShellOnline" , "ORCA", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "MSAL.PS" )
+		#$Modules = @("AZ", "MSOnline", "AzureADPreview", "ExchangeOnlineManagement", "Icewolf.EXO.SpamAnalyze", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell" , "ORCA", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "Microsoft.Graph.Beta", "MSAL.PS", "MSIdentityTools" )
+		#Install-Modules
+		Update-ModuleCustom -Modules $Modules
+	}
 }
 

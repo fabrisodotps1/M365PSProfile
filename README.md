@@ -7,13 +7,13 @@ We've created a flexible Module, that simplifies the Installation and Updatemana
 ## ToDo
 ### Andres
 - Initiales Readme erstellen > done 13.09.2023
-- Nachfolger PowerShellGet
+- Nachfolger PowerShellGet > Microsoft.PowerShell.PSResourceGet 1.0.0 is now GA (is now a Required Module)
   - Get-InstalledModule throws Error #44 https://github.com/PowerShell/PowerShellGet/issues/44
   - Get-Module does not find AZ Module in PowerShell 5.1 #45 https://github.com/PowerShell/PowerShellGet/issues/45
 - Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope Process
 
 ### Fabrice
-- Funktionen Parametriesieren
+- Funktionen Parametrisieren
 - ModuleFast Youtube Video anschauen
 - Microsoft.Graph Module Depenency paralellisierung 
 ```pwsh
@@ -76,7 +76,8 @@ Update-ModuleCustom -Modules @("MSOnline", "AzureADPreview", "ExchangeOnlineMana
 | WhiteboardAdmin | Manage Whiteboards |
 | Microsoft.Graph | Microsoft.Graph Modules https://graph.microsoft.com/v1.0 | 
 | Microsoft.Graph.Beta | Microsoft.Graph Modules https://graph.microsoft.com/beta |
-| MSAL.PS | Microsoft Authentication Library | 
+| MSAL.PS | Microsoft Authentication Library (Depreciated)| 
+| PSMSALNet| PowerShell 7.2 MSAL.NET wrapper| 
 | MSIdentityTools | Additional Functions for Identity |
 
 ## Contribution
