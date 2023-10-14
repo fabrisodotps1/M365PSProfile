@@ -93,11 +93,114 @@ Function Update-AZModules {
 # Remove old Module instead of only install new Version
 ##############################################################################
 Function Update-GraphModules {
-	#Remove loaded Microsoft.Graph* Modules
+	#Remove Loaded Modules
 	Remove-Module Microsoft.Graph*
 
-	Get-Module Microsoft.Graph* -ListAvailable | Uninstall-Module -Force
-	Get-Module Microsoft.Graph -ListAvailable | Uninstall-Module -Force
+
+	##############################################################################
+	#This is Fast too
+	$start = Get-Date
+	#Get-InstalledPSResource Microsoft.Graph* -Scope AllUsers -ErrorAction SilentlyContinue | Uninstall-PSResource -Scope AllUsers -SkipDependencyCheck
+	#Get-InstalledPSResource Microsoft.Graph -Scope AllUsers -ErrorAction SilentlyContinue | Uninstall-PSResource -Scope AllUsers -SkipDependencyCheck
+
+	#Installation
+	#Install-PSResource Microsoft.Graph -Scope AllUsers
+	#Install-PSResource Microsoft.Graph.Beta -Scope AllUsers
+
+	$End = Get-Date
+	$TimeSpan = New-TimeSpan -Start $start -End $End
+	$TimeSpan
+	##############################################################################
+
+	##############################################################################
+	$start = Get-Date
+	#Get Module and Dependency
+	$Graph = Find-PSResource Microsoft.Graph
+	$GraphBeta = Find-PSResource Microsoft.Graph.Beta
+	$Dependencies = $Graph.Dependencies + $GraphBeta.Dependencies
+	#$Dependencies += $GraphBeta.Dependencies
+
+	Foreach ($Module in $Dependencies)
+	{
+		$ModuleName = $Module.Name
+		$MinVersion = $Module.VersionRange.MinVersion
+		$MaxVersion = $Module.VersionRange.MaxVersion
+
+		Write-Host "Module: $ModuleName MIN: $MinVersion MAX: $MaxVersion"
+	}
+
+	#Parallelisierung mit Jobs 
+	$Dependencies | ForEach-Object {
+		[string]$ModuleName = $_.Name
+		[string]$MinVersion = $_.VersionRange.MinVersion.Version.ToString()
+		[string]$MaxVersion = $_.VersionRange.MaxVersion.Version.ToString()
+		#Write-Host "Module: $Name"
+		#Write-Host "Module: $ModuleName MIN: $MinVersion MAX: $MaxVersion"
+	
+		$ScriptBlock = {
+			param(
+				[string]$ModuleName,
+				[string]$MinVersion,
+				[string]$MaxVersion
+			)
+
+			#DEBUG: Checking Parameters
+			#Write-Host "Module: $ModuleName MIN: $MinVersion MAX: $MaxVersion"
+			
+			#Only checks for ALLUSERS Scope at the Moment
+			[Array]$InstalledModules = Get-InstalledPSResource -Name $ModuleName -Scope AllUsers -ErrorAction SilentlyContinue
+			If ($Null -eq $InstalledModules)
+			{
+				#No Module installed > Install the Module
+				Write-Host "Installing $ModuleName $MinVersion"
+				Install-PSResource -Name $ModuleName -Scope AllUsers #-SkipDependencyCheck
+			} else {
+
+				#At least Module is installed
+				foreach ($InstalledModule in $InstalledModules)
+				{
+					$InstalledModuleVersion = $InstalledModule.Version.ToString()
+					If ($InstalledModuleVersion -lt $MinVersion)
+					{
+						Write-Host "Uninstalling $ModuleName $InstalledModuleVersion"
+						Uninstall-PSResource -Name $ModuleName -Scope AllUsers #-SkipDependencyCheck
+						Write-Host "Installing $ModuleName $MinVersion"
+						Install-PSResource -Name $ModuleName -Scope AllUsers #-SkipDependencyCheck
+					}
+				}
+			}
+		}
+	  
+		# Show the loop variable here is correct
+		#Write-Host "processing $ModuleName..."
+	  
+		# pass the loop variable across the job-context barrier
+		Start-Job $ScriptBlock -ArgumentList $ModuleName,$MinVersion,$MaxVersion | Out-Null
+	}
+
+	# Wait for all to complete
+	Write-Host "Wait for Jobs to complete"
+	While (Get-Job -State "Running") { Start-Sleep 2}
+
+	# Display output from all jobs
+	Get-Job | Receive-Job
+
+	# Cleanup
+	Remove-Job *
+
+	$End = Get-Date
+	$TimeSpan = New-TimeSpan -Start $start -End $End
+	$TimeSpan
+	##############################################################################
+
+	#Remove loaded Microsoft.Graph* Modules
+	#Remove-Module Microsoft.Graph*
+
+	#Get-Module Microsoft.Graph* -ListAvailable | Uninstall-PSResource -Scope AllUsers -SkipDependencyCheck
+	#Get-Module Microsoft.Graph -ListAvailable | Uninstall-PSResource -Scope AllUsers -SkipDependencyCheck
+
+	#Get-Module Microsoft.Graph* -ListAvailable | Uninstall-Module -Force
+	#Get-Module Microsoft.Graph -ListAvailable | Uninstall-Module -Force
 
 	#Get Microsoft.Graph Modules except Microsoft.Graph.Authentication because the other Modules have dependencys
 	<#
