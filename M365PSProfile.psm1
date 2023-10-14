@@ -231,10 +231,10 @@ Function Update-GraphModules {
 	#>
 
 	#Finally install the newest Version
-	Write-Host "Install newest Microsoft.Graph Module"
-	Install-Module Microsoft.Graph
-	Install-Module Microsoft.Graph.Beta -AllowClobber
-	Write-Host "Cleanup finished"
+	#Write-Host "Install newest Microsoft.Graph Module"
+	#Install-Module Microsoft.Graph
+	#Install-Module Microsoft.Graph.Beta -AllowClobber
+	#Write-Host "Cleanup finished"
 }
 
 ##############################################################################
