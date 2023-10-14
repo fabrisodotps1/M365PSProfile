@@ -99,20 +99,47 @@ Function Update-GraphModules {
 
 	##############################################################################
 	#This is Fast too
+
+	#Uninstall
 	$start = Get-Date
-	#Get-InstalledPSResource Microsoft.Graph* -Scope AllUsers -ErrorAction SilentlyContinue | Uninstall-PSResource -Scope AllUsers -SkipDependencyCheck
-	#Get-InstalledPSResource Microsoft.Graph -Scope AllUsers -ErrorAction SilentlyContinue | Uninstall-PSResource -Scope AllUsers -SkipDependencyCheck
-
-	#Installation
-	#Install-PSResource Microsoft.Graph -Scope AllUsers
-	#Install-PSResource Microsoft.Graph.Beta -Scope AllUsers
-
+	Get-InstalledPSResource Microsoft.Graph -Scope AllUsers -ErrorAction SilentlyContinue | Uninstall-PSResource -Scope AllUsers -SkipDependencyCheck
+	Get-InstalledPSResource Microsoft.Graph* -Scope AllUsers -ErrorAction SilentlyContinue | Uninstall-PSResource -Scope AllUsers -SkipDependencyCheck
 	$End = Get-Date
 	$TimeSpan = New-TimeSpan -Start $start -End $End
 	$TimeSpan
+
+	#Install
+	$start = Get-Date
+	Install-PSResource Microsoft.Graph -Scope AllUsers
+	Install-PSResource Microsoft.Graph.Beta -Scope AllUsers
+	$End = Get-Date
+	$TimeSpan = New-TimeSpan -Start $start -End $End
+	$TimeSpan
+
+	##############################################################################
+	#Classic Way
+	<#
+	#Install
+	$Start = Get-Date
+	Install-Module Microsoft.Graph
+	Install-Module Microsoft.Graph.Beta -AllowClobber
+	$End = Get-Date
+	$TimeSpan = New-TimeSpan -Start $start -End $End
+	$TimeSpan
+
+	#Uninstall
+	$start = Get-Date
+	Get-Module Microsoft.Graph* -ListAvailable | Uninstall-Module -Force
+	Get-Module Microsoft.Graph -ListAvailable | Uninstall-Module -Force
+	$End = Get-Date
+	$TimeSpan = New-TimeSpan -Start $start -End $End
+	$TimeSpan
+	#>
+
 	##############################################################################
 
 	##############################################################################
+	<#
 	$start = Get-Date
 	#Get Module and Dependency
 	$Graph = Find-PSResource Microsoft.Graph
@@ -192,49 +219,9 @@ Function Update-GraphModules {
 	$TimeSpan = New-TimeSpan -Start $start -End $End
 	$TimeSpan
 	##############################################################################
-
-	#Remove loaded Microsoft.Graph* Modules
-	#Remove-Module Microsoft.Graph*
-
-	#Get-Module Microsoft.Graph* -ListAvailable | Uninstall-PSResource -Scope AllUsers -SkipDependencyCheck
-	#Get-Module Microsoft.Graph -ListAvailable | Uninstall-PSResource -Scope AllUsers -SkipDependencyCheck
-
-	#Get-Module Microsoft.Graph* -ListAvailable | Uninstall-Module -Force
-	#Get-Module Microsoft.Graph -ListAvailable | Uninstall-Module -Force
-
-	#Get Microsoft.Graph Modules except Microsoft.Graph.Authentication because the other Modules have dependencys
-	<#
-	$Modules = Get-Module Microsoft.Graph* -ListAvailable | Where-Object {$_.Name -ne "Microsoft.Graph.Authentication"} | Select-Object Name -Unique
-	Foreach ($Module in $Modules)
-	{
-		$ModuleName = $Module.Name
-		#Get Installed Versions of that specific Module
-		$Versions = Get-Module $ModuleName -ListAvailable
-		Foreach ($Version in $Versions)
-		{
-			#Uninstall Module
-			$ModuleVersion = $Version.Version
-			Write-Host "Uninstall-Module $ModuleName $ModuleVersion"
-			Uninstall-Module $ModuleName -RequiredVersion $ModuleVersion
-		}
-	}
-	#Uninstall Microsoft.Graph.Authentication
-	$ModuleName = "Microsoft.Graph.Authentication"
-	$Versions = Get-Module $ModuleName -ListAvailable
-	#$Versions = Get-InstalledModule $ModuleName -AllVersions
-	Foreach ($Version in $Versions)
-	{
-		$ModuleVersion = $Version.Version
-		Write-Host "Uninstall-Module $ModuleName $ModuleVersion"
-		Uninstall-Module $ModuleName -RequiredVersion $ModuleVersion -Force
-	}
 	#>
 
-	#Finally install the newest Version
-	#Write-Host "Install newest Microsoft.Graph Module"
-	#Install-Module Microsoft.Graph
-	#Install-Module Microsoft.Graph.Beta -AllowClobber
-	#Write-Host "Cleanup finished"
+
 }
 
 ##############################################################################
