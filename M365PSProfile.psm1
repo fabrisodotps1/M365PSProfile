@@ -9,7 +9,21 @@
 # ToDo
 ###############################################################################
 # Moved to README.md
-#Requires -Modules ExchangeOnlineManagement
+# Requires -Modules ExchangeOnlineManagement
+
+
+
+##############################################################################
+# Function AsciiArt
+##############################################################################
+Function Invoke-AsciiArt {
+Write-Host "__  __ ____    __ _____ _____   _____ _____            __ _ _      "
+Write-Host "|  \/  |___ \  / /| ____|  __ \ / ____|  __ \          / _(_) |     "
+Write-Host "| \  / | __) |/ /_| |__ | |__) | (___ | |__) | __ ___ | |_ _| | ___ "
+Write-Host "| |\/| ||__ <| '_ \___ \|  ___/ \___ \|  ___/ '__/ _ \|  _| | |/ _ \"
+Write-Host "| |  | |___) | (_) |__) | |     ____) | |   | | | (_) | | | | |  __/"
+Write-Host "|_|  |_|____/ \___/____/|_|    |_____/|_|   |_|  \___/|_| |_|_|\___|"														
+}
 
 ##############################################################################
 # Update-AZModules
@@ -267,7 +281,7 @@ Function Update-ModuleCustom {
 			#"MSAL.PS",
 			"MSIdentityTools"
 		),
-		[Parameter(Mandatory=$false)][string]$Scope="AllUsers"
+		[Parameter(Mandatory=$false)][string]$Scope="CurrentUser" #CurrentUser / AllUsers
 	)
 
 	$currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
@@ -495,13 +509,15 @@ Function Update-ModuleCustom {
 
 				[Array]$InstalledModule = Get-InstalledPSResource $Module -Scope $Scope -ErrorAction SilentlyContinue | Sort-Object Version -Descending
 
-				If ($Null -eq $InstalledModule) {
+				If ($Null -eq $InstalledModule) 
+				{
 					Write-Host "$Module Module not found. Try to install..."
-					If ($IsAdmin -eq $false) {
+					If ($IsAdmin -eq $false -and $Scope -eq "AllUsers") 
+					{
 						Write-Host "WARNING: PS must be running <As Administrator> to install the Module" -ForegroundColor Red
-					}
-					else {
+					} else {
 						#Install-Module $Module -Confirm:$false
+						Install-PSResource $Module -Scope $Scope
 					}
 				}
 				else {
@@ -536,27 +552,37 @@ Function Update-ModuleCustom {
 			}
 			#>
 
-			[Array]$InstalledModule = Get-InstalledPSResource $Module -Scope $Scope -ErrorAction SilentlyContinue | Sort-Object Version -Descending
+			[Array]$InstalledModules = Get-InstalledPSResource $Module -Scope $Scope -ErrorAction SilentlyContinue | Sort-Object Version -Descending
 
-			If ($Null -eq $InstalledModule) {
+			If ($Null -eq $InstalledModule) 
+			{
 				Write-Host "$Module Module not found. Try to install..."
-				If ($IsAdmin -eq $false) {
+				If ($IsAdmin -eq $false -and $Scope -eq "AllUsers") 
+				{
 					Write-Host "WARNING: PS must be running <As Administrator> to install the Module" -ForegroundColor Red
-				}
-				else {
+				} else {
 					#Install-Module $Module -Confirm:$false
 					#Install-PSResource $Module -Scope $Scope
 				}
-			}
-			else {
-				#Write-Host "Loading Module: MicrosoftGraph"
-				#Import-Module MicrosoftGraph
+			} else {
 				$Version = $InstalledModule[0].Version.ToString()
 				Write-Host "Checking Module: $Module $Version"
-				#If ($InstalledModule[0].InstalledLocation -match "OneDrive")
-				If ($InstalledModule[0].InstalledLocation -match "OneDrive") {
-					Write-Host "Module might be installed in OneDrive Folder - this can lead to Problems" -ForegroundColor Yellow
+				If ($InstalledModule[0].InstalledLocation -match "OneDrive") 
+				{
+					Write-Host "Module is be installed in OneDrive Folder - this can lead to Problems" -ForegroundColor Yellow
 				}
+
+				foreach ($InstalledModule in $InstalledModules)
+				{
+					#Uninstall all Modules
+					$Version = $InstalledModule.Version.ToString()
+					Write-Host "INFO: Uninstall Module $Version"
+					Uninstall-PSResource $Module -Scope $Scope -Force
+				}
+				#Install newest Module
+				$Version = (Find-PSResource -Name $Module -Scope $Scope).Version.ToString()
+				Write-Host "INFO: Install Module $Version"
+				Install-PSResource $Module -Scope $Scope
 			}
 		}
 
@@ -613,25 +639,35 @@ function Install-M365Modules {
 	[array]$Modules = @(<ModuleName1>,<Modulename2>)
 	[array]$Modules = @("AZ", "MSOnline", "AzureADPreview", "ExchangeOnlineManagement", "Icewolf.EXO.SpamAnalyze", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell" , "ORCA", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "Microsoft.Graph.Beta", "MSAL.PS", "MSIdentityTools" )
 
+.PARAMETER Scope
+	[array]$Modules = @(<ModuleName1>,<Modulename2>)
+
 .EXAMPLE	
 	Here are some examples:
 
-	#Installs and updates the Default Modules
+	#Installs and updates the Default Modules in CurrentUser Scope
 	Install-M365Modules
 
 	#Installs and updates the specified Modules
-	Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell")
+	Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell") -Scope [CurrentUser|AllUsers]
 
 #>
 
 	#Parameter for the Module
 	param(
 		[parameter(mandatory=$false)][array]$Modules = @("AZ", "MSOnline", "AzureADPreview", "ExchangeOnlineManagement", "Icewolf.EXO.SpamAnalyze", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell" , "ORCA", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "Microsoft.Graph.Beta", "MSAL.PS", "MSIdentityTools"),
-		[parameter(mandatory=$false)][string]$Scope = "AllUsers"
+		[parameter(mandatory=$false)][string]$Scope = "CurrentUser",
+		[parameter(mandatory=$false)][bool]$AsciiArt = $true
 		)
 
 
 	Write-Host "Loading M365PSProfile Module..."
+	If ($AsciiArt -eq $true)
+	{
+		#Show AsciArt
+		Invoke-AsciiArt
+	}
+
 	$pshost = get-host
 	$pswindow = $pshost.ui.rawui
 	$LanguageMode = $ExecutionContext.SessionState.LanguageMode
