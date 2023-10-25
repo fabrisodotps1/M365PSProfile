@@ -266,12 +266,14 @@ Function Update-ModuleCustom {
 			"Microsoft.Graph.Beta",
 			#"MSAL.PS",
 			"MSIdentityTools"
-		)
+		),
+		[Parameter(Mandatory=$false)][string]$Scope="AllUsers"
 	)
 
 	$currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 	$IsAdmin = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
+	<#
 	#Check Execution Policy
 	Write-Host "Check PowerShell ExecutionPolicy"
 	If ((Get-ExecutionPolicy) -eq "Restricted") {
@@ -283,7 +285,7 @@ Function Update-ModuleCustom {
 		}
 	}
 	
-	<#
+	
 	#PSGallery Trusted
 	Write-Host "Check PowerShell Gallery"
 	If ((Get-PSRepository -Name PSGallery).InstallationPolicy -eq "Untrusted")
@@ -298,7 +300,7 @@ Function Update-ModuleCustom {
 		}
 
 	}
-	#>
+
 
 	#Check PowerShellGet Version
 	Write-Host "Check PowerShellGet Module"
@@ -326,6 +328,17 @@ Function Update-ModuleCustom {
 		}
 	}
 	
+	#>
+	
+
+	#Install-Module Microsoft.PowerShell.PSResourceGet -Scope CurrentUser
+	Import-Module  Microsoft.PowerShell.PSResourceGet
+	$PSGallery = Get-PSResourceRepository -Name PSGallery
+	If ($PSGallery.Trusted -eq $false)
+	{
+		Write-Host "Set PowerShellGallery to Trusted"
+		Set-PSResourceRepository -Name PSGallery -Trusted:$true
+	}
 
 	#Updating Modules
 	If ($IsAdmin -eq $true) {
@@ -469,6 +482,7 @@ Function Update-ModuleCustom {
 				#[Array]$InstalledModule = Get-Module $Module -ListAvailable | Sort-Object Version -Descending
 				#[Array]$InstalledModule = Get-InstalledModule -Name $Module -AllVersions -ErrorAction SilentlyContinue | Sort-Object Version -Descending
 	
+				<#
 				#Write-Host "Checking Module: $Module"
 				If ($Module -eq "AZ" -and $($PSVersionTable.PSVersion.Major) -eq "5") {
 					#Sonderfall AZ
@@ -477,7 +491,10 @@ Function Update-ModuleCustom {
 				else {
 					[Array]$InstalledModule = Get-Module $Module -ListAvailable | Sort-Object Version -Descending
 				}
-	
+				#>
+
+				[Array]$InstalledModule = Get-InstalledPSResource $Module -Scope $Scope -ErrorAction SilentlyContinue | Sort-Object Version -Descending
+
 				If ($Null -eq $InstalledModule) {
 					Write-Host "$Module Module not found. Try to install..."
 					If ($IsAdmin -eq $false) {
@@ -493,7 +510,7 @@ Function Update-ModuleCustom {
 					$Version = $InstalledModule[0].Version.ToString()
 					Write-Host "Checking Module: $Module $Version"
 					#If ($InstalledModule[0].InstalledLocation -match "OneDrive")
-					If ($InstalledModule[0].Path -match "OneDrive") {
+					If ($InstalledModule[0].InstalledLocation -match "OneDrive") {
 						Write-Host "Module might be installed in OneDrive Folder - this can lead to Problems" -ForegroundColor Yellow
 					}
 				}
@@ -508,6 +525,7 @@ Function Update-ModuleCustom {
 			#[Array]$InstalledModule = Get-Module $Module -ListAvailable | Sort-Object Version -Descending
 			#[Array]$InstalledModule = Get-InstalledModule -Name $Module -AllVersions -ErrorAction SilentlyContinue | Sort-Object Version -Descending
 
+			<#
 			#Write-Host "Checking Module: $Module"		
 			If ($Module -eq "AZ" -and $($PSVersionTable.PSVersion.Major) -eq "5") {
 				#Sonderfall AZ
@@ -516,6 +534,9 @@ Function Update-ModuleCustom {
 			else {
 				[Array]$InstalledModule = Get-Module $Module -ListAvailable | Sort-Object Version -Descending
 			}
+			#>
+
+			[Array]$InstalledModule = Get-InstalledPSResource $Module -Scope $Scope -ErrorAction SilentlyContinue | Sort-Object Version -Descending
 
 			If ($Null -eq $InstalledModule) {
 				Write-Host "$Module Module not found. Try to install..."
@@ -524,6 +545,7 @@ Function Update-ModuleCustom {
 				}
 				else {
 					#Install-Module $Module -Confirm:$false
+					#Install-PSResource $Module -Scope $Scope
 				}
 			}
 			else {
@@ -532,7 +554,7 @@ Function Update-ModuleCustom {
 				$Version = $InstalledModule[0].Version.ToString()
 				Write-Host "Checking Module: $Module $Version"
 				#If ($InstalledModule[0].InstalledLocation -match "OneDrive")
-				If ($InstalledModule[0].Path -match "OneDrive") {
+				If ($InstalledModule[0].InstalledLocation -match "OneDrive") {
 					Write-Host "Module might be installed in OneDrive Folder - this can lead to Problems" -ForegroundColor Yellow
 				}
 			}
@@ -604,7 +626,8 @@ function Install-M365Modules {
 
 	#Parameter for the Module
 	param(
-		[parameter(mandatory=$false)][array]$Modules = @("AZ", "MSOnline", "AzureADPreview", "ExchangeOnlineManagement", "Icewolf.EXO.SpamAnalyze", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell" , "ORCA", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "Microsoft.Graph.Beta", "MSAL.PS", "MSIdentityTools" )
+		[parameter(mandatory=$false)][array]$Modules = @("AZ", "MSOnline", "AzureADPreview", "ExchangeOnlineManagement", "Icewolf.EXO.SpamAnalyze", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell" , "ORCA", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "Microsoft.Graph.Beta", "MSAL.PS", "MSIdentityTools"),
+		[parameter(mandatory=$false)][string]$Scope = "AllUsers"
 		)
 
 
