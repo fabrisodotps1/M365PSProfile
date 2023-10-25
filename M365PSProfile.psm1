@@ -2,15 +2,9 @@
 # M365 PS Profle 
 # Installs and Updates the Required PowerShell Modules for M365 Management
 ###############################################################################
-# Zielvorstellung
-# Moved to README.md
-
-###############################################################################
-# ToDo
-###############################################################################
-# Moved to README.md
-# Requires -Modules ExchangeOnlineManagement
-
+# Remove-Module M365PSProfile
+# Import-Module C:\GIT_WorkingDir\M365PSProfile\M365PSProfile.psd1
+# Install-M365Modules -Scope CurrentUser
 
 
 ##############################################################################
@@ -25,82 +19,7 @@ Write-Host "| |  | |___) | (_) |__) | |     ____) | |   | | | (_) | | | | |  __/
 Write-Host "|_|  |_|____/ \___/____/|_|    |_____/|_|   |_|  \___/|_| |_|_|\___|"														
 }
 
-##############################################################################
-# Update-AZModules
-# Remove old Module instead of only install new Version
-##############################################################################
 
-Function Update-AZModules2 {
-	$AZModule = Find-Module AZ
-	$Dependency = $AZModule.dependency
-	Foreach ($Module in $Dependency)
-	{
-		#Check each Module if it needs to be updated
-	}
-}
-
-Function Update-AZModules {
-	#Remove loaded az.* Modules
-	Remove-Module az.*
-
-	#Removing all AZ Modules and installing them takes a long time
-	#Get-Module AZ.* -ListAvailable | Uninstall-Module -Force
-
-	$NewAZModule = Find-Module -Name AZ
-	
-	#Iterate through Modules and uninstall
-	$Modules = Get-Module AZ.* -ListAvailable | Where-Object { $_.Name -ne "Az.Accounts" } | Select-Object Name -Unique
-	Foreach ($Module in $Modules) {
-		$ModuleName = $Module.Name
-		$Versions = Get-Module $ModuleName -ListAvailable
-		#$Versions = Get-InstalledModule $ModuleName -AllVersions
-		Foreach ($Version in $Versions) {
-			$ModuleVersion = $Version.Version
-
-			#Check Version of Submodule if it's older than the dependency of the new AZ Module > Uninstall
-			$NewDependency = $NewAZModule.Dependencies | Where-Object { $_.Name -eq $ModuleName }
-			If ($NewDependency.Version -ne $ModuleVersion) {
-				Write-Host "Uninstall-Module $ModuleName $ModuleVersion"
-				Uninstall-Module $ModuleName -RequiredVersion $ModuleVersion
-			}
-		}
-	}
-	#Uninstall Az.Accounts
-	$ModuleName = "Az.Accounts"
-	$Versions = Get-Module $ModuleName -ListAvailable
-	#$Versions = Get-InstalledModule $ModuleName -AllVersions
-	Foreach ($Version in $Versions) {
-		$ModuleVersion = $Version.Version
-
-		#Check Version of Submodule if it's older than the dependency of the new AZ Module > Uninstall
-		$NewDependency = $NewAZModule.Dependencies | Where-Object { $_.Name -eq $ModuleName }
-		If ($NewDependency.Version -ne $ModuleVersion) {
-			Write-Host "Uninstall-Module $ModuleName $ModuleVersion"
-			Uninstall-Module $ModuleName -RequiredVersion $ModuleVersion
-		}
-	}
-	<#
-	#Uninstall Az
-	$ModuleName = "Az"
-	$Versions = Get-Module $ModuleName -ListAvailable
-	#$Versions = Get-InstalledModule $ModuleName -AllVersions
-	Foreach ($Version in $Versions)
-	{
-		$ModuleVersion = $Version.Version
-		Write-Host "Uninstall-Module $ModuleName $ModuleVersion"
-		Uninstall-Module $ModuleName -RequiredVersion $ModuleVersion -Force
-	}
-	#>
-	
-	#Uninstall AZ Module
-	Get-Module AZ -ListAvailable | Uninstall-Module -Force
-	Get-InstalledModule AZ | Uninstall-Module -Force
-
-	#Install newest Module
-	Write-Host "Install newest AZ Module"
-	Install-Module AZ
-	Write-Host "AZ Module Cleanup finished"
-}
 
 ##############################################################################
 # Update-GraphModules
@@ -239,49 +158,71 @@ Function Update-GraphModules {
 }
 
 ##############################################################################
-# Update-ModuleCustom
-# Remove old Module instead of only install new Version
+# Uninstall-M365Modules
+# Remove Modules
 ##############################################################################
-Function Update-ModuleCustom {
-	<#
+Function Uninstall-M365Modules {
+		<#
 		.SYNOPSIS
-		Update M365 modules
+		Uninstall M365 PowerShell Modules
 
 		.DESCRIPTION
 		Update and cleanup of all defined M365 modules
 
 		.PARAMETER Modules
-		Modules to manage
+		Array of Module Names that will be installed
+
+		.PARAMETER Scope
+		Sets the Scope [CurrentUser/AllUsers] for the Installation of the PowerShell Modules
 
 		.EXAMPLE
-		PS> Update-ModuleCustom
+		Install-M365Modules
 
 		.EXAMPLE
-		PS> Update-ModuleCustom -Modules "Az","MSOnline","PnP.PowerShell","Microsoft.Graph"
+		Install-M365Modules -Modules "Az","MSOnline","PnP.PowerShell","Microsoft.Graph" -Scope [CurrentUser/AllUsers]
+
+		.LINK
+		https://github.com/fabrisodotps1/M365PSProfile
+	#>
+
+	param (
+		[Parameter(Mandatory=$True)][array]$Modules,
+		[Parameter(Mandatory=$True)][string]$Scope
+	)
+
+	<# Uninstall still has to be coded #>
+}
+
+##############################################################################
+# Install-M365Modules
+# Remove old Module instead of only install new Version
+##############################################################################
+Function Install-M365Modules {
+	<#
+		.SYNOPSIS
+		Install and Update M365 PowerShell Modules
+
+		.DESCRIPTION
+		Update and cleanup of all defined M365 PowerShell Modules
+
+		.PARAMETER Modules
+		Array of the PowerShell Module Names that will be installed
+
+		.PARAMETER Scope
+		Sets the Scope [CurrentUser/AllUsers] for the Installation of the PowerShell Modules
+
+		.EXAMPLE
+		Install-M365Modules
+
+		.EXAMPLE
+		Install-M365Modules -Modules "Az","MSOnline","PnP.PowerShell","Microsoft.Graph" -Scope [CurrentUser/AllUsers]
 
 		.LINK
 		https://github.com/fabrisodotps1/M365PSProfile
 	#>
 	param (
-		[Parameter(Mandatory=$false)]
-		[array]$Modules = @(
-			"MSOnline",
-			"AzureADPreview",
-			"ExchangeOnlineManagement",
-			"Icewolf.EXO.SpamAnalyze",
-			"MicrosoftTeams",
-			"Microsoft.Online.SharePoint.PowerShell",
-			"PnP.PowerShell",
-			"ORCA",
-			"O365CentralizedAddInDeployment",
-			"MSCommerce",
-			"WhiteboardAdmin",
-			"Microsoft.Graph",
-			"Microsoft.Graph.Beta",
-			#"MSAL.PS",
-			"MSIdentityTools"
-		),
-		[Parameter(Mandatory=$false)][string]$Scope="CurrentUser" #CurrentUser / AllUsers
+		[Parameter(Mandatory=$True)][array]$Modules,
+		[Parameter(Mandatory=$True)][string]$Scope
 	)
 
 	$currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
@@ -562,7 +503,9 @@ Function Update-ModuleCustom {
 					Write-Host "WARNING: PS must be running <As Administrator> to install the Module" -ForegroundColor Red
 				} else {
 					#Install-Module $Module -Confirm:$false
-					#Install-PSResource $Module -Scope $Scope
+					$Version = (Find-PSResource -Name $Module).Version.ToString()
+					Write-Host "INFO: Install Module $Module $Version"
+					Install-PSResource $Module -Scope $Scope
 				}
 			} else {
 				$Version = $InstalledModule[0].Version.ToString()
@@ -576,12 +519,12 @@ Function Update-ModuleCustom {
 				{
 					#Uninstall all Modules
 					$Version = $InstalledModule.Version.ToString()
-					Write-Host "INFO: Uninstall Module $Version"
+					Write-Host "INFO: Uninstall Module $Module $Version"
 					Uninstall-PSResource $Module -Scope $Scope -Force
 				}
 				#Install newest Module
-				$Version = (Find-PSResource -Name $Module -Scope $Scope).Version.ToString()
-				Write-Host "INFO: Install Module $Version"
+				$Version = (Find-PSResource -Name $Module).Version.ToString()
+				Write-Host "INFO: Install Module $Module $Version"
 				Install-PSResource $Module -Scope $Scope
 			}
 		}
@@ -594,7 +537,7 @@ Function Update-ModuleCustom {
 ##############################################################################
 # Remove existing PS Connections
 ##############################################################################
-Function dcon-all {
+Function Disconnect-All {
 	Get-PSSession | Remove-PSSession
 	Try {
 		Disconnect-AzureAD -ErrorAction SilentlyContinue
@@ -640,17 +583,22 @@ function Install-M365Modules {
 	[array]$Modules = @("AZ", "MSOnline", "AzureADPreview", "ExchangeOnlineManagement", "Icewolf.EXO.SpamAnalyze", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell" , "ORCA", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "Microsoft.Graph.Beta", "MSAL.PS", "MSIdentityTools" )
 
 .PARAMETER Scope
-	[array]$Modules = @(<ModuleName1>,<Modulename2>)
+	Sets the Scope [CurrentUser/AllUsers] for the Installation of the PowerShell Modules
 
-.EXAMPLE	
-	Here are some examples:
+.PARAMETER AsciiArt
+	[bool]AsciiArt controls the AsciiArt Screen at the Start
 
+.EXAMPLE
 	#Installs and updates the Default Modules in CurrentUser Scope
 	Install-M365Modules
 
+.EXAMPLE
 	#Installs and updates the specified Modules
 	Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell") -Scope [CurrentUser|AllUsers]
 
+.EXAMPLE
+	#Installs and updates the specified Modules without showing AsciiArt at the Start
+	Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell") -Scope [CurrentUser|AllUsers] -AsciiArt $False
 #>
 
 	#Parameter for the Module
@@ -661,7 +609,7 @@ function Install-M365Modules {
 		)
 
 
-	Write-Host "Loading M365PSProfile Module..."
+	Write-Host "Starting M365PSProfile..."
 	If ($AsciiArt -eq $true)
 	{
 		#Show AsciArt
@@ -703,11 +651,14 @@ function Install-M365Modules {
 			}
 		}
 
-		#Call Function to Load/Install Modules
-		#$Modules = @("MSOnline", "AzureADPreview", "ExchangeOnlineManagement", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell","SharePointPnPPowerShellOnline" , "ORCA", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "MSAL.PS" )
-		#$Modules = @("AZ", "MSOnline", "AzureADPreview", "ExchangeOnlineManagement", "Icewolf.EXO.SpamAnalyze", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell" , "ORCA", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "Microsoft.Graph.Beta", "MSAL.PS", "MSIdentityTools" )
+
+		#Update Logic / How often the Install and Update Check will be invoked
+		#Every x Days?
+		#Registry Key > Will work for Windows, what about Linux?
+		#File
+
 		#Install-Modules
-		Update-ModuleCustom -Modules $Modules
+		Install-M365Modules -Modules $Modules -Scope $Scope 
 	}
 }
 
