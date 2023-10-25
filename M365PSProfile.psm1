@@ -588,6 +588,9 @@ function Install-M365Modules {
 .PARAMETER AsciiArt
 	[bool]AsciiArt controls the AsciiArt Screen at the Start
 
+.LINK
+	https://github.com/fabrisodotps1/M365PSProfile
+
 .EXAMPLE
 	#Installs and updates the Default Modules in CurrentUser Scope
 	Install-M365Modules
