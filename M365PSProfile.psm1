@@ -197,7 +197,7 @@ Function Uninstall-M365Modules {
 # Install-M365Modules
 # Remove old Module instead of only install new Version
 ##############################################################################
-Function Install-M365Modules {
+Function Custom-M365Modules {
 	<#
 		.SYNOPSIS
 		Install and Update M365 PowerShell Modules
@@ -661,7 +661,7 @@ function Install-M365Modules {
 		#File
 
 		#Install-Modules
-		Install-M365Modules -Modules $Modules -Scope $Scope 
+		Custom-M365Modules -Modules $Modules -Scope $Scope 
 	}
 }
 
