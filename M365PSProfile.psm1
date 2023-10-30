@@ -21,147 +21,12 @@ Write-Host "|_|  |_|____/ \___/____/|_|    |_____/|_|   |_|  \___/|_| |_|_|\___|
 
 
 
-##############################################################################
-# Update-GraphModules
-# Remove old Module instead of only install new Version
-##############################################################################
-Function Update-GraphModules {
-	#Remove Loaded Modules
-	Remove-Module Microsoft.Graph*
-
-
-	##############################################################################
-	#This is Fast too
-
-	#Uninstall
-	$start = Get-Date
-	Get-InstalledPSResource Microsoft.Graph -Scope AllUsers -ErrorAction SilentlyContinue | Uninstall-PSResource -Scope AllUsers -SkipDependencyCheck
-	Get-InstalledPSResource Microsoft.Graph* -Scope AllUsers -ErrorAction SilentlyContinue | Uninstall-PSResource -Scope AllUsers -SkipDependencyCheck
-	$End = Get-Date
-	$TimeSpan = New-TimeSpan -Start $start -End $End
-	$TimeSpan
-
-	#Install
-	$start = Get-Date
-	Install-PSResource Microsoft.Graph -Scope AllUsers
-	Install-PSResource Microsoft.Graph.Beta -Scope AllUsers
-	$End = Get-Date
-	$TimeSpan = New-TimeSpan -Start $start -End $End
-	$TimeSpan
-
-	##############################################################################
-	#Classic Way
-	<#
-	#Install
-	$Start = Get-Date
-	Install-Module Microsoft.Graph
-	Install-Module Microsoft.Graph.Beta -AllowClobber
-	$End = Get-Date
-	$TimeSpan = New-TimeSpan -Start $start -End $End
-	$TimeSpan
-
-	#Uninstall
-	$start = Get-Date
-	Get-Module Microsoft.Graph* -ListAvailable | Uninstall-Module -Force
-	Get-Module Microsoft.Graph -ListAvailable | Uninstall-Module -Force
-	$End = Get-Date
-	$TimeSpan = New-TimeSpan -Start $start -End $End
-	$TimeSpan
-	#>
-
-	##############################################################################
-
-	##############################################################################
-	<#
-	$start = Get-Date
-	#Get Module and Dependency
-	$Graph = Find-PSResource Microsoft.Graph
-	$GraphBeta = Find-PSResource Microsoft.Graph.Beta
-	$Dependencies = $Graph.Dependencies + $GraphBeta.Dependencies
-	#$Dependencies += $GraphBeta.Dependencies
-
-	Foreach ($Module in $Dependencies)
-	{
-		$ModuleName = $Module.Name
-		$MinVersion = $Module.VersionRange.MinVersion
-		$MaxVersion = $Module.VersionRange.MaxVersion
-
-		Write-Host "Module: $ModuleName MIN: $MinVersion MAX: $MaxVersion"
-	}
-
-	#Parallelisierung mit Jobs 
-	$Dependencies | ForEach-Object {
-		[string]$ModuleName = $_.Name
-		[string]$MinVersion = $_.VersionRange.MinVersion.Version.ToString()
-		[string]$MaxVersion = $_.VersionRange.MaxVersion.Version.ToString()
-		#Write-Host "Module: $Name"
-		#Write-Host "Module: $ModuleName MIN: $MinVersion MAX: $MaxVersion"
-	
-		$ScriptBlock = {
-			param(
-				[string]$ModuleName,
-				[string]$MinVersion,
-				[string]$MaxVersion
-			)
-
-			#DEBUG: Checking Parameters
-			#Write-Host "Module: $ModuleName MIN: $MinVersion MAX: $MaxVersion"
-			
-			#Only checks for ALLUSERS Scope at the Moment
-			[Array]$InstalledModules = Get-InstalledPSResource -Name $ModuleName -Scope AllUsers -ErrorAction SilentlyContinue
-			If ($Null -eq $InstalledModules)
-			{
-				#No Module installed > Install the Module
-				Write-Host "Installing $ModuleName $MinVersion"
-				Install-PSResource -Name $ModuleName -Scope AllUsers #-SkipDependencyCheck
-			} else {
-
-				#At least Module is installed
-				foreach ($InstalledModule in $InstalledModules)
-				{
-					$InstalledModuleVersion = $InstalledModule.Version.ToString()
-					If ($InstalledModuleVersion -lt $MinVersion)
-					{
-						Write-Host "Uninstalling $ModuleName $InstalledModuleVersion"
-						Uninstall-PSResource -Name $ModuleName -Scope AllUsers #-SkipDependencyCheck
-						Write-Host "Installing $ModuleName $MinVersion"
-						Install-PSResource -Name $ModuleName -Scope AllUsers #-SkipDependencyCheck
-					}
-				}
-			}
-		}
-	  
-		# Show the loop variable here is correct
-		#Write-Host "processing $ModuleName..."
-	  
-		# pass the loop variable across the job-context barrier
-		Start-Job $ScriptBlock -ArgumentList $ModuleName,$MinVersion,$MaxVersion | Out-Null
-	}
-
-	# Wait for all to complete
-	Write-Host "Wait for Jobs to complete"
-	While (Get-Job -State "Running") { Start-Sleep 2}
-
-	# Display output from all jobs
-	Get-Job | Receive-Job
-
-	# Cleanup
-	Remove-Job *
-
-	$End = Get-Date
-	$TimeSpan = New-TimeSpan -Start $start -End $End
-	$TimeSpan
-	##############################################################################
-	#>
-
-
-}
 
 ##############################################################################
-# Uninstall-M365Modules
+# Invoke-UninstallM365Modules
 # Remove Modules
 ##############################################################################
-Function Uninstall-M365Modules {
+Function Invoke-UninstallM365Modules {
 		<#
 		.SYNOPSIS
 		Uninstall M365 PowerShell Modules
@@ -190,14 +55,17 @@ Function Uninstall-M365Modules {
 		[Parameter(Mandatory=$True)][string]$Scope
 	)
 
+	$currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+	$IsAdmin = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+
 	<# Uninstall still has to be coded #>
 }
 
 ##############################################################################
-# Install-M365Modules
+# Invoke-InstallM365Modules
 # Remove old Module instead of only install new Version
 ##############################################################################
-Function Custom-M365Modules {
+Function Invoke-InstallM365Modules {
 	<#
 		.SYNOPSIS
 		Install and Update M365 PowerShell Modules
@@ -228,320 +96,92 @@ Function Custom-M365Modules {
 	$currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 	$IsAdmin = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
-	<#
-	#Check Execution Policy
-	Write-Host "Check PowerShell ExecutionPolicy"
-	If ((Get-ExecutionPolicy) -eq "Restricted") {
-		If ($IsAdmin -eq $false) {
-			Write-Host "WARNING: PS must be running <As Administrator> to Change Powershell Execution Policy to <RemoteSigned>" -ForegroundColor Red
-		}
-		else {
-			Set-ExecutionPolicy -ExecutionPolicy RemoteSigned
-		}
-	}
 	
-	
-	#PSGallery Trusted
-	Write-Host "Check PowerShell Gallery"
-	If ((Get-PSRepository -Name PSGallery).InstallationPolicy -eq "Untrusted")
-	{
-		If ($IsAdmin -eq $false)
-		{
-			Write-Host "WARNING: PS must be running <As Administrator> to set PowerShellGallery as Trusted" -ForegroundColor Red
-		} else {
-			#Set PSGallery to Trusted
-			Write-Host "Set PowerShellGallery to Trusted"
-			Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-		}
-
-	}
-
-
-	#Check PowerShellGet Version
-	Write-Host "Check PowerShellGet Module"
-	$PSGet = Get-Module PowershellGet -ListAvailable | Sort-Object Version -Descending
-	If ($PSGet[0].Version.ToString() -eq "1.0.0.1") {
-		If ($IsAdmin -eq $false) {
-			Write-Host "WARNING: PS must be running <As Administrator> to set Update PowerShellGet" -ForegroundColor Red
-		}
-		else {
-			Write-Host "Old PowerShellGet Module found... Installing new Version"
-			Install-Module PowershellGet -Force -AllowClobber
-		}
-	}
-
-	#Uninstall Skype for Business Online Powershell Module (msi based)
-	Write-Host "Check SkypeForBusiness MSI"
-	$Skype4B = Get-Package -Provider Programs -IncludeWindowsInstaller -Name "Skype for Business Online, Windows PowerShell Module" -ErrorAction SilentlyContinue
-	If ($Null -ne $Skype4B) {
-		If ($IsAdmin -eq $false) {
-			Write-Host "You need to uninstall 'Skype for Business Online, Windows PowerShell Module' or run PS as Administrator"
-		}
-		else {
-			Write-Host "Uninstalling 'Skype for Business Online, Windows PowerShell Module'"
-			$Skype4B | Uninstall-Package
-		}
-	}
-	
-	#>
-	
-
 	#Install-Module Microsoft.PowerShell.PSResourceGet -Scope CurrentUser
 	Import-Module  Microsoft.PowerShell.PSResourceGet
-	$PSGallery = Get-PSResourceRepository -Name PSGallery
+	$PSGallery = Get-PSResourceRepository -Name PSGallery	
 	If ($PSGallery.Trusted -eq $false)
 	{
-		Write-Host "Set PowerShellGallery to Trusted"
-		Set-PSResourceRepository -Name PSGallery -Trusted:$true
+		Write-Host "Warning: PSGallery is not Trusted" -ForegroundColor Yellow
+		#Set-PSResourceRepository -Name PSGallery -Trusted:$true
 	}
 
-	#Updating Modules
-	If ($IsAdmin -eq $true) {
-		#Check for newer Versions of PS Modules
-		Write-host "Would you like to Check for newer Versions of PS Modules? (Default is Yes)" -ForegroundColor Yellow 
-		$Readhost = Read-Host " ( y / n ) "
-		Switch ($ReadHost) { 
-			Y { Write-Host "You selected: Updating Modules"; $UpdateCheck = $true }
-			N { Write-Host "You selected: Skip Updating Modules" }
-			Default { Write-Host "You selected: Updating Modules"; $UpdateCheck = $true } 
-		} 
 
-		If ($UpdateCheck -eq $true) {
-			#Check if VSCode or PowerShell is running
-			[array]$process = Get-Process | Where-Object { $_.ProcessName -eq "powershell" -or $_.ProcessName -eq "pwsh" -or $_.ProcessName -eq "code" }
-			#$process = Get-Process -Name code -ErrorAction SilentlyContinue
-			If ($process.count -gt 1) {
-				Write-Host "PowerShell or Visual Studio Code running? Please close it, otherwise the Modules sometimes can't be updated..." -ForegroundColor Red
-				$process
-				#Press any key to continue
-				Write-Host 'Press any key to continue...';
-				$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
-			}
+	#Update Check = $False
+	Write-Host "Checking Modules..."
+	Foreach ($Module in $Modules) 
+	{
+		#Get Array of installed Modules
+		[Array]$InstalledModules = Get-InstalledPSResource -Name $Module -Scope $Scope -ErrorAction SilentlyContinue | Sort-Object Version -Descending
 
-			Write-Host "Checking Modules..." 
-			Foreach ($Module in $Modules) {
-				#Write-Host "Checking Module: $Module"
-				If ($Module -eq "AZ" -and $($PSVersionTable.PSVersion.Major) -eq "5") {
-					#Sonderfall AZ
-					[Array]$InstalledModule = Get-InstalledModule -Name $Module -AllVersions -ErrorAction SilentlyContinue | Sort-Object Version -Descending
-				}
-				else {
-					[Array]$InstalledModule = Get-Module $Module -ListAvailable | Sort-Object Version -Descending
-				}
-
-				$Gallerymodule = Find-Module $Module
-				$VersionGallerymodule = $Gallerymodule.Version
-
-				If ($Null -ne $InstalledModule) {
-					#Module is installed
-					$Version = $InstalledModule[0].Version.ToString()
-					Write-Host "Checking Module: $Module $Version"
-
-					#Check if Multiple Modules are installed
-					If (($InstalledModule.count) -gt 1) {
-
-						Write-host "INFO: Multiple Modules found. Uninstall old Modules? (Default is Yes)" -ForegroundColor Yellow 
-						$Readhost = Read-Host " ( y / n ) " 
-						Switch ($ReadHost) { 
-							Y {
-								#Special Cases for AZ and Microsoft.Graph
-								switch ($Module) {
-									#Custom Update for AZ Modules
-									"AZ" { Update-AZModules }
-									#Custom Update for Graph Modules
-									"Microsoft.Graph" { Update-GraphModules }
-									#Default Handling
-									default {
-										#Uninstall all Modules
-										For ($i = 0; $i -lt $InstalledModule.count; $i++) {
-											$Version = $InstalledModule[$i].Version.ToString()
-											Write-Host "INFO: Uninstall Module $Version"
-											Uninstall-Module $Module -Force
-										} 
-										#Install newest Module
-										Write-Host "INFO: Install newest Module $VersionGallerymodule"
-										Install-Module $Module
-									}
-								}
-
-							}
-							N { Write-Host "Skip Uninstall old Modules" }
-							Default {
-								#Special Cases for AZ and Microsoft.Graph
-								switch ($Module) {
-									#Custom Update for AZ Modules
-									"AZ" { Update-AZModules }
-									#Custom Update for Graph Modules
-									"Microsoft.Graph" { Update-GraphModules }
-									#Default Handling
-									default {
-										#Uninstall all Modules
-										For ($i = 0; $i -lt $InstalledModule.count; $i++) {
-											$Version = $InstalledModule[$i].Version.ToString()
-											Write-Host "INFO: Uninstall Module $Version"
-											Uninstall-Module $Module -Force
-										} 
-										#Install newest Module			  
-										Write-Host "INFO: Install newest Module $VersionGallerymodule"
-										Install-Module $Module
-									}
-								}
-							} 
-						} 
-
-					}
-					else {
-						#only one Module Version found
-						#If Module is newer install it
-						If ($Gallerymodule.Version -gt $InstalledModule[0].Version.ToString()) {
-							switch ($Module) {
-								#Custom Update for AZ Modules
-								"AZ" {
-									Write-Host "INFO: Uninstall Module $Version"
-									Update-AZModules
-								}
-								#Custom Update for Graph Modules
-								"Microsoft.Graph" {
-									Write-Host "INFO: Uninstall Module $Version"
-									Update-GraphModules
-								}
-								#Default Handling
-								default {
-									#Uninstall all Modules
-									For ($i = 0; $i -lt $InstalledModule.count; $i++) {
-										$Version = $InstalledModule[$i].Version.ToString()
-										Write-Host "INFO: Uninstall Module $Version"
-										Uninstall-Module $Module -Force
-									} 
-									#Install newest Module
-									Write-Host "INFO: Install newest Module $VersionGallerymodule"
-									Install-Module $Module
-								}
-							}
-
-						} 
-					}
-				}
-				else {
-					#Module not found
-					Write-Host "Install Module $Module $VersionGallerymodule"
-					Install-Module $Module -Scope AllUsers
-				}
-			}
-		}
-		else {
-			#Update Check = $False
-			Write-Host "Checking Modules..."
-			Foreach ($Module in $Modules) {
-				#Write-Host "Checking Module: $Module"
-				#[Array]$InstalledModule = Get-Module $Module -ListAvailable | Sort-Object Version -Descending
-				#[Array]$InstalledModule = Get-InstalledModule -Name $Module -AllVersions -ErrorAction SilentlyContinue | Sort-Object Version -Descending
-	
-				<#
-				#Write-Host "Checking Module: $Module"
-				If ($Module -eq "AZ" -and $($PSVersionTable.PSVersion.Major) -eq "5") {
-					#Sonderfall AZ
-					[Array]$InstalledModule = Get-InstalledModule -Name $Module -AllVersions -ErrorAction SilentlyContinue | Sort-Object Version -Descending
-				}
-				else {
-					[Array]$InstalledModule = Get-Module $Module -ListAvailable | Sort-Object Version -Descending
-				}
-				#>
-
-				[Array]$InstalledModule = Get-InstalledPSResource $Module -Scope $Scope -ErrorAction SilentlyContinue | Sort-Object Version -Descending
-
-				If ($Null -eq $InstalledModule) 
-				{
-					Write-Host "$Module Module not found. Try to install..."
-					If ($IsAdmin -eq $false -and $Scope -eq "AllUsers") 
-					{
-						Write-Host "WARNING: PS must be running <As Administrator> to install the Module" -ForegroundColor Red
-					} else {
-						#Install-Module $Module -Confirm:$false
-						Install-PSResource $Module -Scope $Scope
-					}
-				}
-				else {
-					#Write-Host "Loading Module: MicrosoftGraph"
-					#Import-Module MicrosoftGraph
-					$Version = $InstalledModule[0].Version.ToString()
-					Write-Host "Checking Module: $Module $Version"
-					#If ($InstalledModule[0].InstalledLocation -match "OneDrive")
-					If ($InstalledModule[0].InstalledLocation -match "OneDrive") {
-						Write-Host "Module might be installed in OneDrive Folder - this can lead to Problems" -ForegroundColor Yellow
-					}
-				}
-			}
-		}
-	}
- else {
-		#IsAdmin = $False
-		Write-Host "Checking Modules... (NoAdmin)"
-		Foreach ($Module in $Modules) {
-			#Write-Host "Checking Module: $Module"
-			#[Array]$InstalledModule = Get-Module $Module -ListAvailable | Sort-Object Version -Descending
-			#[Array]$InstalledModule = Get-InstalledModule -Name $Module -AllVersions -ErrorAction SilentlyContinue | Sort-Object Version -Descending
-
-			<#
-			#Write-Host "Checking Module: $Module"		
-			If ($Module -eq "AZ" -and $($PSVersionTable.PSVersion.Major) -eq "5") {
-				#Sonderfall AZ
-				[Array]$InstalledModule = Get-InstalledModule -Name $Module -AllVersions -ErrorAction SilentlyContinue | Sort-Object Version -Descending
-			}
-			else {
-				[Array]$InstalledModule = Get-Module $Module -ListAvailable | Sort-Object Version -Descending
-			}
-			#>
-
-			[Array]$InstalledModules = Get-InstalledPSResource $Module -Scope $Scope -ErrorAction SilentlyContinue | Sort-Object Version -Descending
-
-			If ($Null -eq $InstalledModules) 
+		If ($Null -eq $InstalledModules) 
+		{
+			#Module not found
+			Write-Host "$Module Module not found. Try to install..."
+			If ($IsAdmin -eq $false -and $Scope -eq "AllUsers") 
 			{
-				Write-Host "$Module Module not found. Try to install..."
-				If ($IsAdmin -eq $false -and $Scope -eq "AllUsers") 
-				{
-					Write-Host "WARNING: PS must be running <As Administrator> to install the Module" -ForegroundColor Red
-				} else {
-					#Install-Module $Module -Confirm:$false
-					$Version = (Find-PSResource -Name $Module).Version.ToString()
-					Write-Host "INFO: Install Module $Module $Version"
-					Install-PSResource $Module -Scope $Scope
-				}
+				Write-Host "WARNING: PS must be running <As Administrator> to install the Module" -ForegroundColor Red				
 			} else {
-				<#
-				$Version = $InstalledModule[0].Version.ToString()
-				Write-Host "Checking Module: $Module $Version"
-				If ($InstalledModule[0].InstalledLocation -match "OneDrive") 
-				{
-					Write-Host "Module is be installed in OneDrive Folder - this can lead to Problems" -ForegroundColor Yellow
-				}
-				#>
-
-				#Get Module from PowerShell Gallery
-				$PSGalleryModule = Find-PSResource -Name $Module
-				$PSGalleryVersion = $PSGalleryModule.Version.ToString()
-
-				foreach ($InstalledModule in $InstalledModules)
-				{
-					If ($InstalledModule.Version.ToString() -lt $PSGalleryVersion)
-					{
-						#Uninstall all Modules
-						$Version = $InstalledModule.Version.ToString()
-						Write-Host "INFO: Uninstall Module $Module $Version"
-						Uninstall-PSResource $Module -Scope $Scope -Force
-					}
-				}
-				#Install newest Module
-				$Version = (Find-PSResource -Name $Module).Version.ToString()
-				Write-Host "INFO: Install Module $Module $Version"
+				#Install-Module $Module -Confirm:$false
 				Install-PSResource $Module -Scope $Scope
 			}
+		} else {
+			#Module found
+
+			#Get Module from PowerShell Gallery
+			$PSGalleryModule = Find-PSResource -Name $Module
+			$PSGalleryVersion = $PSGalleryModule.Version.ToString()
+
+			#Check if Multiple Modules are installed
+			If (($InstalledModules.count) -gt 1) {
+
+				Write-host "INFO: Multiple Modules found. Uninstall old Modules? (Default is Yes)" -ForegroundColor Yellow 
+				$Readhost = Read-Host " ( y / n ) " 
+				Switch ($ReadHost) 
+				{ 
+					Y {
+						#Uninstall all Modules
+						For ($i = 0; $i -lt $InstalledModule.count; $i++) {
+							$Version = $InstalledModules[$i].Version.ToString()
+							Write-Host "INFO: Uninstall Module $Version"
+							Uninstall-PSResource -Name $Module -Scope $Scope -Force
+						} 
+						#Install newest Module
+						Write-Host "INFO: Install newest Module $Module $PSGalleryVersion"
+						Install-PSResource -Name $Module -Scope $Scope
+					}				
+					N { Write-Host "Skip Uninstall old Modules" }
+					Default {
+						#Uninstall all Modules
+						For ($i = 0; $i -lt $InstalledModule.count; $i++) {
+							$Version = $InstalledModules[$i].Version.ToString()
+							Write-Host "INFO: Uninstall Module $Version"
+							Uninstall-PSResource -Name $Module -Scope $Scope -Force
+						} 
+						#Install newest Module
+						Write-Host "INFO: Install newest Module $Module $PSGalleryVersion"
+						Install-PSResource -Name $Module -Scope $Scope
+					}
+				}
+			} else {
+				#Only one Module found
+
+				#Version Check 
+				If ($PSGalleryVersion -gt $InstalledModules.Version.ToString() )
+				{
+					#Uninstall Module
+					Uninstall-PSResource -Name $Module -Scope $Scope -Force
+					#Install Module
+					Install-PSResource -Name $Module -Scope $Scope
+				} else {
+					#Write Module Name
+					Write-Host "Checking Module: $Module $InstalledModules.Version.ToString() "
+				}				
+			}
 		}
-
 	}
-
-
 }
+
 
 ##############################################################################
 # Remove existing PS Connections
@@ -555,8 +195,8 @@ Function Disconnect-All {
 		Disconnect-MicrosoftTeams -ErrorAction SilentlyContinue
 		Disconnect-ExchangeOnline -confirm:$false -ErrorAction SilentlyContinue
 		Disconnect-MgGraph -ErrorAction SilentlyContinue
-	}
- catch {
+	} catch {
+		#Missing Error Handling
 	}
 }
 
@@ -617,7 +257,9 @@ function Install-M365Modules {
 	param(
 		[parameter(mandatory=$false)][array]$Modules = @("AZ", "MSOnline", "AzureADPreview", "ExchangeOnlineManagement", "Icewolf.EXO.SpamAnalyze", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell" , "ORCA", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "Microsoft.Graph.Beta", "MSAL.PS", "MSIdentityTools"),
 		[parameter(mandatory=$false)][string]$Scope = "CurrentUser",
-		[parameter(mandatory=$false)][bool]$AsciiArt = $true
+		[parameter(mandatory=$false)][bool]$AsciiArt = $true,
+		[parameter(mandatory=$false)][bool]$UpdateCheckDays = "7"
+
 		)
 
 
@@ -628,6 +270,7 @@ function Install-M365Modules {
 		Invoke-AsciiArt
 	}
 
+	<#
 	$pshost = get-host
 	$pswindow = $pshost.ui.rawui
 	$LanguageMode = $ExecutionContext.SessionState.LanguageMode
@@ -662,6 +305,7 @@ function Install-M365Modules {
 				}
 			}
 		}
+		#>
 
 
 		#Update Logic / How often the Install and Update Check will be invoked
@@ -670,7 +314,6 @@ function Install-M365Modules {
 		#File
 
 		#Install-Modules
-		Custom-M365Modules -Modules $Modules -Scope $Scope 
-	}
+		Invoke-InstallM365Modules -Modules $Modules -Scope $Scope 	
 }
 
