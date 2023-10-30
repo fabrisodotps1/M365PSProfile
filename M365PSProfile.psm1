@@ -239,7 +239,7 @@ Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Mi
 					If ($PSGalleryVersion -gt $InstalledModules.Version.ToString() )
 					{
 						#Uninstall Module
-						Uninstall-PSResource -Name $Module -Scope $Scope -Force
+						Uninstall-PSResource -Name $Module -Scope $Scope -SkipDependencyCheck
 						#Install Module
 						Install-PSResource -Name $Module -Scope $Scope
 					} else {
