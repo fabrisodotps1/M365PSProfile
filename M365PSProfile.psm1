@@ -495,7 +495,7 @@ Function Custom-M365Modules {
 
 			[Array]$InstalledModules = Get-InstalledPSResource $Module -Scope $Scope -ErrorAction SilentlyContinue | Sort-Object Version -Descending
 
-			If ($Null -eq $InstalledModule) 
+			If ($Null -eq $InstalledModules) 
 			{
 				Write-Host "$Module Module not found. Try to install..."
 				If ($IsAdmin -eq $false -and $Scope -eq "AllUsers") 
@@ -508,19 +508,28 @@ Function Custom-M365Modules {
 					Install-PSResource $Module -Scope $Scope
 				}
 			} else {
+				<#
 				$Version = $InstalledModule[0].Version.ToString()
 				Write-Host "Checking Module: $Module $Version"
 				If ($InstalledModule[0].InstalledLocation -match "OneDrive") 
 				{
 					Write-Host "Module is be installed in OneDrive Folder - this can lead to Problems" -ForegroundColor Yellow
 				}
+				#>
+
+				#Get Module from PowerShell Gallery
+				$PSGalleryModule = Find-PSResource -Name $Module
+				$PSGalleryVersion = $PSGalleryModule.Version.ToString()
 
 				foreach ($InstalledModule in $InstalledModules)
 				{
-					#Uninstall all Modules
-					$Version = $InstalledModule.Version.ToString()
-					Write-Host "INFO: Uninstall Module $Module $Version"
-					Uninstall-PSResource $Module -Scope $Scope -Force
+					If ($InstalledModule.Version.ToString() -lt $PSGalleryVersion)
+					{
+						#Uninstall all Modules
+						$Version = $InstalledModule.Version.ToString()
+						Write-Host "INFO: Uninstall Module $Module $Version"
+						Uninstall-PSResource $Module -Scope $Scope -Force
+					}
 				}
 				#Install newest Module
 				$Version = (Find-PSResource -Name $Module).Version.ToString()
