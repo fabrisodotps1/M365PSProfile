@@ -181,6 +181,19 @@ Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Mi
 	If ($UpdateCheck -eq $true)
 	{
 		
+		#Check if VSCode or PowerShell is running
+		[array]$process = Get-Process | Where-Object {$_.ProcessName -eq "powershell" -or $_.ProcessName -eq "pwsh" -or $_.ProcessName -eq "code"}
+		#$process = Get-Process -Name code -ErrorAction SilentlyContinue
+		If ($process.count -gt 1)
+		{
+			Write-Host "PowerShell or Visual Studio Code running? Please close it, otherwise the Modules sometimes can't be updated..." -ForegroundColor Red
+			$process
+			#Press any key to continue
+			Write-Host 'Press any key to continue...';
+			$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
+		}
+
+
 		Write-Host "Checking Modules..."
 		Foreach ($Module in $Modules) 
 		{
@@ -196,7 +209,7 @@ Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Mi
 					Write-Host "WARNING: PS must be running <As Administrator> to install the Module" -ForegroundColor Red				
 				} else {
 					#Install-Module $Module -Confirm:$false
-					Install-PSResource $Module -Scope $Scope
+					Install-PSResource $Module -Scope $Scope -TrustRepository
 				}
 			} else {
 				#Module found
@@ -219,7 +232,7 @@ Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Mi
 							
 							#Install newest Module
 							Write-Host "INFO: Install newest Module $Module $PSGalleryVersion"
-							Install-PSResource -Name $Module -Scope $Scope
+							Install-PSResource -Name $Module -Scope $Scope -TrustRepository
 						}				
 						N { Write-Host "Skip Uninstall old Modules" }
 						Default {
@@ -229,7 +242,7 @@ Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Mi
 
 							#Install newest Module
 							Write-Host "INFO: Install newest Module $Module $PSGalleryVersion"
-							Install-PSResource -Name $Module -Scope $Scope
+							Install-PSResource -Name $Module -Scope $Scope -TrustRepository
 						}
 					}
 				} else {
@@ -241,7 +254,7 @@ Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Mi
 						#Uninstall Module
 						Uninstall-PSResource -Name $Module -Scope $Scope -SkipDependencyCheck
 						#Install Module
-						Install-PSResource -Name $Module -Scope $Scope
+						Install-PSResource -Name $Module -Scope $Scope -TrustRepository
 					} else {
 						#Write Module Name
 						Write-Host "Checking Module: $Module $($InstalledModules.Version.ToString())" -ForegroundColor Green
