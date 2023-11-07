@@ -55,13 +55,28 @@ Function Uninstall-M365Modules {
 
 	param (
 		[Parameter(Mandatory=$True)][array]$Modules,
-		[Parameter(Mandatory=$True)][string]$Scope
+		[Parameter(Mandatory=$True)]
+		[ValidateSet("CurrentUser","AllUsers")]
+		[string]$Scope
 	)
 
 	$currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 	$IsAdmin = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
-	<# Uninstall still has to be coded #>
+	foreach ($Module in $Modules) {
+		[Array]$InstalledModules = Get-InstalledPSResource -Name $Module -Scope $Scope -ErrorAction SilentlyContinue | Sort-Object Version -Descending
+
+		if ($InstalledModules) {
+			# Module found
+			Write-Host "$Module Module found. Try to uninstall..."
+			if (($IsAdmin -eq $false) -and ($Scope -eq "AllUsers")) {
+				Write-Host "WARNING: PS must be running <As Administrator> to uninstall the Module" -ForegroundColor Red				
+			} else {
+				# Uninstall all versions of the module
+				Uninstall-PSResource -Name $Module -Scope $Scope -SkipDependencyCheck
+			}
+		}
+	}
 }
 
 ##############################################################################
@@ -146,11 +161,12 @@ Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Mi
 	#Parameter for the Module
 	param(
 		[parameter(mandatory=$false)][array]$Modules = @("AZ", "MSOnline", "AzureADPreview", "ExchangeOnlineManagement", "Icewolf.EXO.SpamAnalyze", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell" , "ORCA", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "Microsoft.Graph.Beta", "MSAL.PS", "MSIdentityTools"),
-		[parameter(mandatory=$false)][string]$Scope = "CurrentUser",
+		[parameter(mandatory=$false)]
+		[ValidateSet("CurrentUser","AllUsers")]
+		[string]$Scope = "CurrentUser",
 		[parameter(mandatory=$false)][bool]$AsciiArt = $true,
 		[parameter(mandatory=$false)][int]$UpdateCheckDays = 7
-
-		)
+	)
 
 
 	Write-Host "Starting M365PSProfile..."
