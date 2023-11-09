@@ -2,7 +2,7 @@
 
 If you're an Microsoft 365 Administrator, you need to have several PowerShell Modules for Managing an M365 Environement..
 
-We've created a flexible Module, that simplifies the Installation and Updatemanagement of these Modules.
+We've created a flexible Module, that simplifies the Installation and Update of these Modules.
 
 ## ToDo
 ### Andres
@@ -19,22 +19,30 @@ We've created a flexible Module, that simplifies the Installation and Updatemana
 ## Goals
 - Simple One-Liner in the [PowerShell Profile](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-7.3)
 - No Admin Rights required
-- Support for PowerShell 5 and 7 (Install in CurrentUser)
-- Parameter for Modules that should be installed and updated
 - Fast and configurable
-- Today the installation of AZ and Microsoft.Graph takes a long time.
-  - Maybe try to analyze the dependency
-  - Can the Installation be paralellized?
+- Support for PowerShell 5 and 7 (Install in CurrentUser Scope)
+- Parameter for Modules that should be installed and updated
+- Use the Microsoft.PowerShell.PSResourceGet
 
 ## Installation
 
 You need to install the Module
 
 ```pwsh
-Install-Module M365PSProfile
+#PowerShellGet
+Install-Module -Name M365PSProfile
+
+#Microsoft.PowerShell.PSResourceGet
+Install-PSResource -Name M365PSProfile
 ```
 
 ## Usage
+
+### PowerShell Profiles
+- Diffrent Scopes [CurrentUser / AllUsers]
+- CurrentUser / CurrentHost
+- Diffrent Locations in PowerShell 5/7
+
 
 Open the PowerShell Profile add the following Line
 
@@ -45,20 +53,34 @@ Open the PowerShell Profile add the following Line
 #macOS - ~/.config/powershell/Microsoft.PowerShell_profile.ps1
 ```
 
+### What you have to put into your Profile
+
 > Note:  Command might still Change
 
 ```pwsh
-Update-ModuleCustom -Modules @("MSOnline", "AzureADPreview", "ExchangeOnlineManagement", "Icewolf.EXO.SpamAnalyze", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell" , "ORCA", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "Microsoft.Graph.Beta", "MSAL.PS", "MSIdentityTools" )
+Import-Module -Name M365PSProfile
+#Install or updates the default Modules (what we think every M365 Admin needs) in the CurrentUser Scope
+Install-M365Module
+
+#Install or Updates the Modules in the Array
+Install-M365Module -Modules @("MSOnline", "AzureADPreview", "ExchangeOnlineManagement", "Icewolf.EXO.SpamAnalyze", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell" , "ORCA", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "Microsoft.Graph.Beta", "MSAL.PS", "MSIdentityTools" )
 ```
 
+### Parameters
+```pwsh
+-Modules @(ArrayOfModulenames)
+-Scope [Default:CurrentUser/AllUsers]
+-AsciiArt [Default:true/false]
+-UpdateCheckDays [Default:7]
+-RunInVSCode [Default:false/true]
+```
 
-
-## Modules 
+### Modules 
 
 | Module | Description |
 | --- | --- |
-| MSOnline | AzureAD / Entra ID Module > Depreciated 30.03.2024 |
-| AzureADPreview | AzureAD / Entra ID Module > Depreciated 30.03.2024 |
+| #MSOnline | AzureAD / Entra ID Module > Depreciated 30.03.2024 |
+| #AzureADPreview | AzureAD / Entra ID Module > Depreciated 30.03.2024 |
 | ExchangeOnlineManagement | Exchange Online |
 | Icewolf.EXO.SpamAnalyze | Exchange Online Message Tracking / SpamAnalyze | 
 | MicrosoftTeams | Microsoft Teams |
@@ -70,7 +92,7 @@ Update-ModuleCustom -Modules @("MSOnline", "AzureADPreview", "ExchangeOnlineMana
 | WhiteboardAdmin | Manage Whiteboards |
 | Microsoft.Graph | Microsoft.Graph Modules https://graph.microsoft.com/v1.0 | 
 | Microsoft.Graph.Beta | Microsoft.Graph Modules https://graph.microsoft.com/beta |
-| MSAL.PS | Microsoft Authentication Library (Depreciated)| 
+| #MSAL.PS | Microsoft Authentication Library (Depreciated)| 
 | PSMSALNet| PowerShell 7.2 MSAL.NET wrapper| 
 | MSIdentityTools | Additional Functions for Identity |
 
