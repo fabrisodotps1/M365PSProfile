@@ -73,7 +73,7 @@ Function Uninstall-M365Modules {
 				Write-Host "WARNING: PS must be running <As Administrator> to uninstall the Module" -ForegroundColor Red				
 			} else {
 				# Uninstall all versions of the module
-				Uninstall-PSResource -Name $Module -Scope $Scope -SkipDependencyCheck
+				Uninstall-PSResource -Name $Module -Scope $Scope -SkipDependencyCheck -WarningAction SilentlyContinue
 			}
 		}
 	}
@@ -118,8 +118,6 @@ Function Set-WindowTitle {
 ##############################################################################
 
 function Install-M365Modules {
-
-
 <# 
 .SYNOPSIS
 M365PSProfile installs and keeps the PowerShell Modules needed for Microsoft 365 Management up to date.
@@ -141,6 +139,9 @@ Sets the Days for the Update Check
 
 .PARAMETER AsciiArt
 [bool]AsciiArt controls the AsciiArt Screen at the Start
+
+.PARAMETER $RunInVSCode
+[bool]$RunInVSCode controls if the Script will run in VSCode [Default is $false]
 
 .LINK
 https://github.com/fabrisodotps1/M365PSProfile
@@ -165,9 +166,18 @@ Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Mi
 		[ValidateSet("CurrentUser","AllUsers")]
 		[string]$Scope = "CurrentUser",
 		[parameter(mandatory=$false)][bool]$AsciiArt = $true,
-		[parameter(mandatory=$false)][int]$UpdateCheckDays = 7
+		[parameter(mandatory=$false)][int]$UpdateCheckDays = 7,
+		[parameter(mandatory=$false)][bool]$RunInVSCode = $false
+
 	)
 
+	#Check if it is running in VSCode
+	if ($env:TERM_PROGRAM -eq 'vscode') {
+		If ($RunInVSCode -eq $false) {
+			#Write-Host "Running in VSCode. Please run in PowerShell" -ForegroundColor Red
+			Exit
+		}			
+	}	
 
 	Write-Host "Starting M365PSProfile..."
 	If ($AsciiArt -eq $true)
@@ -202,7 +212,7 @@ Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Mi
 		#$process = Get-Process -Name code -ErrorAction SilentlyContinue
 		If ($process.count -gt 1)
 		{
-			Write-Host "PowerShell or Visual Studio Code running? Please close it, otherwise the Modules sometimes can't be updated..." -ForegroundColor Red
+			Write-Host "PowerShell or Visual Studio Code running? Please close it, Modules in use can't be updated..." -ForegroundColor Red
 			$process
 			#Press any key to continue
 			Write-Host 'Press any key to continue...';
@@ -225,7 +235,7 @@ Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Mi
 					Write-Host "WARNING: PS must be running <As Administrator> to install the Module" -ForegroundColor Red				
 				} else {
 					#Install-Module $Module -Confirm:$false
-					Install-PSResource $Module -Scope $Scope -TrustRepository
+					Install-PSResource $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue
 				}
 			} else {
 				#Module found
@@ -237,28 +247,28 @@ Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Mi
 				#Check if Multiple Modules are installed
 				If (($InstalledModules.count) -gt 1) {
 
-					Write-host "WARNIN: $Module > Multiple Versions found. Uninstall old Versions? (Default is Yes)" -ForegroundColor Yellow 
+					Write-host "WARNING: $Module > Multiple Versions found. Uninstall old Versions? (Default is Yes)" -ForegroundColor Yellow 
 					$Readhost = Read-Host " ( y / n ) " 
 					Switch ($ReadHost) 
 					{ 
 						Y {
 							#Uninstall all Modules
-							Write-Host "INFO: Uninstall Module"
+							Write-Host "Uninstall Module"
 							Uninstall-PSResource -Name $Module -Scope $Scope -SkipDependencyCheck
 							
 							#Install newest Module
-							Write-Host "INFO: Install newest Module $Module $PSGalleryVersion"
-							Install-PSResource -Name $Module -Scope $Scope -TrustRepository
+							Write-Host "Install newest Module $Module $PSGalleryVersion"
+							Install-PSResource -Name $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue
 						}				
 						N { Write-Host "Skip Uninstall old Modules" }
 						Default {
 							#Uninstall all Modules
-							Write-Host "INFO: Uninstall Module"
+							Write-Host "Uninstall Module"
 							Uninstall-PSResource -Name $Module -Scope $Scope -SkipDependencyCheck
 
 							#Install newest Module
-							Write-Host "INFO: Install newest Module $Module $PSGalleryVersion"
-							Install-PSResource -Name $Module -Scope $Scope -TrustRepository
+							Write-Host "Install newest Module $Module $PSGalleryVersion"
+							Install-PSResource -Name $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue
 						}
 					}
 				} else {
@@ -266,11 +276,13 @@ Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Mi
 
 					#Version Check 
 					If ($PSGalleryVersion -gt $InstalledModules.Version.ToString() )
-					{
+					{						
 						#Uninstall Module
+						Write-Host "Uninstall Module: $Module $($InstalledModules.Version.ToString())"
 						Uninstall-PSResource -Name $Module -Scope $Scope -SkipDependencyCheck
 						#Install Module
-						Install-PSResource -Name $Module -Scope $Scope -TrustRepository
+						Write-Host "Install Module: $Module $PSGalleryVersion" -ForegroundColor Yellow						
+						Install-PSResource -Name $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue
 					} else {
 						#Write Module Name
 						Write-Host "Checking Module: $Module $($InstalledModules.Version.ToString())" -ForegroundColor Green
