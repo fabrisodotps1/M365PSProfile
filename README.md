@@ -66,6 +66,15 @@ Install-M365Module
 Install-M365Module -Modules @("MSOnline", "AzureADPreview", "ExchangeOnlineManagement", "Icewolf.EXO.SpamAnalyze", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell" , "ORCA", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "Microsoft.Graph.Beta", "MSAL.PS", "MSIdentityTools" )
 ```
 
+### Modules Path
+Show the Path where PowerShell looks for Modules
+
+```
+$env:PSModulePath.Split(";")
+```
+
+
+
 ### Parameters
 ```pwsh
 -Modules @(ArrayOfModulenames)

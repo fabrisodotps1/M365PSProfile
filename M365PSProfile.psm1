@@ -19,7 +19,7 @@ Write-Host "|  \/  |___ \  / /| ____|  __ \ / ____|  __ \          / _(_) |     
 Write-Host "| \  / | __) |/ /_| |__ | |__) | (___ | |__) | __ ___ | |_ _| | ___ "
 Write-Host "| |\/| ||__ <| '_ \___ \|  ___/ \___ \|  ___/ '__/ _ \|  _| | |/ _ \"
 Write-Host "| |  | |___) | (_) |__) | |     ____) | |   | | | (_) | | | | |  __/"
-Write-Host "|_|  |_|____/ \___/____/|_|    |_____/|_|   |_|  \___/|_| |_|_|\___|"														
+Write-Host "|_|  |_|____/ \___/____/|_|    |_____/|_|   |_|  \___/|_| |_|_|\___|"
 }
 
 
@@ -232,7 +232,7 @@ Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Mi
 				Write-Host "$Module Module not found. Try to install..."
 				If ($IsAdmin -eq $false -and $Scope -eq "AllUsers") 
 				{
-					Write-Host "WARNING: PS must be running <As Administrator> to install the Module" -ForegroundColor Red				
+					Write-Host "WARNING: PS must be running <As Administrator> to install the Module" -ForegroundColor Red
 				} else {
 					#Install-Module $Module -Confirm:$false
 					Install-PSResource $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue
@@ -254,10 +254,10 @@ Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Mi
 						Y {
 							#Uninstall all Modules
 							Write-Host "Uninstall Module"
-							Uninstall-PSResource -Name $Module -Scope $Scope -SkipDependencyCheck
+							Uninstall-PSResource -Name $Module -Scope $Scope -SkipDependencyCheck -ForegroundColor Yellow
 							
 							#Install newest Module
-							Write-Host "Install newest Module $Module $PSGalleryVersion"
+							Write-Host "Install newest Module $Module $PSGalleryVersion" -ForegroundColor Yellow
 							Install-PSResource -Name $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue
 						}				
 						N { Write-Host "Skip Uninstall old Modules" }
@@ -267,7 +267,7 @@ Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Mi
 							Uninstall-PSResource -Name $Module -Scope $Scope -SkipDependencyCheck
 
 							#Install newest Module
-							Write-Host "Install newest Module $Module $PSGalleryVersion"
+							Write-Host "Install newest Module $Module $PSGalleryVersion" -ForegroundColor Yellow
 							Install-PSResource -Name $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue
 						}
 					}
@@ -276,17 +276,17 @@ Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Mi
 
 					#Version Check 
 					If ($PSGalleryVersion -gt $InstalledModules.Version.ToString() )
-					{						
+					{
 						#Uninstall Module
-						Write-Host "Uninstall Module: $Module $($InstalledModules.Version.ToString())"
+						Write-Host "Uninstall Module: $Module $($InstalledModules.Version.ToString())" -ForegroundColor Yellow
 						Uninstall-PSResource -Name $Module -Scope $Scope -SkipDependencyCheck
 						#Install Module
-						Write-Host "Install Module: $Module $PSGalleryVersion" -ForegroundColor Yellow						
+						Write-Host "Install Module: $Module $PSGalleryVersion" -ForegroundColor Yellow
 						Install-PSResource -Name $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue
 					} else {
 						#Write Module Name
 						Write-Host "Checking Module: $Module $($InstalledModules.Version.ToString())" -ForegroundColor Green
-					}				
+					}
 				}
 			}
 		}
