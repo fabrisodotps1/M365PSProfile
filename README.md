@@ -73,6 +73,8 @@ Show the Path where PowerShell looks for Modules
 $env:PSModulePath.Split(";")
 ```
 
+Scope: CurrentUser / AllUsers
+CurrentUser has precedence
 
 
 ### Parameters
