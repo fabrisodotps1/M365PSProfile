@@ -176,7 +176,7 @@ Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Mi
 		If ($RunInVSCode -eq $false) {
 			#Write-Host "Running in VSCode. Please run in PowerShell" -ForegroundColor Red
 			Exit
-		}			
+		}
 	}	
 
 	Write-Host "Starting M365PSProfile..."
@@ -234,6 +234,11 @@ Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Mi
 				{
 					Write-Host "WARNING: PS must be running <As Administrator> to install the Module" -ForegroundColor Red
 				} else {
+					#Get Module from PowerShell Gallery
+					$PSGalleryModule = Find-PSResource -Name $Module
+					$PSGalleryVersion = $PSGalleryModule.Version.ToString()
+					Write-Host "Install newest Module $Module $PSGalleryVersion" -ForegroundColor Yellow
+
 					#Install-Module $Module -Confirm:$false
 					Install-PSResource $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue
 				}
