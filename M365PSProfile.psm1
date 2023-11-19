@@ -70,7 +70,7 @@ Function Uninstall-M365Modules {
 			# Module found
 			Write-Host "$Module Module found. Try to uninstall..."
 			if (($IsAdmin -eq $false) -and ($Scope -eq "AllUsers")) {
-				Write-Host "WARNING: PS must be running <As Administrator> to uninstall the Module" -ForegroundColor Red				
+				Write-Host "WARNING: PS must be running <As Administrator> to uninstall the Module" -ForegroundColor Red
 			} else {
 				# Uninstall all versions of the module
 				Uninstall-PSResource -Name $Module -Scope $Scope -SkipDependencyCheck -WarningAction SilentlyContinue
