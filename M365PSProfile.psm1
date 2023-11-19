@@ -179,7 +179,7 @@ Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Mi
 		}
 	}	
 
-	Write-Host "Starting M365PSProfile..."
+	#Write-Host "Starting M365PSProfile..."
 	If ($AsciiArt -eq $true)
 	{
 		#Show AsciArt
