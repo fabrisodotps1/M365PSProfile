@@ -32,7 +32,7 @@
 
 ##############################################################################
 # Get-M365StandardModules
-# Remove Modules in -Modules Parameter
+# Returns the M365StandardModules global variable 
 ##############################################################################
 
 Function Get-M365StandardModules {
