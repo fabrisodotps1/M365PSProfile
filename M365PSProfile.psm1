@@ -83,7 +83,7 @@ Function Uninstall-M365Modules {
 	#>
 
 	param (
-		[Parameter(Mandatory=$True)][array]$Modules,
+		[Parameter(Mandatory=$false)][array]$Modules = $global:M365StandardModules,
 		[Parameter(Mandatory=$True)]
 		[ValidateSet("CurrentUser","AllUsers")]
 		[string]$Scope
