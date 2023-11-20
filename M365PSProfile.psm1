@@ -95,6 +95,7 @@ Function Uninstall-M365Module {
 				Write-Host "WARNING: PS must be running <As Administrator> to uninstall the Module" -ForegroundColor Red
 			} else {
 				# Uninstall all versions of the module
+				Write-Host "Uninstall Module: $Module $($InstalledModules.Version.ToString())" -ForegroundColor Yellow
 				Uninstall-PSResource -Name $Module -Scope $Scope -SkipDependencyCheck -WarningAction SilentlyContinue
 			}
 		}
