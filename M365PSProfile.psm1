@@ -228,7 +228,7 @@ Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Mi
 		#$process = Get-Process -Name code -ErrorAction SilentlyContinue
 		If ($process.count -gt 1)
 		{
-			Write-Host "PowerShell or Visual Studio Code running? Please close it, Modules in use can't be updated..." -ForegroundColor Red
+			Write-Host "PowerShell or Visual Studio Code running? Please close it, Modules in use can't be updated..." -ForegroundColor Yellow
 			$process
 			#Press any key to continue
 			Write-Host 'Press any key to continue...';
