@@ -11,7 +11,6 @@
 ##############################################################################
 # Global variable for standard modules
 ##############################################################################
-
 [array]$global:M365StandardModules = @(
 	"ExchangeOnlineManagement",
 	"Icewolf.EXO.SpamAnalyze",
@@ -32,7 +31,6 @@
 # Get-M365StandardModules
 # Returns the M365StandardModules global variable 
 ##############################################################################
-
 Function Get-M365StandardModule {
 	return $global:M365StandardModules
 }
@@ -48,9 +46,6 @@ Write-Host "| |\/| ||__ <| '_ \___ \|  ___/ \___ \|  ___/ '__/ _ \|  _| | |/ _ \
 Write-Host "| |  | |___) | (_) |__) | |     ____) | |   | | | (_) | | | | |  __/"
 Write-Host "|_|  |_|____/ \___/____/|_|    |_____/|_|   |_|  \___/|_| |_|_|\___|"
 }
-
-
-
 
 ##############################################################################
 # Uninstall-M365Modules
@@ -128,7 +123,6 @@ Function Disconnect-All {
 		#Missing Error Handling
 	}
 }
-
 
 #############################################################################
 # Set-WindowTitle Function
@@ -217,7 +211,6 @@ Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Mi
 	$currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 	$IsAdmin = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
-	
 	#Install-Module Microsoft.PowerShell.PSResourceGet -Scope CurrentUser
 	Import-Module  Microsoft.PowerShell.PSResourceGet
 	$PSGallery = Get-PSResourceRepository -Name PSGallery	
@@ -226,7 +219,6 @@ Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Mi
 		Write-Host "Warning: PSGallery is not Trusted" -ForegroundColor Yellow
 		#Set-PSResourceRepository -Name PSGallery -Trusted:$true
 	}
-
 
 	#Update Logic
 	#Has to be coded
@@ -245,7 +237,6 @@ Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Mi
 			Write-Host 'Press any key to continue...';
 			$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
 		}
-
 
 		Write-Host "Checking Modules..."
 		Foreach ($Module in $Modules) 
@@ -322,7 +313,6 @@ Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Mi
 				}
 			}
 		}
-
 	}
 }
 
