@@ -77,9 +77,7 @@ Function Uninstall-M365Module {
 
 	param (
 		[Parameter(Mandatory=$false)][array]$Modules = $global:M365StandardModules,
-		[Parameter(Mandatory=$True)]
-		[ValidateSet("CurrentUser","AllUsers")]
-		[string]$Scope
+		[parameter(mandatory=$false)][ValidateSet("CurrentUser","AllUsers")][string]$Scope = "CurrentUser"
 	)
 
 	$currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
@@ -184,9 +182,7 @@ Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Mi
 	#Parameter for the Module
 	param(
 		[parameter(mandatory=$false)][array]$Modules = $global:M365StandardModules,
-		[parameter(mandatory=$false)]
-		[ValidateSet("CurrentUser","AllUsers")]
-		[string]$Scope = "CurrentUser",
+		[parameter(mandatory=$false)][ValidateSet("CurrentUser","AllUsers")][string]$Scope = "CurrentUser",
 		[parameter(mandatory=$false)][bool]$AsciiArt = $true,
 		[parameter(mandatory=$false)][int]$UpdateCheckDays = 7,
 		[parameter(mandatory=$false)][bool]$RunInVSCode = $false
