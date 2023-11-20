@@ -35,7 +35,7 @@
 # Returns the M365StandardModules global variable 
 ##############################################################################
 
-Function Get-M365StandardModules {
+Function Get-M365StandardModule {
 	return $global:M365StandardModules
 }
 
@@ -58,7 +58,7 @@ Write-Host "|_|  |_|____/ \___/____/|_|    |_____/|_|   |_|  \___/|_| |_|_|\___|
 # Uninstall-M365Modules
 # Remove Modules in -Modules Parameter
 ##############################################################################
-Function Uninstall-M365Modules {
+Function Uninstall-M365Module {
 		<#
 		.SYNOPSIS
 		Uninstall M365 PowerShell Modules
@@ -146,7 +146,7 @@ Function Set-WindowTitle {
 # Main Program
 ##############################################################################
 
-function Install-M365Modules {
+function Install-M365Module {
 <# 
 .SYNOPSIS
 M365PSProfile installs and keeps the PowerShell Modules needed for Microsoft 365 Management up to date.
