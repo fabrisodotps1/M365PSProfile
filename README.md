@@ -143,10 +143,38 @@ These are the Modules that are installed if you don't use an Array with the -Mod
 or you can use this command to list the default Modules
 
 ```pwsh
-Get-M365StandardModules
+Get-M365StandardModule
 ```
 
-### Uninstall-PSProfile
+### Uninstall
+For Uninstalling there are three Options
+
+1) Uninstall the Standard Modules
+
+```pwsh
+#Uninstalls the Standard M365 Modules
+Install-M365Module
+```
+
+2) Uninstall the PSProfile
+You need to edit the PowerShell Profile and remove these two Lines
+
+```pwsh
+Import-Module -Name M365PSProfile
+Install-M365Module
+```
+
+3) Uninstall the Module
+You can uninstall the M365PSProfile Module. Make sure you have removed the Lines in Option 2
+
+```pwsh
+#PowerShellGet
+Uninstall-Module -Name M365PSProfile
+
+#Microsoft.PowerShell.PSResourceGet
+Uninstall-PSResource -Name M365PSProfile
+```
+
 
 ## Contribution
 How can you contribute?
