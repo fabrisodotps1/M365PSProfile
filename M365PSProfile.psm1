@@ -8,7 +8,36 @@
 # Import-Module C:\GIT_WorkingDir\M365PSProfile\M365PSProfile.psd1
 # Install-M365Modules -Scope CurrentUser
 
+##############################################################################
+# Global variable for standard modules
+##############################################################################
 
+[array]$global:M365StandardModules = @(
+	"MSOnline",
+	"AzureADPreview",
+	"ExchangeOnlineManagement",
+	"Icewolf.EXO.SpamAnalyze",
+	"MicrosoftTeams",
+	"Microsoft.Online.SharePoint.PowerShell",
+	"PnP.PowerShell",
+	"ORCA",
+	"O365CentralizedAddInDeployment",
+	"MSCommerce",
+	"WhiteboardAdmin",
+	"Microsoft.Graph",
+	"Microsoft.Graph.Beta",
+	"MSAL.PS",
+	"MSIdentityTools"
+)
+
+##############################################################################
+# Get-M365StandardModules
+# Remove Modules in -Modules Parameter
+##############################################################################
+
+Function Get-M365StandardModules {
+	return $global:M365StandardModules
+}
 
 ##############################################################################
 # Function AsciiArt
@@ -161,7 +190,7 @@ Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Mi
 
 	#Parameter for the Module
 	param(
-		[parameter(mandatory=$false)][array]$Modules = @("AZ", "MSOnline", "AzureADPreview", "ExchangeOnlineManagement", "Icewolf.EXO.SpamAnalyze", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell" , "ORCA", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "Microsoft.Graph.Beta", "MSAL.PS", "MSIdentityTools"),
+		[parameter(mandatory=$false)][array]$Modules = $global:M365StandardModules,
 		[parameter(mandatory=$false)]
 		[ValidateSet("CurrentUser","AllUsers")]
 		[string]$Scope = "CurrentUser",
