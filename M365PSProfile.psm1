@@ -112,8 +112,8 @@ Function Uninstall-M365Module {
 Function Disconnect-All {
 	Get-PSSession | Remove-PSSession
 	Try {
-		Disconnect-AzureAD -ErrorAction SilentlyContinue
-		Disconnect-MsolService -ErrorAction SilentlyContinue
+		#Disconnect-AzureAD -ErrorAction SilentlyContinue
+		#Disconnect-MsolService -ErrorAction SilentlyContinue
 		Disconnect-SPOService -ErrorAction SilentlyContinue
 		Disconnect-MicrosoftTeams -ErrorAction SilentlyContinue
 		Disconnect-ExchangeOnline -confirm:$false -ErrorAction SilentlyContinue
@@ -274,7 +274,7 @@ Install-M365Modules -Modules @("ExchangeOnlineManagement", "MicrosoftTeams", "Mi
 						Y {
 							#Uninstall all Modules
 							Write-Host "Uninstall Module"
-							Uninstall-PSResource -Name $Module -Scope $Scope -SkipDependencyCheck -ForegroundColor Yellow
+							Uninstall-PSResource -Name $Module -Scope $Scope -SkipDependencyCheck
 							
 							#Install newest Module
 							Write-Host "Install newest Module $Module $PSGalleryVersion" -ForegroundColor Yellow

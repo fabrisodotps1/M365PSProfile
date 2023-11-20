@@ -12,9 +12,7 @@ We've created a flexible Module, that simplifies the Installation and Update of 
 
 
 ### Fabrice
-- Uninstall Function coden
-- Globale Variable mit dem Array der Module
-  - Funktion zur Abfrage der Standard Module
+- Add-M365Profile Function
 
 ## Our Journey
 A frew Years ago Andres had created a PowerShell Profile Script that installed all the M365 Modules.
