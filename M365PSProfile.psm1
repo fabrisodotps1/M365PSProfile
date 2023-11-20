@@ -13,8 +13,6 @@
 ##############################################################################
 
 [array]$global:M365StandardModules = @(
-	"MSOnline",
-	"AzureADPreview",
 	"ExchangeOnlineManagement",
 	"Icewolf.EXO.SpamAnalyze",
 	"MicrosoftTeams",
@@ -26,7 +24,7 @@
 	"WhiteboardAdmin",
 	"Microsoft.Graph",
 	"Microsoft.Graph.Beta",
-	"MSAL.PS",
+	"PSMSALNet",
 	"MSIdentityTools"
 )
 
