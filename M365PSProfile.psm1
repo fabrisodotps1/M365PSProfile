@@ -48,6 +48,25 @@ Write-Host "|_|  |_|____/ \___/____/|_|    |_____/|_|   |_|  \___/|_| |_|_|\___|
 }
 
 ##############################################################################
+# Add-M365PSProfile
+# Add M365PSProfile, if no PowerShell Profile exists
+##############################################################################
+Function Add-M365PSProfile {
+	if (-not(Test-Path -Path $Profile)) {
+		Write-Host "No PowerShell Profile exists. A new Profile with the M365PSProfile setup is created."
+
+		$ProfileContent = @"
+		Import-Module -Name M365PSProfile
+		#Install or updates the default Modules (what we think every M365 Admin needs) in the CurrentUser Scope
+		Install-M365Module
+"@
+		$ProfileContent | Out-File -FilePath $Profile -Encoding utf8 -Force
+	} else {
+		Write-Host "PowerShell Profile already exists. Add the commands for the M365PSProfile setup to the Profile." -ForegroundColor Yellow
+	}
+}
+
+##############################################################################
 # Uninstall-M365Modules
 # Remove Modules in -Modules Parameter
 ##############################################################################
