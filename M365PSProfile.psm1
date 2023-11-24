@@ -308,8 +308,12 @@ Function Install-M365Module {
 			} else {
 				#Only one Module found
 
+				#Debug
+				#Write-Host "Installed Modules: $($InstalledModules.Version.ToString())" -ForegroundColor Cyan
+				#Write-Host "PSGallery Version: $PSGalleryVersion" -ForegroundColor Cyan
+
 				#Version Check 
-				If ($PSGalleryVersion -gt $InstalledModules.Version.ToString() ) {
+				If ($PSGalleryVersion -gt $($InstalledModules.Version.ToString()) ) {
 					#Uninstall Module
 					Write-Host "Uninstall Module: $Module $($InstalledModules.Version.ToString())" -ForegroundColor Yellow
 					Uninstall-PSResource -Name $Module -Scope $Scope -SkipDependencyCheck
