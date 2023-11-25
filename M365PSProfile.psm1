@@ -275,7 +275,7 @@ Function Install-M365Module {
 
 			#Get Module from PowerShell Gallery
 			$PSGalleryModule = Find-PSResource -Name $Module
-			$PSGalleryVersion = $PSGalleryModule.Version.ToString()
+			[System.Version]$PSGalleryVersion = $PSGalleryModule.Version.ToString()
 
 			#Check if Multiple Modules are installed
 			If (($InstalledModules.count) -gt 1) {
@@ -307,13 +307,16 @@ Function Install-M365Module {
 				}
 			} else {
 				#Only one Module found
-
+				[System.Version]$InstalledModuleVersion = $($InstalledModules.Version.ToString())
+				
 				#Debug
-				#Write-Host "Installed Modules: $($InstalledModules.Version.ToString())" -ForegroundColor Cyan
-				#Write-Host "PSGallery Version: $PSGalleryVersion" -ForegroundColor Cyan
+				#Write-Host "Installed Modules: <$InstalledModuleVersion>" -ForegroundColor Cyan
+				#Write-Host "PSGallery Version: <$PSGalleryVersion>" -ForegroundColor Cyan
+				#Write-Host "Installed Module Type: $($InstalledModuleVersion.GetType().Name)" -ForegroundColor Cyan
+				#Write-Host "PSGallery Module Type: $($PSGalleryVersion.GetType().Name)" -ForegroundColor Cyan
 
 				#Version Check 
-				If ($PSGalleryVersion -gt $($InstalledModules.Version.ToString()) ) {
+				If ($PSGalleryVersion -gt $InstalledModuleVersion ) {
 					#Uninstall Module
 					Write-Host "Uninstall Module: $Module $($InstalledModules.Version.ToString())" -ForegroundColor Yellow
 					Uninstall-PSResource -Name $Module -Scope $Scope -SkipDependencyCheck
