@@ -23,8 +23,8 @@
 	"WhiteboardAdmin",
 	"Microsoft.Graph",
 	"Microsoft.Graph.Beta",
-	"PSMSALNet",
-	"MSIdentityTools"
+	"MSIdentityTools",
+	"PSMSALNet"
 )
 
 ##############################################################################
