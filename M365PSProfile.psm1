@@ -39,6 +39,20 @@ Function Get-M365StandardModule {
 # Function AsciiArt
 ##############################################################################
 Function Invoke-AsciiArt {
+	<#
+		.SYNOPSIS
+		Generates M365PSProfile AsciiArt
+
+		.DESCRIPTION
+		Generates M365PSProfile AsciiArt
+
+		.EXAMPLE
+		Invoke-AsciiArt
+
+		.LINK
+		https://github.com/fabrisodotps1/M365PSProfile
+	#>
+
 	Write-Host "__  __ ____    __ _____ _____   _____ _____            __ _ _      "
 	Write-Host "|  \/  |___ \  / /| ____|  __ \ / ____|  __ \          / _(_) |     "
 	Write-Host "| \  / | __) |/ /_| |__ | |__) | (___ | |__) | __ ___ | |_ _| | ___ "
@@ -142,6 +156,20 @@ Function Uninstall-M365Module {
 # Remove existing PS Connections
 ##############################################################################
 Function Disconnect-All {
+	<#
+		.SYNOPSIS
+		Disconnect all Connections to Microsoft 365 Services
+
+		.DESCRIPTION
+		Disconnect all Connections of the Modules MicrosoftTeams, ExchangeOnlineManagement, Microsoft.Online.SharePoint.PowerShell, Microsoft.Graph
+
+		.EXAMPLE
+		Disconnect-All
+
+		.LINK
+		https://github.com/fabrisodotps1/M365PSProfile
+	#>
+
 	Get-PSSession | Remove-PSSession
 	Try {
 		#Disconnect-AzureAD -ErrorAction SilentlyContinue
@@ -159,6 +187,23 @@ Function Disconnect-All {
 # Set-WindowTitle Function
 #############################################################################
 Function Set-WindowTitle {
+	<#
+		.SYNOPSIS
+		Set the Window Title
+
+		.DESCRIPTION
+		Set the Window Title
+
+		.EXAMPLE
+		Set-WindowTitle
+
+		.EXAMPLE
+		Set-WindowTitle -Title "My Title"
+
+		.LINK
+		https://github.com/fabrisodotps1/M365PSProfile
+	#>
+
 	PARAM (
 		[string]$Title = "Windows PowerShell"
 	)
