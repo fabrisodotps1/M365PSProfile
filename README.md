@@ -4,18 +4,8 @@ If you're an Microsoft 365 Administrator, you need to have several PowerShell Mo
 
 We've created a flexible Module, that simplifies the Installation and Update of these Modules.
 
-## ToDo
-### Andres
-- Testing PS5/PS7 mit und ohne Admin Rights
-- Readme überarbeiten
-  - Screenshots hinzufügen
-
-
-### Fabrice
-- Add-M365Profile Function
-
 ## Our Journey
-A frew Years ago Andres had created a PowerShell Profile Script that installed all the M365 Modules.
+A few Years ago Andres had created a PowerShell Profile Script that installed all the M365 Modules.
 The Modules where only installed when running as Administrator in the "AllUsers" Scope.
 
 That approach had some downsites:
