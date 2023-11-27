@@ -19,7 +19,7 @@ Over time - that approach became unmanageable.
 ## Goals
 So we decided to write a Module that handles the Logic and can be updated from the PowerShell Gallery.
 
-Our Gouls are:
+Our Goals are:
 - Simple One-Liner in the [PowerShell Profile](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-7.3)
 - No Admin Rights required -> Installation in the "CurrentUser" Scope
 - Fast and configurable -> Required Modules can be insta
