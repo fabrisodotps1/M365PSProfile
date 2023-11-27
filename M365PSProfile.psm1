@@ -1,12 +1,7 @@
-###############################################################################
+##############################################################################
 # M365 PS Profle 
 # Installs and Updates the Required PowerShell Modules for M365 Management
-###############################################################################
-# Install-Module Microsoft.PowerShell.PSResourceGet -Scope CurrentUser
-#
-# Remove-Module M365PSProfile
-# Import-Module C:\GIT_WorkingDir\M365PSProfile\M365PSProfile.psd1
-# Install-M365Modules -Scope CurrentUser
+##############################################################################
 
 ##############################################################################
 # Global variable for standard modules
@@ -32,6 +27,20 @@
 # Returns the M365StandardModules global variable 
 ##############################################################################
 Function Get-M365StandardModule {
+	<#
+		.SYNOPSIS
+		Returns the M365StandardModules global variable.
+
+		.DESCRIPTION
+		Returns the M365StandardModules global variable which contains the standard modules for M365 Management.
+
+		.EXAMPLE
+		Get-M365StandardModule
+
+		.LINK
+		https://github.com/fabrisodotps1/M365PSProfile
+	#>
+
 	return $global:M365StandardModules
 }
 
@@ -71,7 +80,9 @@ Function Add-M365PSProfile {
 		Add PowerShell Profile with M365PSProfile setup
 
 		.DESCRIPTION
-		Add PowerShell Profile with M365PSProfile setup (if no PowerShell Profile exists)
+		Add PowerShell Profile with M365PSProfile setup (if no PowerShell Profile exists).
+
+		Needs to be executed separately for PowerShell v5 and v7.
 
 		.EXAMPLE
 		Add-M365PSProfile
@@ -104,13 +115,13 @@ Function Uninstall-M365Module {
 		Uninstall M365 PowerShell Modules
 
 		.DESCRIPTION
-		Update and cleanup of all defined M365 modules
+		Uninstall of all defined M365 modules
 
 		.PARAMETER Modules
-		Array of Module Names that will be uninstalled
+		Array of Module Names that will be uninstalled. Default value are the default modules (see Get-M365StandardModule) or an Array with the Modules to uninstall.
 
 		.PARAMETER Scope
-		Sets the Scope [CurrentUser/AllUsers] for the Installation of the PowerShell Modules
+		Sets the Scope [CurrentUser/AllUsers] for the Installation of the PowerShell Modules. Default value is CurrentUser.
 
 		.EXAMPLE
 		Uninstall-M365Modules
@@ -147,12 +158,6 @@ Function Uninstall-M365Module {
 }
 
 ##############################################################################
-# Invoke-InstallM365Modules
-# Remove old Module instead of only install new Version
-##############################################################################
-
-
-##############################################################################
 # Remove existing PS Connections
 ##############################################################################
 Function Disconnect-All {
@@ -161,7 +166,7 @@ Function Disconnect-All {
 		Disconnect all Connections to Microsoft 365 Services
 
 		.DESCRIPTION
-		Disconnect all Connections of the Modules MicrosoftTeams, ExchangeOnlineManagement, Microsoft.Online.SharePoint.PowerShell, Microsoft.Graph
+		Disconnect all Connections of the Modules MicrosoftTeams, ExchangeOnlineManagement, Microsoft.Online.SharePoint.PowerShell, Microsoft.Graph and removes remote PS Sessions
 
 		.EXAMPLE
 		Disconnect-All
@@ -171,16 +176,11 @@ Function Disconnect-All {
 	#>
 
 	Get-PSSession | Remove-PSSession
-	Try {
-		#Disconnect-AzureAD -ErrorAction SilentlyContinue
-		#Disconnect-MsolService -ErrorAction SilentlyContinue
-		Disconnect-SPOService -ErrorAction SilentlyContinue
-		Disconnect-MicrosoftTeams -ErrorAction SilentlyContinue
-		Disconnect-ExchangeOnline -confirm:$false -ErrorAction SilentlyContinue
-		Disconnect-MgGraph -ErrorAction SilentlyContinue
-	} catch {
-		#Missing Error Handling
-	}
+
+	Disconnect-SPOService -ErrorAction SilentlyContinue
+	Disconnect-MicrosoftTeams -ErrorAction SilentlyContinue
+	Disconnect-ExchangeOnline -confirm:$false -ErrorAction SilentlyContinue
+	Disconnect-MgGraph -ErrorAction SilentlyContinue
 }
 
 #############################################################################
@@ -264,12 +264,10 @@ Function Install-M365Module {
 	#Check if it is running in VSCode
 	if ($env:TERM_PROGRAM -eq 'vscode') {
 		If ($RunInVSCode -eq $false) {
-			#Write-Host "Running in VSCode. Please run in PowerShell" -ForegroundColor Red
 			Exit
 		}
 	}	
 
-	#Write-Host "Starting M365PSProfile..."
 	If ($AsciiArt -eq $true) {
 		#Show AsciArt
 		Invoke-AsciiArt
@@ -279,7 +277,6 @@ Function Install-M365Module {
 	$currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 	$IsAdmin = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
-	#Install-Module Microsoft.PowerShell.PSResourceGet -Scope CurrentUser
 	Import-Module  Microsoft.PowerShell.PSResourceGet
 	$PSGallery = Get-PSResourceRepository -Name PSGallery	
 	If ($PSGallery.Trusted -eq $false) {
@@ -353,15 +350,9 @@ Function Install-M365Module {
 			} else {
 				#Only one Module found
 				[System.Version]$InstalledModuleVersion = $($InstalledModules.Version.ToString())
-				
-				#Debug
-				#Write-Host "Installed Modules: <$InstalledModuleVersion>" -ForegroundColor Cyan
-				#Write-Host "PSGallery Version: <$PSGalleryVersion>" -ForegroundColor Cyan
-				#Write-Host "Installed Module Type: $($InstalledModuleVersion.GetType().Name)" -ForegroundColor Cyan
-				#Write-Host "PSGallery Module Type: $($PSGalleryVersion.GetType().Name)" -ForegroundColor Cyan
 
 				#Version Check 
-				If ($PSGalleryVersion -gt $InstalledModuleVersion ) {
+				If ($PSGalleryVersion -gt $InstalledModuleVersion) {
 					#Uninstall Module
 					Write-Host "Uninstall Module: $Module $($InstalledModules.Version.ToString())" -ForegroundColor Yellow
 					Uninstall-PSResource -Name $Module -Scope $Scope -SkipDependencyCheck
