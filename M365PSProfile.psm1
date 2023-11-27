@@ -1,5 +1,5 @@
 ##############################################################################
-# M365 PS Profle 
+# M365 PS Profile 
 # Installs and Updates the Required PowerShell Modules for M365 Management
 ##############################################################################
 
