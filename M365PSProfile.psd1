@@ -71,7 +71,7 @@ RequiredModules = @(@{ModuleName = 'Microsoft.PowerShell.PSResourceGet'; GUID = 
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = @('Install-M365Module', 'Uninstall-M365Module', 'Get-M365StandardModule', 'Disconnect-All', 'Set-WindowTitle', 'Add-M365Profile')
+FunctionsToExport = @('Install-M365Module', 'Uninstall-M365Module', 'Get-M365StandardModule', 'Add-M365PSProfile', 'Disconnect-All', 'Set-WindowTitle')
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()
@@ -109,13 +109,17 @@ PrivateData = @{
         # IconUri = ''
 
  		# Set to a prerelease string value if the release should be a prerelease.
- 		Prerelease = 'Preview1'
+ 		Prerelease = 'Preview2'
 
         # ReleaseNotes of this module
         ReleaseNotes = '
 ---------------------------------------------------------------------------------------------
 Whats new in this release:
-V0.2
+V0.2 Preview2
+- Fixed Export Functions
+- Add-M365PSProfile can now be used to add the Profile if no Profile exists
+
+V0.2 Preview1
 - Initial Version of the PowerShell Module
 
 Functions:
