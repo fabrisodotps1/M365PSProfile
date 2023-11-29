@@ -9,7 +9,7 @@ A few Years ago Andres had created a PowerShell Profile Script that installed al
 The Modules where only installed when running as Administrator in the "AllUsers" Scope.
 
 That approach had some downsites:
-- Updating the Code requiered the User download the Script and Update the Profile for every Update
+- Updating the Code required the User download the Script and Update the Profile for every Update
 - Required "Run as Admin" for installation of Modules
 - Updating Modules took a long Time ☕
 - The Modules where defined static in the Script
@@ -70,10 +70,10 @@ You need to install the Module
 
 ```pwsh
 #PowerShellGet
-Install-Module -Name M365PSProfile
+Install-Module -Name M365PSProfile -Scope CurrentUser -AllowPreview
 
 #Microsoft.PowerShell.PSResourceGet
-Install-PSResource -Name M365PSProfile
+Install-PSResource -Name M365PSProfile -AllowPreview
 ```
 
 ### What you have to put into your Profile
@@ -96,7 +96,7 @@ Import-Module -Name M365PSProfile
 Install-M365Module
 
 #Install or Updates the Modules in the Array
-Install-M365Module -Modules @("ExchangeOnlineManagement", "Icewolf.EXO.SpamAnalyze", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell", "ORCA", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "Microsoft.Graph.Beta", "PSMSALNet", "MSIdentityTools" )
+Install-M365Module -Modules @("ExchangeOnlineManagement", "Icewolf.EXO.SpamAnalyze", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell", "ORCA", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "Microsoft.Graph.Beta", "MSIdentityTools", "PSMSALNet")
 ```
 
 ### Script Parameters
@@ -115,13 +115,13 @@ These are the Modules that are installed if you don't use an Array with the -Mod
 | Module | Description |
 | --- | --- |
 | ExchangeOnlineManagement | Exchange Online |
-| Icewolf.EXO.SpamAnalyze | Exchange Online Message Tracking / SpamAnalyze | 
+| Icewolf.EXO.SpamAnalyze | Exchange Online Message Tracking / [SpamAnalyze](https://github.com/BohrenAn/GitHub_PowerShellScripts/tree/main/Icewolf.EXO.SpamAnalyze) | 
 | MicrosoftTeams | Microsoft Teams |
 | Microsoft.Online.SharePoint.PowerShell | Microsoft Sharepoint | 
 | PnP.PowerShell | SharePoint / Microsoft Teams |
 | ORCA | Defender for Office 365 Recommended Configuration Analyzer |
 | O365CentralizedAddInDeployment | Deploy Office Add-Ins | 
-| MSCommerce | Manage M365 SelfServicePurchase | 
+| MSCommerce | Manage M365 Self Service Purchase | 
 | WhiteboardAdmin | Manage Whiteboards |
 | Microsoft.Graph | Microsoft.Graph Modules https://graph.microsoft.com/v1.0 | 
 | Microsoft.Graph.Beta | Microsoft.Graph Modules https://graph.microsoft.com/beta |
@@ -141,15 +141,27 @@ For Uninstalling there are three Options
 
 ```pwsh
 #Uninstalls the Standard M365 Modules
-Install-M365Module
+Uninstall-M365Module
 ```
 
 2) Uninstall the PSProfile
+>Note that PowerShell 5 and 7 have separate PowerShell Profiles
+
 You need to edit the PowerShell Profile and remove these two Lines
 
-```pwsh
+```
 Import-Module -Name M365PSProfile
 Install-M365Module
+```
+
+To view or delete the PowerShell Profile you can use these Commands
+
+```pwsh
+#View the Content of your PowerShell Profile
+Get-Content $Profile
+
+#Delete the PowerShell Profile
+Remove-Item $Profile
 ```
 
 3) Uninstall the Module
