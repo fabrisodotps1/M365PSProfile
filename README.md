@@ -44,16 +44,12 @@ For Example "Current user, Current Host" on Windows
 
 ```pwsh
 #PowerShell 5.1
-$HOME\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1
+#$HOME\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1
+$Profile
 
 #PowerShell 7
-$HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
-```
-
-The Profile File can also be viewed with the Variable
-
-```pwsh
-$profile
+#$HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
+$Profile
 ```
 
 ### Modules Path
@@ -76,6 +72,18 @@ Install-Module -Name M365PSProfile -Scope CurrentUser -AllowPreview
 Install-PSResource -Name M365PSProfile -AllowPreview
 ```
 
+![Image](M365PSProfile_01.png)
+
+### Available Commands
+
+You can view the available Commands of the Module with the command below
+
+```pwsh
+Get-Command -Module M365PSProfile
+```
+
+![Image](M365PSProfile_02.png)
+
 ### What you have to put into your Profile
 
 If you don't have an existing PowerShell Profile you can simply use the command below.
@@ -86,6 +94,7 @@ You have to do that for PowerShell 5 and PowerShell 7
 Add-M365PSProfile
 ```
 
+![Image](M365PSProfile_03.png)
 
 If you have already a PowerShell Profile you need to add at least one line to your PowerShell Profile
 
@@ -98,6 +107,14 @@ Install-M365Module
 #Install or Updates the Modules in the Array
 Install-M365Module -Modules @("ExchangeOnlineManagement", "Icewolf.EXO.SpamAnalyze", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell", "ORCA", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "Microsoft.Graph.Beta", "MSIdentityTools", "PSMSALNet")
 ```
+
+With these commands in the Profile it looks like this
+
+PowerShell 5
+![Image](M365PSProfile_04.png)
+
+PowerShell 7
+![Image](M365PSProfile_05.png)
 
 ### Script Parameters
 ```pwsh
