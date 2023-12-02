@@ -1,6 +1,6 @@
 # M365PSProfile
 
-If you're an Microsoft 365 Administrator, you need to have several PowerShell Modules for Managing an M365 Environement..
+If you're an Microsoft 365 Administrator, you need to have several PowerShell Modules for Managing an M365 Environement.
 
 We've created a flexible Module, that simplifies the Installation and Update of these Modules.
 
