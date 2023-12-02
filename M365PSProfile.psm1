@@ -94,10 +94,10 @@ Function Add-M365PSProfile {
 	if (-not(Test-Path -Path $Profile)) {
 		Write-Host "No PowerShell Profile exists. A new Profile with the M365PSProfile setup is created."
 
-		$ProfileContent = @"
-		Import-Module -Name M365PSProfile
-		#Install or updates the default Modules (what we think every M365 Admin needs) in the CurrentUser Scope
-		Install-M365Module
+$ProfileContent = @"
+#M365PSProfile: Install or updates the default Modules (what we think every M365 Admin needs) in the CurrentUser Scope
+Import-Module -Name M365PSProfile
+Install-M365Module
 "@
 		$ProfileContent | Out-File -FilePath $Profile -Encoding utf8 -Force
 	} else {
