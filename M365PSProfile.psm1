@@ -62,7 +62,7 @@ Function Invoke-AsciiArt {
 		https://github.com/fabrisodotps1/M365PSProfile
 	#>
 
-	Write-Host "__  __ ____    __ _____ _____   _____ _____            __ _ _      "
+	Write-Host " __  __ ____    __ _____ _____   _____ _____            __ _ _      "
 	Write-Host "|  \/  |___ \  / /| ____|  __ \ / ____|  __ \          / _(_) |     "
 	Write-Host "| \  / | __) |/ /_| |__ | |__) | (___ | |__) | __ ___ | |_ _| | ___ "
 	Write-Host "| |\/| ||__ <| '_ \___ \|  ___/ \___ \|  ___/ '__/ _ \|  _| | |/ _ \"
