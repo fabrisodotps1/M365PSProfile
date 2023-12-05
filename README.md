@@ -32,10 +32,10 @@ You need to install the Module
 
 ```pwsh
 #PowerShellGet
-Install-Module -Name M365PSProfile -Scope CurrentUser -AllowPreview
+Install-Module -Name M365PSProfile -Scope CurrentUser -AllowPrerelease
 
 #Microsoft.PowerShell.PSResourceGet
-Install-PSResource -Name M365PSProfile -AllowPreview
+Install-PSResource -Name M365PSProfile -Prerelease
 ```
 
 ![Image](M365PSProfile_01.png)
