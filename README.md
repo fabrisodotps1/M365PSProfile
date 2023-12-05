@@ -1,6 +1,6 @@
 # M365PSProfile
 
-If you're an Microsoft 365 Administrator, you need to have several PowerShell Modules for Managing an M365 Environement..
+If you're an Microsoft 365 Administrator, you need to have several PowerShell Modules for Managing an M365 Environement.
 
 We've created a flexible Module, that simplifies the Installation and Update of these Modules.
 
@@ -9,7 +9,7 @@ A few Years ago Andres had created a PowerShell Profile Script that installed al
 The Modules where only installed when running as Administrator in the "AllUsers" Scope.
 
 That approach had some downsites:
-- Updating the Code requiered the User download the Script and Update the Profile for every Update
+- Updating the Code required the User download the Script and Update the Profile for every Update
 - Required "Run as Admin" for installation of Modules
 - Updating Modules took a long Time ☕
 - The Modules where defined static in the Script
@@ -27,54 +27,28 @@ Our Goals are:
 - Parameter for Modules that should be installed and updated
 - Use the [Microsoft.PowerShell.PSResourceGet](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.psresourceget/?view=powershellget-3.x) (included in PowerShell 7.4)
 
-## Usage
-
-### PowerShell Profiles
-How do [PowerShell Profiles](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-7.4) work?
-
-Basically there exist four Types
-- All Users, All Hosts
-- All Users, Current Host
-- Current User, All Hosts
-- Current user, Current Host
-
-
-Be aware that there are diffrend Folders for PowerShell 5 and 7.
-For Example "Current user, Current Host" on Windows
-
-```pwsh
-#PowerShell 5.1
-$HOME\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1
-
-#PowerShell 7
-$HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
-```
-
-The Profile File can also be viewed with the Variable
-
-```pwsh
-$profile
-```
-
-### Modules Path
-Show the Path where PowerShell looks for Modules
-
-```
-$env:PSModulePath.Split(";")
-```
-
->Note: The Modules in the Scope "CurrentUser" has precedence over Scope "AllUsers"
-
 ## Installation
 You need to install the Module
 
 ```pwsh
 #PowerShellGet
-Install-Module -Name M365PSProfile
+Install-Module -Name M365PSProfile -Scope CurrentUser -AllowPreview
 
 #Microsoft.PowerShell.PSResourceGet
-Install-PSResource -Name M365PSProfile
+Install-PSResource -Name M365PSProfile -AllowPreview
 ```
+
+![Image](M365PSProfile_01.png)
+
+### Available Commands
+
+You can view the available Commands of the Module with the command below
+
+```pwsh
+Get-Command -Module M365PSProfile
+```
+
+![Image](M365PSProfile_02.png)
 
 ### What you have to put into your Profile
 
@@ -86,6 +60,7 @@ You have to do that for PowerShell 5 and PowerShell 7
 Add-M365PSProfile
 ```
 
+![Image](M365PSProfile_03.png)
 
 If you have already a PowerShell Profile you need to add at least one line to your PowerShell Profile
 
@@ -94,10 +69,22 @@ If you have already a PowerShell Profile you need to add at least one line to yo
 Import-Module -Name M365PSProfile
 #Install or updates the default Modules (what we think every M365 Admin needs) in the CurrentUser Scope
 Install-M365Module
-
-#Install or Updates the Modules in the Array
-Install-M365Module -Modules @("ExchangeOnlineManagement", "Icewolf.EXO.SpamAnalyze", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell", "ORCA", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "Microsoft.Graph.Beta", "PSMSALNet", "MSIdentityTools" )
 ```
+
+If you have specific Modules that you want to keep up to date, use the -Modules Parameter with an Array of ModuleNames
+
+```pwsh
+#Install or Updates the Modules in the Array
+Install-M365Module -Modules @("ExchangeOnlineManagement", "Icewolf.EXO.SpamAnalyze", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell", "ORCA", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "Microsoft.Graph.Beta", "MSIdentityTools", "PSMSALNet")
+```
+
+With these commands in the Profile it looks like this
+
+PowerShell 5
+![Image](M365PSProfile_04.png)
+
+PowerShell 7
+![Image](M365PSProfile_05.png)
 
 ### Script Parameters
 ```pwsh
@@ -106,7 +93,33 @@ Install-M365Module -Modules @("ExchangeOnlineManagement", "Icewolf.EXO.SpamAnaly
 -AsciiArt [Default:true/false]
 -RunInVSCode [Default:false/true]
 ```
+### PowerShell Profiles
+How do PowerShell Profiles work?
+- MS Learn [PowerShell Profiles](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-7.4)
 
+Basically there exist four Types
+- All Users, All Hosts
+- All Users, Current Host
+- Current User, All Hosts
+- Current user, Current Host
+
+
+Be aware that there are diffrent Profile Files for PowerShell 5 and 7.
+For Example "Current user, Current Host" on Windows
+
+```pwsh
+#PowerShell 5.1
+#$HOME\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1
+$Profile
+#View or Edit Profile
+notepad $Profile
+
+#PowerShell 7
+#$HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
+$Profile
+#View or Edit Profile
+notepad $Profile
+```
 
 ### Standard Modules that are installed with this Module
 
@@ -115,13 +128,13 @@ These are the Modules that are installed if you don't use an Array with the -Mod
 | Module | Description |
 | --- | --- |
 | ExchangeOnlineManagement | Exchange Online |
-| Icewolf.EXO.SpamAnalyze | Exchange Online Message Tracking / SpamAnalyze | 
+| Icewolf.EXO.SpamAnalyze | Exchange Online Message Tracking / [SpamAnalyze](https://github.com/BohrenAn/GitHub_PowerShellScripts/tree/main/Icewolf.EXO.SpamAnalyze) | 
 | MicrosoftTeams | Microsoft Teams |
 | Microsoft.Online.SharePoint.PowerShell | Microsoft Sharepoint | 
 | PnP.PowerShell | SharePoint / Microsoft Teams |
 | ORCA | Defender for Office 365 Recommended Configuration Analyzer |
 | O365CentralizedAddInDeployment | Deploy Office Add-Ins | 
-| MSCommerce | Manage M365 SelfServicePurchase | 
+| MSCommerce | Manage M365 Self Service Purchase | 
 | WhiteboardAdmin | Manage Whiteboards |
 | Microsoft.Graph | Microsoft.Graph Modules https://graph.microsoft.com/v1.0 | 
 | Microsoft.Graph.Beta | Microsoft.Graph Modules https://graph.microsoft.com/beta |
@@ -141,15 +154,27 @@ For Uninstalling there are three Options
 
 ```pwsh
 #Uninstalls the Standard M365 Modules
-Install-M365Module
+Uninstall-M365Module
 ```
 
 2) Uninstall the PSProfile
+>Note that PowerShell 5 and 7 have separate PowerShell Profiles
+
 You need to edit the PowerShell Profile and remove these two Lines
 
-```pwsh
+```
 Import-Module -Name M365PSProfile
 Install-M365Module
+```
+
+To view or delete the PowerShell Profile you can use these Commands
+
+```pwsh
+#View the Content of your PowerShell Profile
+Get-Content $Profile
+
+#Delete the PowerShell Profile
+Remove-Item $Profile
 ```
 
 3) Uninstall the Module
@@ -163,6 +188,14 @@ Uninstall-Module -Name M365PSProfile
 Uninstall-PSResource -Name M365PSProfile
 ```
 
+### Modules Path
+Show the Path where PowerShell looks for Modules
+
+```
+$env:PSModulePath.Split(";")
+```
+
+>Note: The Modules in the Scope "CurrentUser" has precedence over Scope "AllUsers"
 
 ## Contribution
 How can you contribute?

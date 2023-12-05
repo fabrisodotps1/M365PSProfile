@@ -62,7 +62,7 @@ Function Invoke-AsciiArt {
 		https://github.com/fabrisodotps1/M365PSProfile
 	#>
 
-	Write-Host "__  __ ____    __ _____ _____   _____ _____            __ _ _      "
+	Write-Host " __  __ ____    __ _____ _____   _____ _____            __ _ _      "
 	Write-Host "|  \/  |___ \  / /| ____|  __ \ / ____|  __ \          / _(_) |     "
 	Write-Host "| \  / | __) |/ /_| |__ | |__) | (___ | |__) | __ ___ | |_ _| | ___ "
 	Write-Host "| |\/| ||__ <| '_ \___ \|  ___/ \___ \|  ___/ '__/ _ \|  _| | |/ _ \"
@@ -94,10 +94,10 @@ Function Add-M365PSProfile {
 	if (-not(Test-Path -Path $Profile)) {
 		Write-Host "No PowerShell Profile exists. A new Profile with the M365PSProfile setup is created."
 
-		$ProfileContent = @"
-		Import-Module -Name M365PSProfile
-		#Install or updates the default Modules (what we think every M365 Admin needs) in the CurrentUser Scope
-		Install-M365Module
+$ProfileContent = @"
+#M365PSProfile: Install or updates the default Modules (what we think every M365 Admin needs) in the CurrentUser Scope
+Import-Module -Name M365PSProfile
+Install-M365Module
 "@
 		$ProfileContent | Out-File -FilePath $Profile -Encoding utf8 -Force
 	} else {
