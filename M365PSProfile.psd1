@@ -12,7 +12,7 @@
 RootModule = 'M365PSProfile.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.2.0'
+ModuleVersion = '0.3.0'
 
 # Supported PSEditions
 CompatiblePSEditions = @('Core', 'Desktop')
@@ -109,19 +109,13 @@ PrivateData = @{
         # IconUri = ''
 
  		# Set to a prerelease string value if the release should be a prerelease.
- 		Prerelease = 'Preview2'
+ 		#Prerelease = 'Preview2'
 
         # ReleaseNotes of this module
         ReleaseNotes = '
 ---------------------------------------------------------------------------------------------
 Whats new in this release:
-V0.2 Preview2
-- Fixed Export Functions
-- Add-M365PSProfile can now be used to add the Profile if no Profile exists
-
-V0.2 Preview1
-- Initial Version of the PowerShell Module
-
+V0.3.0 
 Functions:
 - Install-M365Module
 - Uninstall-M365Module

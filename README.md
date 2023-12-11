@@ -75,7 +75,7 @@ If you have specific Modules that you want to keep up to date, use the -Modules 
 
 ```pwsh
 #Install or Updates the Modules in the Array
-Install-M365Module -Modules @("ExchangeOnlineManagement", "Icewolf.EXO.SpamAnalyze", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell", "ORCA", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "Microsoft.Graph.Beta", "MSIdentityTools", "PSMSALNet")
+Install-M365Module -Modules @("ExchangeOnlineManagement", "Icewolf.EXO.SpamAnalyze", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell", "ORCA", "M365PSProfile", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "Microsoft.Graph.Beta", "MSIdentityTools", "PSMSALNet")
 ```
 
 With these commands in the Profile it looks like this
@@ -130,15 +130,16 @@ These are the Modules that are installed if you don't use an Array with the -Mod
 | ExchangeOnlineManagement | Exchange Online |
 | Icewolf.EXO.SpamAnalyze | Exchange Online Message Tracking / [SpamAnalyze](https://github.com/BohrenAn/GitHub_PowerShellScripts/tree/main/Icewolf.EXO.SpamAnalyze) | 
 | MicrosoftTeams | Microsoft Teams |
-| Microsoft.Online.SharePoint.PowerShell | Microsoft Sharepoint | 
+| Microsoft.Online.SharePoint.PowerShell | Microsoft Sharepoint |
 | PnP.PowerShell | SharePoint / Microsoft Teams |
 | ORCA | Defender for Office 365 Recommended Configuration Analyzer |
-| O365CentralizedAddInDeployment | Deploy Office Add-Ins | 
-| MSCommerce | Manage M365 Self Service Purchase | 
+| O365CentralizedAddInDeployment | Deploy Office Add-Ins |
+| M365PSProfile | Keep your M365 Modules up to date |
+| MSCommerce | Manage M365 Self Service Purchase |
 | WhiteboardAdmin | Manage Whiteboards |
-| Microsoft.Graph | Microsoft.Graph Modules https://graph.microsoft.com/v1.0 | 
+| Microsoft.Graph | Microsoft.Graph Modules https://graph.microsoft.com/v1.0 |
 | Microsoft.Graph.Beta | Microsoft.Graph Modules https://graph.microsoft.com/beta |
-| PSMSALNet| PowerShell 7.2 MSAL.NET wrapper| 
+| PSMSALNet| PowerShell 7.2 MSAL.NET wrapper|
 | MSIdentityTools | Additional Functions for Identity |
 
 or you can use this command to list the default Modules

@@ -14,6 +14,7 @@
 	"PnP.PowerShell",
 	"ORCA",
 	"O365CentralizedAddInDeployment",
+	"M365PSProfile"
 	"MSCommerce",
 	"WhiteboardAdmin",
 	"Microsoft.Graph",
@@ -278,7 +279,7 @@ Function Install-M365Module {
 	$IsAdmin = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
 	Import-Module  Microsoft.PowerShell.PSResourceGet
-	$PSGallery = Get-PSResourceRepository -Name PSGallery	
+	$PSGallery = Get-PSResourceRepository -Name PSGallery
 	If ($PSGallery.Trusted -eq $false) {
 		Write-Host "Warning: PSGallery is not Trusted" -ForegroundColor Yellow
 	}
@@ -306,17 +307,17 @@ Function Install-M365Module {
 				Write-Host "WARNING: PS must be running <As Administrator> to install the Module" -ForegroundColor Red
 			} else {
 				#Get Module from PowerShell Gallery
-				$PSGalleryModule = Find-PSResource -Name $Module
+				$PSGalleryModule = Find-PSResource -Name $Module #-Prerelease
 				$PSGalleryVersion = $PSGalleryModule.Version.ToString()
 				Write-Host "Install newest Module $Module $PSGalleryVersion" -ForegroundColor Yellow
 
-				Install-PSResource $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue
+				Install-PSResource $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue #-Prerelease
 			}
 		} else {
 			#Module found
 
 			#Get Module from PowerShell Gallery
-			$PSGalleryModule = Find-PSResource -Name $Module
+			$PSGalleryModule = Find-PSResource -Name $Module #-Prerelease
 			[System.Version]$PSGalleryVersion = $PSGalleryModule.Version.ToString()
 
 			#Check if Multiple Modules are installed
@@ -332,7 +333,7 @@ Function Install-M365Module {
 						
 						#Install newest Module
 						Write-Host "Install newest Module $Module $PSGalleryVersion" -ForegroundColor Yellow
-						Install-PSResource -Name $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue
+						Install-PSResource -Name $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue #-Prerelease
 					}				
 					N {
 						Write-Host "Skip Uninstall old Modules" 
@@ -344,7 +345,7 @@ Function Install-M365Module {
 
 						#Install newest Module
 						Write-Host "Install newest Module $Module $PSGalleryVersion" -ForegroundColor Yellow
-						Install-PSResource -Name $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue
+						Install-PSResource -Name $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue #-Prerelease
 					}
 				}
 			} else {
@@ -358,7 +359,7 @@ Function Install-M365Module {
 					Uninstall-PSResource -Name $Module -Scope $Scope -SkipDependencyCheck
 					#Install Module
 					Write-Host "Install Module: $Module $PSGalleryVersion" -ForegroundColor Yellow
-					Install-PSResource -Name $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue
+					Install-PSResource -Name $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue #-Prerelease
 				} else {
 					#Write Module Name
 					Write-Host "Checking Module: $Module $($InstalledModules.Version.ToString())" -ForegroundColor Green
