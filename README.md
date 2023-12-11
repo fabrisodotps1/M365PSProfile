@@ -27,49 +27,15 @@ Our Goals are:
 - Parameter for Modules that should be installed and updated
 - Use the [Microsoft.PowerShell.PSResourceGet](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.psresourceget/?view=powershellget-3.x) (included in PowerShell 7.4)
 
-## Usage
-
-### PowerShell Profiles
-How do [PowerShell Profiles](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-7.4) work?
-
-Basically there exist four Types
-- All Users, All Hosts
-- All Users, Current Host
-- Current User, All Hosts
-- Current user, Current Host
-
-
-Be aware that there are diffrend Folders for PowerShell 5 and 7.
-For Example "Current user, Current Host" on Windows
-
-```pwsh
-#PowerShell 5.1
-#$HOME\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1
-$Profile
-
-#PowerShell 7
-#$HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
-$Profile
-```
-
-### Modules Path
-Show the Path where PowerShell looks for Modules
-
-```
-$env:PSModulePath.Split(";")
-```
-
->Note: The Modules in the Scope "CurrentUser" has precedence over Scope "AllUsers"
-
 ## Installation
 You need to install the Module
 
 ```pwsh
 #PowerShellGet
-Install-Module -Name M365PSProfile -Scope CurrentUser -AllowPreview
+Install-Module -Name M365PSProfile -Scope CurrentUser -AllowPrerelease
 
 #Microsoft.PowerShell.PSResourceGet
-Install-PSResource -Name M365PSProfile -AllowPreview
+Install-PSResource -Name M365PSProfile -Prerelease
 ```
 
 ![Image](M365PSProfile_01.png)
@@ -103,7 +69,11 @@ If you have already a PowerShell Profile you need to add at least one line to yo
 Import-Module -Name M365PSProfile
 #Install or updates the default Modules (what we think every M365 Admin needs) in the CurrentUser Scope
 Install-M365Module
+```
 
+If you have specific Modules that you want to keep up to date, use the -Modules Parameter with an Array of ModuleNames
+
+```pwsh
 #Install or Updates the Modules in the Array
 Install-M365Module -Modules @("ExchangeOnlineManagement", "Icewolf.EXO.SpamAnalyze", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell", "ORCA", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "Microsoft.Graph.Beta", "MSIdentityTools", "PSMSALNet")
 ```
@@ -123,7 +93,33 @@ PowerShell 7
 -AsciiArt [Default:true/false]
 -RunInVSCode [Default:false/true]
 ```
+### PowerShell Profiles
+How do PowerShell Profiles work?
+- MS Learn [PowerShell Profiles](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-7.4)
 
+Basically there exist four Types
+- All Users, All Hosts
+- All Users, Current Host
+- Current User, All Hosts
+- Current user, Current Host
+
+
+Be aware that there are diffrent Profile Files for PowerShell 5 and 7.
+For Example "Current user, Current Host" on Windows
+
+```pwsh
+#PowerShell 5.1
+#$HOME\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1
+$Profile
+#View or Edit Profile
+notepad $Profile
+
+#PowerShell 7
+#$HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
+$Profile
+#View or Edit Profile
+notepad $Profile
+```
 
 ### Standard Modules that are installed with this Module
 
@@ -192,6 +188,14 @@ Uninstall-Module -Name M365PSProfile
 Uninstall-PSResource -Name M365PSProfile
 ```
 
+### Modules Path
+Show the Path where PowerShell looks for Modules
+
+```
+$env:PSModulePath.Split(";")
+```
+
+>Note: The Modules in the Scope "CurrentUser" has precedence over Scope "AllUsers"
 
 ## Contribution
 How can you contribute?
