@@ -22,7 +22,7 @@ So we decided to write a Module that handles the Logic and can be updated from t
 Our Goals are:
 - Simple One-Liner in the [PowerShell Profile](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-7.3)
 - No Admin Rights required -> Installation in the "CurrentUser" Scope
-- Fast and configurable -> Required Modules can be insta
+- Fast and configurable -> Predefined Modules or can be defined by yourself
 - Support for PowerShell 5 and 7 (Install in CurrentUser Scope)
 - Parameter for Modules that should be installed and updated
 - Use the [Microsoft.PowerShell.PSResourceGet](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.psresourceget/?view=powershellget-3.x) (included in PowerShell 7.4)
@@ -32,10 +32,10 @@ You need to install the Module
 
 ```pwsh
 #PowerShellGet
-Install-Module -Name M365PSProfile -Scope CurrentUser -AllowPreview
+Install-Module -Name M365PSProfile -Scope CurrentUser -AllowPrerelease
 
 #Microsoft.PowerShell.PSResourceGet
-Install-PSResource -Name M365PSProfile -AllowPreview
+Install-PSResource -Name M365PSProfile -Prerelease
 ```
 
 ![Image](M365PSProfile_01.png)
@@ -75,7 +75,7 @@ If you have specific Modules that you want to keep up to date, use the -Modules 
 
 ```pwsh
 #Install or Updates the Modules in the Array
-Install-M365Module -Modules @("ExchangeOnlineManagement", "Icewolf.EXO.SpamAnalyze", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell", "ORCA", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "Microsoft.Graph.Beta", "MSIdentityTools", "PSMSALNet")
+Install-M365Module -Modules @("ExchangeOnlineManagement", "Icewolf.EXO.SpamAnalyze", "MicrosoftTeams", "Microsoft.Online.SharePoint.PowerShell", "PnP.PowerShell", "ORCA", "M365PSProfile", "O365CentralizedAddInDeployment", "MSCommerce", "WhiteboardAdmin", "Microsoft.Graph", "Microsoft.Graph.Beta", "MSIdentityTools", "PSMSALNet")
 ```
 
 With these commands in the Profile it looks like this
@@ -130,15 +130,16 @@ These are the Modules that are installed if you don't use an Array with the -Mod
 | ExchangeOnlineManagement | Exchange Online |
 | Icewolf.EXO.SpamAnalyze | Exchange Online Message Tracking / [SpamAnalyze](https://github.com/BohrenAn/GitHub_PowerShellScripts/tree/main/Icewolf.EXO.SpamAnalyze) | 
 | MicrosoftTeams | Microsoft Teams |
-| Microsoft.Online.SharePoint.PowerShell | Microsoft Sharepoint | 
+| Microsoft.Online.SharePoint.PowerShell | Microsoft Sharepoint |
 | PnP.PowerShell | SharePoint / Microsoft Teams |
 | ORCA | Defender for Office 365 Recommended Configuration Analyzer |
-| O365CentralizedAddInDeployment | Deploy Office Add-Ins | 
-| MSCommerce | Manage M365 Self Service Purchase | 
+| O365CentralizedAddInDeployment | Deploy Office Add-Ins |
+| M365PSProfile | Keep your M365 Modules up to date |
+| MSCommerce | Manage M365 Self Service Purchase |
 | WhiteboardAdmin | Manage Whiteboards |
-| Microsoft.Graph | Microsoft.Graph Modules https://graph.microsoft.com/v1.0 | 
+| Microsoft.Graph | Microsoft.Graph Modules https://graph.microsoft.com/v1.0 |
 | Microsoft.Graph.Beta | Microsoft.Graph Modules https://graph.microsoft.com/beta |
-| PSMSALNet| PowerShell 7.2 MSAL.NET wrapper| 
+| PSMSALNet| PowerShell 7.2 MSAL.NET wrapper|
 | MSIdentityTools | Additional Functions for Identity |
 
 or you can use this command to list the default Modules
