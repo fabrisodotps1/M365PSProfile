@@ -12,7 +12,7 @@
 RootModule = 'M365PSProfile.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.3.0'
+ModuleVersion = '0.4.0'
 
 # Supported PSEditions
 CompatiblePSEditions = @('Core', 'Desktop')
@@ -115,6 +115,9 @@ PrivateData = @{
         ReleaseNotes = '
 ---------------------------------------------------------------------------------------------
 Whats new in this release:
+V0.4.0 
+- Added Code to fix Modules like AZ and Microsoft.Graph
+
 V0.3.0 
 Functions:
 - Install-M365Module
