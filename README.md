@@ -81,9 +81,11 @@ Install-M365Module -Modules @("ExchangeOnlineManagement", "Icewolf.EXO.SpamAnaly
 With these commands in the Profile it looks like this
 
 PowerShell 5
+
 ![Image](M365PSProfile_04.png)
 
 PowerShell 7
+
 ![Image](M365PSProfile_05.png)
 
 ### Script Parameters
