@@ -32,10 +32,10 @@ You need to install the Module
 
 ```pwsh
 #PowerShellGet
-Install-Module -Name M365PSProfile -Scope CurrentUser -AllowPrerelease
+Install-Module -Name M365PSProfile -Scope CurrentUser
 
 #Microsoft.PowerShell.PSResourceGet
-Install-PSResource -Name M365PSProfile -Prerelease
+Install-PSResource -Name M365PSProfile
 ```
 
 ![Image](M365PSProfile_01.png)
@@ -81,9 +81,11 @@ Install-M365Module -Modules @("ExchangeOnlineManagement", "Icewolf.EXO.SpamAnaly
 With these commands in the Profile it looks like this
 
 PowerShell 5
+
 ![Image](M365PSProfile_04.png)
 
 PowerShell 7
+
 ![Image](M365PSProfile_05.png)
 
 ### Script Parameters

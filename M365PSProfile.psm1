@@ -357,6 +357,28 @@ Function Install-M365Module {
 					#Uninstall Module
 					Write-Host "Uninstall Module: $Module $($InstalledModules.Version.ToString())" -ForegroundColor Yellow
 					Uninstall-PSResource -Name $Module -Scope $Scope -SkipDependencyCheck
+
+					#If AZ also Uninstall all AZ.* Modules
+					If ($Module -eq "AZ")
+					{
+						Write-Host "Uninstall AZ.* Modules" -ForegroundColor Yellow
+						Uninstall-PSResource AZ.* -Scope $Scope -SkipDependencyCheck
+					}
+
+					#If Microsoft.Graph also Uninstall all Microsoft.Graph.* Modules
+					If ($Module -eq "Microsoft.Graph")
+					{
+						Write-Host "Uninstall Microsoft.Graph.* Modules" -ForegroundColor Yellow
+						Get-InstalledPSResource -Name Microsoft.Graph.* -Scope CurrentUser | Where-Object {$_.Name -notmatch "Microsoft.Graph.Beta"} | Uninstall-PSResource -SkipDependencyCheck
+					}
+
+					#If Microsoft.Graph.Beta also Uninstall all Microsoft.Graph.Beta.* Modules
+					If ($Module -eq "Microsoft.Graph.Beta")
+					{
+						Write-Host "Uninstall Microsoft.Graph.Beta.* Modules" -ForegroundColor Yellow
+						Get-InstalledPSResource -Name Microsoft.Graph.Beta* -Scope CurrentUser | Uninstall-PSResource -SkipDependencyCheck
+					}
+
 					#Install Module
 					Write-Host "Install Module: $Module $PSGalleryVersion" -ForegroundColor Yellow
 					Install-PSResource -Name $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue #-Prerelease
