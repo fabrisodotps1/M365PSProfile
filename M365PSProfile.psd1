@@ -12,7 +12,7 @@
 RootModule = 'M365PSProfile.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.4.0'
+ModuleVersion = '0.5.0'
 
 # Supported PSEditions
 CompatiblePSEditions = @('Core', 'Desktop')
@@ -27,7 +27,7 @@ Author = 'Andres Bohren, Fabrice Reiser'
 CompanyName = ''
 
 # Copyright statement for this module
-Copyright = '(c) 2023 Andres Bohren & Fabrice Reiser'
+Copyright = '(c) 2024 Andres Bohren & Fabrice Reiser'
 
 # Description of the functionality provided by this module
 Description = 'This PowerShell Module helps M365 Administrators to keep the needed PowerShell Modules up to date'
@@ -115,6 +115,9 @@ PrivateData = @{
         ReleaseNotes = '
 ---------------------------------------------------------------------------------------------
 Whats new in this release:
+V0.5.0
+- Added Info for adding M365PSProfile to the Profile when loading the Module
+
 V0.4.0 
 - Added Code to fix Modules like AZ and Microsoft.Graph
 

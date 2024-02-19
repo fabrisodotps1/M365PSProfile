@@ -92,7 +92,7 @@ Function Add-M365PSProfile {
 		https://github.com/fabrisodotps1/M365PSProfile
 	#>
 	
-	if (-not(Test-Path -Path $Profile)) {
+	If (-not(Test-Path -Path $Profile)) {
 		Write-Host "No PowerShell Profile exists. A new Profile with the M365PSProfile setup is created."
 
 $ProfileContent = @"
@@ -390,4 +390,23 @@ Function Install-M365Module {
 		}
 	}
 }
+
+##############################################################################
+# Import Module
+##############################################################################
+If (-not(Test-Path -Path $Profile)) 
+{
+	Write-Host "No PowerShell Profile exists. You can add the M365Profile Update check with ADD-M365PSProfile" -ForegroundColor Yellow
+	
+} else {
+	$Content = Get-Content -Path $PROFILE
+	If ($Content -match "Install-M365Module")
+	{
+		#Match found
+	} else {
+		#No Match found
+		Write-Host  "You have a PowerShell Profile. You can add the M365Profile Update check by adding: Install-M365Module" -ForegroundColor Yellow
+	}
+}
+
 
