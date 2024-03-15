@@ -53,7 +53,7 @@ PowerShellVersion = '5.1'
 
 # Modules that must be imported into the global environment prior to importing this module
 # RequiredModules = @()
-RequiredModules = @(@{ModuleName = 'Microsoft.PowerShell.PSResourceGet'; GUID = 'e4e0bda1-0703-44a5-b70d-8fe704cd0643'; ModuleVersion = '1.0.0'; })
+RequiredModules = @(@{ModuleName = 'Microsoft.PowerShell.PSResourceGet'; GUID = 'e4e0bda1-0703-44a5-b70d-8fe704cd0643'; ModuleVersion = '1.0.3'; })
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()
@@ -117,6 +117,7 @@ PrivateData = @{
 Whats new in this release:
 V0.5.0
 - Added Info for adding M365PSProfile to the Profile when loading the Module
+- Updated required Modules to Microsoft.PowerShell.PSResourceGet 1.0.3
 
 V0.4.0 
 - Added Code to fix Modules like AZ and Microsoft.Graph
