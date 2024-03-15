@@ -106,7 +106,7 @@ PrivateData = @{
         ProjectUri = 'https://github.com/fabrisodotps1/M365PSProfile'
 
         # A URL to an icon representing this module.
-        # IconUri = ''
+        IconUri = 'https://raw.githubusercontent.com/fabrisodotps1/M365PSProfile/develop/PandaLogo.png'
 
  		# Set to a prerelease string value if the release should be a prerelease.
  		#Prerelease = 'Preview2'
@@ -118,6 +118,7 @@ Whats new in this release:
 V0.5.0
 - Added Info for adding M365PSProfile to the Profile when loading the Module
 - Updated required Modules to Microsoft.PowerShell.PSResourceGet 1.0.3
+- Added Icon on PowerShell Gallery
 
 V0.4.0 
 - Added Code to fix Modules like AZ and Microsoft.Graph
