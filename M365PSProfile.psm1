@@ -296,6 +296,32 @@ Function Install-M365Module {
 	}
 
 	Write-Host "Checking Modules..."
+	<#
+	#Check Microsoft.PowerShell.PSResourceGet
+	#Can't uninstall loaded DLL's so you have to uninstall next time you start PowerShell
+	#[System.AppDomain]::CurrentDomain.GetAssemblies() | where {$_.Location -match "Microsoft.PowerShell.PSResourceGet"}
+	$Module = "Microsoft.PowerShell.PSResourceGet"
+	[Array]$InstalledModules = Get-InstalledPSResource -Name $Module -Scope $Scope -ErrorAction SilentlyContinue | Sort-Object Version -Descending
+	If ($InstalledModules.Count -gt 1)
+	{
+		$Version = $InstalledModules[$InstalledModules.Count - 1].Version
+		Write-Host "Uninstall Module $Module $Version" -ForegroundColor Yellow
+		#Uninstall-PSResource -Name $Module -Scope $Scope -SkipDependencyCheck
+	} else {
+		#Get Module from PowerShell Gallery
+		$PSGalleryModule = Find-PSResource -Name $Module 
+		$PSGalleryVersion = $PSGalleryModule.Version.ToString()
+
+		#Version Check 
+		If ($PSGalleryVersion -gt $InstalledModuleVersion) 
+		{
+			Write-Host "Install newest Module $Module $PSGalleryVersion" -ForegroundColor Yellow
+			Install-PSResource $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue 
+		}
+	}
+	#>
+
+
 	Foreach ($Module in $Modules) {
 		#Get Array of installed Modules
 		[Array]$InstalledModules = Get-InstalledPSResource -Name $Module -Scope $Scope -ErrorAction SilentlyContinue | Sort-Object Version -Descending
@@ -306,6 +332,9 @@ Function Install-M365Module {
 			If ($IsAdmin -eq $false -and $Scope -eq "AllUsers") {
 				Write-Host "WARNING: PS must be running <As Administrator> to install the Module" -ForegroundColor Red
 			} else {
+				#Only one Version found
+				[System.Version]$InstalledModuleVersion = $($InstalledModules.Version.ToString())
+
 				#Get Module from PowerShell Gallery
 				$PSGalleryModule = Find-PSResource -Name $Module #-Prerelease
 				$PSGalleryVersion = $PSGalleryModule.Version.ToString()
