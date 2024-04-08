@@ -118,6 +118,7 @@ Whats new in this release:
 V0.5.0
 - Added Info for adding M365PSProfile to the Profile when loading the Module
 - Updated required Modules to Microsoft.PowerShell.PSResourceGet 1.0.3
+- Added Code to update Microsoft.PowerShell.PSResourceGet to the latest Version
 - Added Icon on PowerShell Gallery
 
 V0.4.0 

@@ -296,18 +296,23 @@ Function Install-M365Module {
 	}
 
 	Write-Host "Checking Modules..."
-	<#
 	#Check Microsoft.PowerShell.PSResourceGet
 	#Can't uninstall loaded DLL's so you have to uninstall next time you start PowerShell
 	#[System.AppDomain]::CurrentDomain.GetAssemblies() | where {$_.Location -match "Microsoft.PowerShell.PSResourceGet"}
 	$Module = "Microsoft.PowerShell.PSResourceGet"
 	[Array]$InstalledModules = Get-InstalledPSResource -Name $Module -Scope $Scope -ErrorAction SilentlyContinue | Sort-Object Version -Descending
+
+	Write-Host "Checking Module: $Module $($InstalledModules[0].Version.ToString())" -ForegroundColor Green
+
 	If ($InstalledModules.Count -gt 1)
 	{
 		$Version = $InstalledModules[$InstalledModules.Count - 1].Version
 		Write-Host "Uninstall Module $Module $Version" -ForegroundColor Yellow
-		#Uninstall-PSResource -Name $Module -Scope $Scope -SkipDependencyCheck
+		Uninstall-PSResource -Name $Module -Scope $Scope -Version $Version -SkipDependencyCheck
 	} else {
+		#Only one Version found
+		[System.Version]$InstalledModuleVersion = $($InstalledModules.Version.ToString())
+
 		#Get Module from PowerShell Gallery
 		$PSGalleryModule = Find-PSResource -Name $Module 
 		$PSGalleryVersion = $PSGalleryModule.Version.ToString()
@@ -319,7 +324,6 @@ Function Install-M365Module {
 			Install-PSResource $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue 
 		}
 	}
-	#>
 
 
 	Foreach ($Module in $Modules) {
