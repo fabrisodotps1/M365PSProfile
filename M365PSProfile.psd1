@@ -106,7 +106,7 @@ PrivateData = @{
         ProjectUri = 'https://github.com/fabrisodotps1/M365PSProfile'
 
         # A URL to an icon representing this module.
-        IconUri = 'https://raw.githubusercontent.com/fabrisodotps1/M365PSProfile/develop/PandaLogo.png'
+        IconUri = 'https://raw.githubusercontent.com/fabrisodotps1/M365PSProfile/develop/M365PSProfile.png'
 
  		# Set to a prerelease string value if the release should be a prerelease.
  		#Prerelease = 'Preview2'
