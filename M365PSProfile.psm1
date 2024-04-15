@@ -92,7 +92,7 @@ Function Add-M365PSProfile {
 		https://github.com/fabrisodotps1/M365PSProfile
 	#>
 	
-	if (-not(Test-Path -Path $Profile)) {
+	If (-not(Test-Path -Path $Profile)) {
 		Write-Host "No PowerShell Profile exists. A new Profile with the M365PSProfile setup is created."
 
 $ProfileContent = @"
@@ -296,6 +296,36 @@ Function Install-M365Module {
 	}
 
 	Write-Host "Checking Modules..."
+	#Check Microsoft.PowerShell.PSResourceGet
+	#Can't uninstall loaded DLL's so you have to uninstall next time you start PowerShell
+	#[System.AppDomain]::CurrentDomain.GetAssemblies() | where {$_.Location -match "Microsoft.PowerShell.PSResourceGet"}
+	$Module = "Microsoft.PowerShell.PSResourceGet"
+	[Array]$InstalledModules = Get-InstalledPSResource -Name $Module -Scope $Scope -ErrorAction SilentlyContinue | Sort-Object Version -Descending
+
+	Write-Host "Checking Module: $Module $($InstalledModules[0].Version.ToString())" -ForegroundColor Green
+
+	If ($InstalledModules.Count -gt 1)
+	{
+		$Version = $InstalledModules[$InstalledModules.Count - 1].Version
+		Write-Host "Uninstall Module $Module $Version" -ForegroundColor Yellow
+		Uninstall-PSResource -Name $Module -Scope $Scope -Version $Version -SkipDependencyCheck
+	} else {
+		#Only one Version found
+		[System.Version]$InstalledModuleVersion = $($InstalledModules.Version.ToString())
+
+		#Get Module from PowerShell Gallery
+		$PSGalleryModule = Find-PSResource -Name $Module 
+		$PSGalleryVersion = $PSGalleryModule.Version.ToString()
+
+		#Version Check 
+		If ($PSGalleryVersion -gt $InstalledModuleVersion) 
+		{
+			Write-Host "Install newest Module $Module $PSGalleryVersion" -ForegroundColor Yellow
+			Install-PSResource $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue 
+		}
+	}
+
+
 	Foreach ($Module in $Modules) {
 		#Get Array of installed Modules
 		[Array]$InstalledModules = Get-InstalledPSResource -Name $Module -Scope $Scope -ErrorAction SilentlyContinue | Sort-Object Version -Descending
@@ -306,6 +336,9 @@ Function Install-M365Module {
 			If ($IsAdmin -eq $false -and $Scope -eq "AllUsers") {
 				Write-Host "WARNING: PS must be running <As Administrator> to install the Module" -ForegroundColor Red
 			} else {
+				#Only one Version found
+				[System.Version]$InstalledModuleVersion = $($InstalledModules.Version.ToString())
+
 				#Get Module from PowerShell Gallery
 				$PSGalleryModule = Find-PSResource -Name $Module #-Prerelease
 				$PSGalleryVersion = $PSGalleryModule.Version.ToString()
@@ -390,4 +423,23 @@ Function Install-M365Module {
 		}
 	}
 }
+
+##############################################################################
+# Import Module
+##############################################################################
+If (-not(Test-Path -Path $Profile)) 
+{
+	Write-Host "No PowerShell Profile exists. You can add the M365Profile Update check with ADD-M365PSProfile" -ForegroundColor Yellow
+	
+} else {
+	$Content = Get-Content -Path $PROFILE
+	If ($Content -match "Install-M365Module")
+	{
+		#Match found
+	} else {
+		#No Match found
+		Write-Host  "You have a PowerShell Profile. You can add the M365Profile Update check by adding: Install-M365Module" -ForegroundColor Yellow
+	}
+}
+
 
