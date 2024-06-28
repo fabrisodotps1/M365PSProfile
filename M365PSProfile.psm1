@@ -302,29 +302,39 @@ Function Install-M365Module {
 	$Module = "Microsoft.PowerShell.PSResourceGet"
 	[Array]$InstalledModules = Get-InstalledPSResource -Name $Module -Scope $Scope -ErrorAction SilentlyContinue | Sort-Object Version -Descending
 
-	Write-Host "Checking Module: $Module $($InstalledModules[0].Version.ToString())" -ForegroundColor Green
-
-	If ($InstalledModules.Count -gt 1)
+	If ($Null -ne $InstalledModules)
 	{
-		$Version = $InstalledModules[$InstalledModules.Count - 1].Version
-		Write-Host "Uninstall Module $Module $Version" -ForegroundColor Yellow
-		Uninstall-PSResource -Name $Module -Scope $Scope -Version $Version -SkipDependencyCheck
-	} else {
-		#Only one Version found
-		[System.Version]$InstalledModuleVersion = $($InstalledModules.Version.ToString())
+		Write-Host "Checking Module: $Module $($InstalledModules[0].Version.ToString())" -ForegroundColor Green
 
+		If ($InstalledModules.Count -gt 1)
+		{
+			$Version = $InstalledModules[$InstalledModules.Count - 1].Version
+			Write-Host "Uninstall Module $Module $Version" -ForegroundColor Yellow
+			Uninstall-PSResource -Name $Module -Scope $Scope -Version $Version -SkipDependencyCheck
+		} else {
+			#Only one Version found
+			[System.Version]$InstalledModuleVersion = $($InstalledModules.Version.ToString())
+	
+			#Get Module from PowerShell Gallery
+			$PSGalleryModule = Find-PSResource -Name $Module 
+			$PSGalleryVersion = $PSGalleryModule.Version.ToString()
+	
+			#Version Check 
+			If ($PSGalleryVersion -gt $InstalledModuleVersion) 
+			{
+				Write-Host "Install newest Module $Module $PSGalleryVersion" -ForegroundColor Yellow
+				Install-PSResource $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue 
+			}
+		}
+	} else {
 		#Get Module from PowerShell Gallery
 		$PSGalleryModule = Find-PSResource -Name $Module 
 		$PSGalleryVersion = $PSGalleryModule.Version.ToString()
 
-		#Version Check 
-		If ($PSGalleryVersion -gt $InstalledModuleVersion) 
-		{
-			Write-Host "Install newest Module $Module $PSGalleryVersion" -ForegroundColor Yellow
-			Install-PSResource $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue 
-		}
+		#Install Module
+		Write-Host "Install Module: $Module $PSGalleryVersion" -ForegroundColor Yellow
+		Install-PSResource -Name $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue #-Prerelease
 	}
-
 
 	Foreach ($Module in $Modules) {
 		#Get Array of installed Modules
@@ -336,9 +346,6 @@ Function Install-M365Module {
 			If ($IsAdmin -eq $false -and $Scope -eq "AllUsers") {
 				Write-Host "WARNING: PS must be running <As Administrator> to install the Module" -ForegroundColor Red
 			} else {
-				#Only one Version found
-				[System.Version]$InstalledModuleVersion = $($InstalledModules.Version.ToString())
-
 				#Get Module from PowerShell Gallery
 				$PSGalleryModule = Find-PSResource -Name $Module #-Prerelease
 				$PSGalleryVersion = $PSGalleryModule.Version.ToString()
