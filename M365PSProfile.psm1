@@ -81,7 +81,7 @@ Function Add-M365PSProfile {
 		Add PowerShell Profile with M365PSProfile setup
 
 		.DESCRIPTION
-		Add PowerShell Profile with M365PSProfile setup (if no PowerShell Profile exists).
+		Add PowerShell Profile with M365PSProfile setup.
 
 		Needs to be executed separately for PowerShell v5 and v7.
 
@@ -91,18 +91,30 @@ Function Add-M365PSProfile {
 		.LINK
 		https://github.com/fabrisodotps1/M365PSProfile
 	#>
-	
-	If (-not(Test-Path -Path $Profile)) {
-		Write-Host "No PowerShell Profile exists. A new Profile with the M365PSProfile setup is created."
+	[CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
+    	param()
 
-$ProfileContent = @"
+	$ProfileContent = @"
+
 #M365PSProfile: Install or updates the default Modules (what we think every M365 Admin needs) in the CurrentUser Scope
 Import-Module -Name M365PSProfile
 Install-M365Module
 "@
+
+	If (-not(Test-Path -Path $Profile)) {
+		Write-Host "No PowerShell Profile exists. A new Profile with the M365PSProfile setup is created."
 		$ProfileContent | Out-File -FilePath $Profile -Encoding utf8 -Force
 	} else {
-		Write-Host "PowerShell Profile already exists. Add the commands for the M365PSProfile setup to the Profile." -ForegroundColor Yellow
+		Write-Host "PowerShell Profile already exists. You could manually add the following code to your PowerShell profile: `r`n" -ForegroundColor Yellow
+		Write-Host $ProfileContent -ForegroundColor Magenta
+		Write-Host "`r`nThis command can also add the code to the end of your profile file ($($Profile))."
+		
+		if ($PSCmdlet.ShouldContinue($Path, "Add ""Install-M365Module"" to the PowerShell Profile file $($Profile)")) {
+			Write-Host "Adding to profile..."
+			Add-Content -Path $Profile -Value $ProfileContent
+		} else {
+			Write-Host "Okay, not changing your profile."
+		}
 	}
 }
 
