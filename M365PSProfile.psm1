@@ -111,7 +111,7 @@ Install-M365Module
 		
 		if ($PSCmdlet.ShouldContinue($Path, "Add ""Install-M365Module"" to the PowerShell Profile file $($Profile)")) {
 			Write-Host "Adding to profile..."
-			Add-Content -Path $Profile -Value $ProfileContent
+			Add-Content -Path $Profile -Value $ProfileContent -Encoding utf8
 		} else {
 			Write-Host "Okay, not changing your profile."
 		}
