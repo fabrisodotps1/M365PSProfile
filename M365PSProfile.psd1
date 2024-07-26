@@ -125,10 +125,10 @@ V0.5.0
 - Added Code to update Microsoft.PowerShell.PSResourceGet to the latest Version
 - Added Icon on PowerShell Gallery
 
-V0.4.0 
+V0.4.0
 - Added Code to fix Modules like AZ and Microsoft.Graph
 
-V0.3.0 
+V0.3.0
 Functions:
 - Install-M365Module
 - Uninstall-M365Module
@@ -150,4 +150,3 @@ Functions:
 # DefaultCommandPrefix = ''
 
 }
-

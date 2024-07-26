@@ -1,5 +1,5 @@
 ##############################################################################
-# M365 PS Profile 
+# M365 PS Profile
 # Installs and Updates the Required PowerShell Modules for M365 Management
 ##############################################################################
 
@@ -25,7 +25,7 @@
 
 ##############################################################################
 # Get-M365StandardModules
-# Returns the M365StandardModules global variable 
+# Returns the M365StandardModules global variable
 ##############################################################################
 Function Get-M365StandardModule {
 	<#
@@ -91,7 +91,7 @@ Function Add-M365PSProfile {
 		.LINK
 		https://github.com/fabrisodotps1/M365PSProfile
 	#>
-	
+
 	If (-not(Test-Path -Path $Profile)) {
 		Write-Host "No PowerShell Profile exists. A new Profile with the M365PSProfile setup is created."
 
@@ -204,11 +204,14 @@ Function Set-WindowTitle {
 		.LINK
 		https://github.com/fabrisodotps1/M365PSProfile
 	#>
-
+	[CmdletBinding(SupportsShouldProcess)]
 	PARAM (
 		[string]$Title = "Windows PowerShell"
 	)
-	$host.ui.RawUI.WindowTitle = $Title
+
+	if($PSCmdlet.ShouldProcess($Title)){
+		$host.ui.RawUI.WindowTitle = $Title
+	}
 }
 
 ##############################################################################
@@ -216,11 +219,11 @@ Function Set-WindowTitle {
 ##############################################################################
 
 Function Install-M365Module {
-	<# 
+	<#
 		.SYNOPSIS
 		M365PSProfile installs and keeps the PowerShell Modules needed for Microsoft 365 Management up to date.
 		It provides a simple way to add it to the PowerShell Profile
-			
+
 		.DESCRIPTION
 		M365PSProfile installs and keeps the PowerShell Modules needed for Microsoft 365 Management up to date.
 		It provides a simple way to add it to the PowerShell Profile
@@ -267,7 +270,7 @@ Function Install-M365Module {
 		If ($RunInVSCode -eq $false) {
 			Exit
 		}
-	}	
+	}
 
 	If ($AsciiArt -eq $true) {
 		#Show AsciArt
@@ -283,10 +286,10 @@ Function Install-M365Module {
 	If ($PSGallery.Trusted -eq $false) {
 		Write-Host "Warning: PSGallery is not Trusted" -ForegroundColor Yellow
 	}
-		
+
 	#Check if VSCode or PowerShell is running
 	[array]$process = Get-Process | Where-Object { $_.ProcessName -eq "powershell" -or $_.ProcessName -eq "pwsh" -or $_.ProcessName -eq "code" }
-	
+
 	If ($process.count -gt 1) {
 		Write-Host "PowerShell or Visual Studio Code running? Please close it, Modules in use can't be updated..." -ForegroundColor Yellow
 		$process
@@ -314,21 +317,21 @@ Function Install-M365Module {
 		} else {
 			#Only one Version found
 			[System.Version]$InstalledModuleVersion = $($InstalledModules.Version.ToString())
-	
+
 			#Get Module from PowerShell Gallery
-			$PSGalleryModule = Find-PSResource -Name $Module 
+			$PSGalleryModule = Find-PSResource -Name $Module
 			$PSGalleryVersion = $PSGalleryModule.Version.ToString()
-	
-			#Version Check 
-			If ($PSGalleryVersion -gt $InstalledModuleVersion) 
+
+			#Version Check
+			If ($PSGalleryVersion -gt $InstalledModuleVersion)
 			{
 				Write-Host "Install newest Module $Module $PSGalleryVersion" -ForegroundColor Yellow
-				Install-PSResource $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue 
+				Install-PSResource $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue
 			}
 		}
 	} else {
 		#Get Module from PowerShell Gallery
-		$PSGalleryModule = Find-PSResource -Name $Module 
+		$PSGalleryModule = Find-PSResource -Name $Module
 		$PSGalleryVersion = $PSGalleryModule.Version.ToString()
 
 		#Install Module
@@ -363,20 +366,20 @@ Function Install-M365Module {
 			#Check if Multiple Modules are installed
 			If (($InstalledModules.count) -gt 1) {
 
-				Write-Host "WARNING: $Module > Multiple Versions found. Uninstall old Versions? (Default is Yes)" -ForegroundColor Yellow 
-				$Readhost = Read-Host " ( y / n ) " 
-				Switch ($ReadHost) { 
+				Write-Host "WARNING: $Module > Multiple Versions found. Uninstall old Versions? (Default is Yes)" -ForegroundColor Yellow
+				$Readhost = Read-Host " ( y / n ) "
+				Switch ($ReadHost) {
 					Y {
 						#Uninstall all Modules
 						Write-Host "Uninstall Module"
 						Uninstall-PSResource -Name $Module -Scope $Scope -SkipDependencyCheck
-						
+
 						#Install newest Module
 						Write-Host "Install newest Module $Module $PSGalleryVersion" -ForegroundColor Yellow
 						Install-PSResource -Name $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue #-Prerelease
-					}				
+					}
 					N {
-						Write-Host "Skip Uninstall old Modules" 
+						Write-Host "Skip Uninstall old Modules"
 					}
 					Default {
 						#Uninstall all Modules
@@ -392,7 +395,7 @@ Function Install-M365Module {
 				#Only one Module found
 				[System.Version]$InstalledModuleVersion = $($InstalledModules.Version.ToString())
 
-				#Version Check 
+				#Version Check
 				If ($PSGalleryVersion -gt $InstalledModuleVersion) {
 					#Uninstall Module
 					Write-Host "Uninstall Module: $Module $($InstalledModules.Version.ToString())" -ForegroundColor Yellow
@@ -434,10 +437,9 @@ Function Install-M365Module {
 ##############################################################################
 # Import Module
 ##############################################################################
-If (-not(Test-Path -Path $Profile)) 
+If (-not(Test-Path -Path $Profile))
 {
 	Write-Host "No PowerShell Profile exists. You can add the M365Profile Update check with ADD-M365PSProfile" -ForegroundColor Yellow
-	
 } else {
 	$Content = Get-Content -Path $PROFILE
 	If ($Content -match "Install-M365Module")
