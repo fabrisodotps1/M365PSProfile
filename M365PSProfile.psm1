@@ -6,6 +6,7 @@
 ##############################################################################
 # Global variable for standard modules
 ##############################################################################
+#Backlog: Microsoft.Graph.Entra
 [array]$global:M365StandardModules = @(
 	"ExchangeOnlineManagement",
 	"Icewolf.EXO.SpamAnalyze",
