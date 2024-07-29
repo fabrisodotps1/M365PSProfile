@@ -12,7 +12,7 @@
 RootModule = 'M365PSProfile.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.6.0'
+ModuleVersion = '0.7.0'
 
 # Supported PSEditions
 CompatiblePSEditions = @('Core', 'Desktop')
@@ -115,27 +115,9 @@ PrivateData = @{
         ReleaseNotes = '
 ---------------------------------------------------------------------------------------------
 Whats new in this release:
-V0.6.0
-- Fixed Bug when Modules are not installed
-- Updated required Modules to Microsoft.PowerShell.PSResourceGet 1.0.5
-
-V0.5.0
-- Added Info for adding M365PSProfile to the Profile when loading the Module
-- Updated required Modules to Microsoft.PowerShell.PSResourceGet 1.0.3
-- Added Code to update Microsoft.PowerShell.PSResourceGet to the latest Version
-- Added Icon on PowerShell Gallery
-
-V0.4.0 
-- Added Code to fix Modules like AZ and Microsoft.Graph
-
-V0.3.0 
-Functions:
-- Install-M365Module
-- Uninstall-M365Module
-- Get-M365StandardModule
-- Add-M365Profile
-- Disconnect-All
-- Set-WindowTitle
+V0.7.0
+- Added optional Parameter -Repository (default PSGallery) if using multiple Repositorys by @diecknet
+- The Function Add-M365PSProfile now adds the needed commands to the $PROFILE  by @diecknet
 ---------------------------------------------------------------------------------------------
 '
 
