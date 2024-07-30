@@ -94,25 +94,25 @@ AliasesToExport = @()
 # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
 PrivateData = @{
 
-    PSData = @{
+	PSData = @{
 
-        # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = @('Office365', 'Microsoft365', 'O365', 'M365', 'Admin' )
+		# Tags applied to this module. These help with module discovery in online galleries.
+		Tags = @('Office365', 'Microsoft365', 'O365', 'M365', 'Admin' )
 
-        # A URL to the license for this module.
-        # LicenseUri = ''
+		# A URL to the license for this module.
+		# LicenseUri = ''
 
-        # A URL to the main website for this project.
-        ProjectUri = 'https://github.com/fabrisodotps1/M365PSProfile'
+		# A URL to the main website for this project.
+		ProjectUri = 'https://github.com/fabrisodotps1/M365PSProfile'
 
-        # A URL to an icon representing this module.
-        IconUri = 'https://raw.githubusercontent.com/fabrisodotps1/M365PSProfile/develop/M365PSProfile.png'
+		# A URL to an icon representing this module.
+		IconUri = 'https://raw.githubusercontent.com/fabrisodotps1/M365PSProfile/develop/M365PSProfile.png'
 
  		# Set to a prerelease string value if the release should be a prerelease.
  		#Prerelease = 'Preview2'
 
-        # ReleaseNotes of this module
-        ReleaseNotes = '
+		# ReleaseNotes of this module
+		ReleaseNotes = '
 ---------------------------------------------------------------------------------------------
 Whats new in this release:
 V0.7.0
@@ -121,7 +121,7 @@ V0.7.0
 ---------------------------------------------------------------------------------------------
 '
 
-    } # End of PSData hashtable
+	} # End of PSData hashtable
 
 } # End of PrivateData hashtable
 
