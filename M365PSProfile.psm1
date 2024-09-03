@@ -95,8 +95,7 @@ Function Add-M365PSProfile {
 	[CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
 		param()
 
-	$ProfileContent = @"
-
+	$M365PSProfileContent = @"
 #M365PSProfile: Install or updates the default Modules (what we think every M365 Admin needs) in the CurrentUser Scope
 Import-Module -Name M365PSProfile
 Install-M365Module
@@ -105,15 +104,25 @@ Install-M365Module
 	If (-not(Test-Path -Path $Profile)) {
 		#No Profile found
 		Write-Host "No PowerShell Profile exists. A new Profile with the M365PSProfile setup is created."
-		$ProfileContent | Out-File -FilePath $Profile -Encoding utf8 -Force
+		$M365PSProfileContent | Out-File -FilePath $Profile -Encoding utf8 -Force
 	} else {
 		#Profile found
-		#$ProfileContent = Get-Content -Path $Profile -Encoding utf8
+		$ProfileContent = Get-Content -Path $Profile -Encoding utf8
 		#$ProfileContent | Where-Object {$_ -match "Import-Module -Name M365PSProfile"}
-		#$ProfileContent | Where-Object {$_ -match "Install-M365Module"}
+		$Match = $ProfileContent | Where-Object {$_ -match "Install-M365Module"}
+		If ($Null -ne $Match)
+		{
+			#M365PSProfile already in Profile
+			Write-Host "PowerShell Profile already exists. M365PSProfile is already in the Profile." -ForegroundColor Yellow
+		} else {
+			#M365PSProfile not in Profile
+			Write-Host "PowerShell Profile already exists. Adding M365PSProfile to it" -ForegroundColor Yellow
+			Add-Content -Path $Profile -Value $M365PSProfileContent -Encoding utf8
+		}
 
+		<#
 		Write-Host "PowerShell Profile already exists. You could manually add the following code to your PowerShell profile: `r`n" -ForegroundColor Yellow
-		Write-Host $ProfileContent -ForegroundColor Magenta
+		Write-Host $M365PSProfileContent -ForegroundColor Magenta
 		Write-Host "`r`nThis command can also add the code to the end of your profile file ($($Profile))."
 
 		if ($PSCmdlet.ShouldContinue($Path, "Add ""Install-M365Module"" to the PowerShell Profile file $($Profile)")) {
@@ -122,6 +131,7 @@ Install-M365Module
 		} else {
 			Write-Host "Okay, not changing your profile."
 		}
+		#>
 	}
 }
 
