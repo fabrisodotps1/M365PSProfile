@@ -153,6 +153,9 @@ Function Uninstall-M365Module {
 		.PARAMETER Scope
 		Sets the Scope [CurrentUser/AllUsers] for the Installation of the PowerShell Modules. Default value is CurrentUser.
 
+		.PARAMETER Repository
+		[string]Repository specifies which PowerShell Repository should be used [Default is PSGallery]
+
 		.EXAMPLE
 		Uninstall-M365Modules
 
@@ -165,7 +168,8 @@ Function Uninstall-M365Module {
 
 	param (
 		[Parameter(Mandatory = $false)][array]$Modules = $global:M365StandardModules,
-		[parameter(mandatory = $false)][ValidateSet("CurrentUser", "AllUsers")][string]$Scope = "CurrentUser"
+		[parameter(mandatory = $false)][ValidateSet("CurrentUser", "AllUsers")][string]$Scope = "CurrentUser",
+		[parameter(mandatory = $false)][string]$Repository = "PSGallery"
 	)
 
 	$currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
@@ -472,14 +476,14 @@ Function Install-M365Module {
 ##############################################################################
 If (-not(Test-Path -Path $Profile))
 {
-	Write-Host "No PowerShell Profile exists. You can add the M365Profile Update check with ADD-M365PSProfile" -ForegroundColor Yellow
+	Write-Host "No PowerShell Profile exists. You can add the M365PSProfile Update check with Add-M365PSProfile" -ForegroundColor Yellow
 } else {
-	$Content = Get-Content -Path $PROFILE
+	$Content = Get-Content -Path $Profile -Encoding utf8
 	If ($Content -match "Install-M365Module")
 	{
 		#Match found
 	} else {
 		#No Match found
-		Write-Host  "You have a PowerShell Profile. You can add the M365Profile Update check by adding: Install-M365Module" -ForegroundColor Yellow
+		Write-Host  "You have a PowerShell Profile. You can add the M365PSProfile Update check with Add-M365PSProfile" -ForegroundColor Yellow
 	}
 }
