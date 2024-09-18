@@ -116,7 +116,6 @@ V0.7.0
 - The Function Add-M365PSProfile now adds the needed commands to the $Profile by @diecknet and @bohrenan
 ---------------------------------------------------------------------------------------------
 '
-
 	} # End of PSData hashtable
 
 } # End of PrivateData hashtable

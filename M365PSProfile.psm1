@@ -119,19 +119,6 @@ Install-M365Module
 			Write-Host "PowerShell Profile already exists. Adding M365PSProfile to it" -ForegroundColor Yellow
 			Add-Content -Path $Profile -Value $M365PSProfileContent -Encoding utf8
 		}
-
-		<#
-		Write-Host "PowerShell Profile already exists. You could manually add the following code to your PowerShell profile: `r`n" -ForegroundColor Yellow
-		Write-Host $M365PSProfileContent -ForegroundColor Magenta
-		Write-Host "`r`nThis command can also add the code to the end of your profile file ($($Profile))."
-
-		if ($PSCmdlet.ShouldContinue($Path, "Add ""Install-M365Module"" to the PowerShell Profile file $($Profile)")) {
-			Write-Host "Adding to profile..."
-			Add-Content -Path $Profile -Value $ProfileContent -Encoding utf8
-		} else {
-			Write-Host "Okay, not changing your profile."
-		}
-		#>
 	}
 }
 
