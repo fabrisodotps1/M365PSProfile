@@ -201,6 +201,8 @@ Function Disconnect-All {
 	Disconnect-MicrosoftTeams -ErrorAction SilentlyContinue
 	Disconnect-ExchangeOnline -confirm:$false -ErrorAction SilentlyContinue
 	Disconnect-MgGraph -ErrorAction SilentlyContinue
+	Disconnect-PnPOnline -ErrorAction SilentlyContinue
+
 }
 
 #############################################################################
@@ -325,8 +327,14 @@ Function Install-M365Module {
 		Write-Host "PowerShell or Visual Studio Code running? Please close it, Modules in use can't be updated..." -ForegroundColor Yellow
 		$process
 		#Press any key to continue
-		Write-Host 'Press any key to continue...';
-		$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
+		#Write-Host 'Press any key to continue...';
+		#$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
+
+		#count back from 5 to 1 and start the update
+		5..1 | ForEach-Object {
+		Write-Host "M365PSProfile Update starts in $_ seconds... (Hit Ctrl+C to cancel)"
+		Start-Sleep -Seconds 1
+		}
 	}
 
 	Write-Host "Checking Modules..."
