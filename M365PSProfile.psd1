@@ -112,8 +112,10 @@ PrivateData = @{
 ---------------------------------------------------------------------------------------------
 Whats new in this release:
 V0.7.0
+- Added Version to the Install-M365Module Function
 - Added optional Parameter -Repository (default PSGallery) if using multiple Repositorys by @diecknet
 - The Function Add-M365PSProfile now adds the needed commands to the $Profile by @diecknet and @bohrenan
+- Changed from "Press any key to continue..." to a Counter from 5 to 1 when other PS Processes are running
 ---------------------------------------------------------------------------------------------
 '
 	} # End of PSData hashtable
