@@ -332,7 +332,7 @@ Function Install-M365Module {
 
 		#count back from 5 to 1 and start the update
 		5..1 | ForEach-Object {
-		Write-Host "M365PSProfile Update starts in $_ seconds... (Hit Ctrl+C to cancel)"
+		Write-Host "M365PSProfile Update starts in $_ seconds... (Hit Ctrl+C to cancel)" -ForegroundColor Yellow
 		Start-Sleep -Seconds 1
 		}
 	}
