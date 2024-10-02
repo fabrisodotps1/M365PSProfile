@@ -96,6 +96,7 @@ Function Add-M365PSProfile {
 		param()
 
 	$M365PSProfileContent = @"
+
 #M365PSProfile: Install or updates the default Modules (what we think every M365 Admin needs) in the CurrentUser Scope
 Import-Module -Name M365PSProfile
 Install-M365Module
