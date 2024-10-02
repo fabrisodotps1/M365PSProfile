@@ -95,7 +95,7 @@ Function Add-M365PSProfile {
 	[CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
 		param()
 
-	$ProfileContent = @"
+	$M365PSProfileContent = @"
 
 #M365PSProfile: Install or updates the default Modules (what we think every M365 Admin needs) in the CurrentUser Scope
 Import-Module -Name M365PSProfile
@@ -105,22 +105,20 @@ Install-M365Module
 	If (-not(Test-Path -Path $Profile)) {
 		#No Profile found
 		Write-Host "No PowerShell Profile exists. A new Profile with the M365PSProfile setup is created."
-		$ProfileContent | Out-File -FilePath $Profile -Encoding utf8 -Force
+		$M365PSProfileContent | Out-File -FilePath $Profile -Encoding utf8 -Force
 	} else {
 		#Profile found
-		#$ProfileContent = Get-Content -Path $Profile -Encoding utf8
+		$ProfileContent = Get-Content -Path $Profile -Encoding utf8
 		#$ProfileContent | Where-Object {$_ -match "Import-Module -Name M365PSProfile"}
-		#$ProfileContent | Where-Object {$_ -match "Install-M365Module"}
-
-		Write-Host "PowerShell Profile already exists. You could manually add the following code to your PowerShell profile: `r`n" -ForegroundColor Yellow
-		Write-Host $ProfileContent -ForegroundColor Magenta
-		Write-Host "`r`nThis command can also add the code to the end of your profile file ($($Profile))."
-
-		if ($PSCmdlet.ShouldContinue($Path, "Add ""Install-M365Module"" to the PowerShell Profile file $($Profile)")) {
-			Write-Host "Adding to profile..."
-			Add-Content -Path $Profile -Value $ProfileContent -Encoding utf8
+		$Match = $ProfileContent | Where-Object {$_ -match "Install-M365Module"}
+		If ($Null -ne $Match)
+		{
+			#M365PSProfile already in Profile
+			Write-Host "PowerShell Profile already exists. M365PSProfile is already in the Profile." -ForegroundColor Yellow
 		} else {
-			Write-Host "Okay, not changing your profile."
+			#M365PSProfile not in Profile
+			Write-Host "PowerShell Profile already exists. Adding M365PSProfile to it" -ForegroundColor Yellow
+			Add-Content -Path $Profile -Value $M365PSProfileContent -Encoding utf8
 		}
 	}
 }
@@ -143,6 +141,9 @@ Function Uninstall-M365Module {
 		.PARAMETER Scope
 		Sets the Scope [CurrentUser/AllUsers] for the Installation of the PowerShell Modules. Default value is CurrentUser.
 
+		.PARAMETER Repository
+		[string]Repository specifies which PowerShell Repository should be used [Default is PSGallery]
+
 		.EXAMPLE
 		Uninstall-M365Modules
 
@@ -155,7 +156,8 @@ Function Uninstall-M365Module {
 
 	param (
 		[Parameter(Mandatory = $false)][array]$Modules = $global:M365StandardModules,
-		[parameter(mandatory = $false)][ValidateSet("CurrentUser", "AllUsers")][string]$Scope = "CurrentUser"
+		[parameter(mandatory = $false)][ValidateSet("CurrentUser", "AllUsers")][string]$Scope = "CurrentUser",
+		[parameter(mandatory = $false)][string]$Repository = "PSGallery"
 	)
 
 	$currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
@@ -200,6 +202,8 @@ Function Disconnect-All {
 	Disconnect-MicrosoftTeams -ErrorAction SilentlyContinue
 	Disconnect-ExchangeOnline -confirm:$false -ErrorAction SilentlyContinue
 	Disconnect-MgGraph -ErrorAction SilentlyContinue
+	Disconnect-PnPOnline -ErrorAction SilentlyContinue
+
 }
 
 #############################################################################
@@ -324,8 +328,14 @@ Function Install-M365Module {
 		Write-Host "PowerShell or Visual Studio Code running? Please close it, Modules in use can't be updated..." -ForegroundColor Yellow
 		$process
 		#Press any key to continue
-		Write-Host 'Press any key to continue...';
-		$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
+		#Write-Host 'Press any key to continue...';
+		#$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
+
+		#count back from 5 to 1 and start the update
+		5..1 | ForEach-Object {
+		Write-Host "M365PSProfile Update starts in $_ seconds... (Hit Ctrl+C to cancel)" -ForegroundColor Yellow
+		Start-Sleep -Seconds 1
+		}
 	}
 
 	Write-Host "Checking Modules..."
@@ -462,14 +472,14 @@ Function Install-M365Module {
 ##############################################################################
 If (-not(Test-Path -Path $Profile))
 {
-	Write-Host "No PowerShell Profile exists. You can add the M365Profile Update check with ADD-M365PSProfile" -ForegroundColor Yellow
+	Write-Host "No PowerShell Profile exists. You can add the M365PSProfile Update check with Add-M365PSProfile" -ForegroundColor Yellow
 } else {
-	$Content = Get-Content -Path $PROFILE
+	$Content = Get-Content -Path $Profile -Encoding utf8
 	If ($Content -match "Install-M365Module")
 	{
 		#Match found
 	} else {
 		#No Match found
-		Write-Host  "You have a PowerShell Profile. You can add the M365Profile Update check by adding: Install-M365Module" -ForegroundColor Yellow
+		Write-Host  "You have a PowerShell Profile. You can add the M365PSProfile Update check with Add-M365PSProfile" -ForegroundColor Yellow
 	}
 }
