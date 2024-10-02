@@ -16,11 +16,11 @@
 
 * Ensure the PR description clearly describes the problem and solution.
 
-#### **Did you fix whitespace, format code, or make a purely cosmetic patch?** :nail_polish:
+#### **Did you fix whitespace, format code, or make a purely cosmetic patch?** :ring:
 
 Changes that are cosmetic in nature and do not add anything substantial to the stability or functionality of M365PSProfile will generally not be accepted.
 
-#### **Do you have questions about the source code?**
+#### **Do you have questions about the source code?** :phone:
 
 * If you have any questions about using M365PSProfile, please contact the creators of the module directly: [@andresbohren](https://x.com/andresbohren) or [@fabrisodotps1](https://x.com/fabrisodotps1)
 
