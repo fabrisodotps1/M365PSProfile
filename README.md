@@ -215,8 +215,7 @@ $env:PSModulePath.Split(";")
 
 How can you contribute?
 
-- Create an Issue
-- Fork the Repo and create a Pull Request
+➡ Check out [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ## Maintainer
 
