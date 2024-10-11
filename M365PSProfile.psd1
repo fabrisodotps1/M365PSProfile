@@ -8,7 +8,7 @@
 RootModule = 'M365PSProfile.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.7.0'
+ModuleVersion = '0.7.1'
 
 # Supported PSEditions
 CompatiblePSEditions = @('Core', 'Desktop')
@@ -111,6 +111,8 @@ PrivateData = @{
 		ReleaseNotes = '
 ---------------------------------------------------------------------------------------------
 Whats new in this release:
+V0.7.1
+- Bugfix: Removed unnecessary variable $InstalledModuleVersion in "module is not installed" area
 V0.7.0
 - Added Version to the Install-M365Module Function
 - Added optional Parameter -Repository (default PSGallery) if using multiple Repositorys by @diecknet
