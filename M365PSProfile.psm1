@@ -379,9 +379,6 @@ Function Install-M365Module {
 			If ($IsAdmin -eq $false -and $Scope -eq "AllUsers") {
 				Write-Host "WARNING: PS must be running <As Administrator> to install the Module" -ForegroundColor Red
 			} else {
-				#Only one Version found
-				[System.Version]$InstalledModuleVersion = $($InstalledModules.Version.ToString())
-
 				#Get Module from PowerShell Gallery
 				$PSGalleryModule = Find-PSResource -Name $Module -Repository $Repository #-Prerelease
 				$PSGalleryVersion = $PSGalleryModule.Version.ToString()
