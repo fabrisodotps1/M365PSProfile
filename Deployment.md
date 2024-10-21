@@ -1,0 +1,42 @@
+## Add Tag
+
+Adding Tags in git
+
+```
+git tag v0.7.1
+git push origin --tags
+```
+
+## Pull Request to Main
+
+Create a Pull Request to Main and Approve
+
+## Deploy to Release Folder
+
+```pwsh
+$CurrentDirectory = (Get-Location).Path
+$Path = (Get-Location).Path + "\Release"
+
+#Delete Folder Release if it exist
+If (Test-Path -Path $Path)
+{
+	Remove-Item -Path $Path -Recurse -confirm:$false
+}
+
+#Create Folder Release
+New-Item -Path $Path -Type "Directory"
+
+# Copy PoweShell Files to Release Folder
+$PSFiles = Get-ChildItem -Path $CurrentDirectory -File | Where-Object {$_.Name -match ".psd1" -or $_.Name -match ".psm1"}
+Copy-Item $PSFiles -Destination $Path
+```
+
+## Deploy to PowerShell Gallery
+
+Deploy Files from the Release Directory to the PowerShell Gallery
+
+```pwsh
+$Path = (Get-Location).Path + "\Release\"
+$APIKey = "YourSecretApiKey"
+Publish-PSResource -Path $Path -ApiKey $APIKey -Repository PSGallery
+```
