@@ -23,6 +23,42 @@
 	"PSMSALNet"
 )
 
+<#
+##############################################################################
+# Get-StandardPlatformPaths
+# Returns the M365StandardModules global variable
+##############################################################################
+Function Get-StandardPlatformPaths {
+#$Personal = [environment]::getfolderpath("mydocuments")
+#C:\Users\andres.bohren\OneDrive - ISOLUTIONS AG\Documents
+#$ProgramFiles = [environment]::getfolderpath("ProgramFiles")
+#C:\Program Files
+If ([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows))
+{
+	#Windows
+	If ($Host.Version -ge "6.0")
+	{
+		$Path = "PowerShell"
+	} else {
+		$path = "WindowsPowerShell"
+	}
+
+	#$localUserDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), path);
+	$LocalUserDir = Join-Path -Path $Personal -ChildPath $Path
+	$AllUsersDir = Join-Path -Path $ProgramFiles -ChildPath $Path
+
+	Return $LocalUserDir, $AllUsersDir
+}
+
+#Unix / OSX
+$LocalUserDir = Join-Path -Path $Env:Home -ChildPath ".local", "share", "powershell"
+$AllUsersDir = Join-Path -Path "/usr" -ChildPath "local", "share", "powershell"
+Return $LocalUserDir, $AllUsersDir
+}
+#>
+
+
+
 ##############################################################################
 # Get-M365StandardModules
 # Returns the M365StandardModules global variable
