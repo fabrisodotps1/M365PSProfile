@@ -23,41 +23,66 @@
 	"PSMSALNet"
 )
 
-<#
+
 ##############################################################################
-# Get-StandardPlatformPaths
-# Returns the M365StandardModules global variable
+# Get-M365ModulePath
+# Returns the Path for the Modules
 ##############################################################################
-Function Get-StandardPlatformPaths {
-#$Personal = [environment]::getfolderpath("mydocuments")
-#C:\Users\andres.bohren\OneDrive - ISOLUTIONS AG\Documents
-#$ProgramFiles = [environment]::getfolderpath("ProgramFiles")
-#C:\Program Files
-If ([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows))
-{
-	#Windows
-	If ($Host.Version -ge "6.0")
+Function Get-M365ModulePath {
+	<#
+		.SYNOPSIS
+		Returns the Path for the Modules based ont the Scope Parameter
+
+		.DESCRIPTION
+		Returns the Path for the Modules based ont the Scope Parameter
+
+		.PARAMETER Scope
+		Sets the Scope [CurrentUser/AllUsers] for the Installation of the PowerShell Modules. Default value is CurrentUser.
+
+		.EXAMPLE
+		Get-M365ModulePath -Scope CurrentUser
+
+		.EXAMPLE
+		Get-M365ModulePath -Scope AllUsers
+
+		.LINK
+		https://github.com/fabrisodotps1/M365PSProfile
+	#>
+
+	PARAM(
+		[parameter(mandatory = $false)][ValidateSet("CurrentUser", "AllUsers")][string]$Scope = "CurrentUser"
+	)
+
+	$Personal = [environment]::getfolderpath("mydocuments")
+	$ProgramFiles = [environment]::getfolderpath("ProgramFiles")
+	If ([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows))
 	{
-		$Path = "PowerShell"
-	} else {
-		$path = "WindowsPowerShell"
+		#Windows
+		If ($Host.Version -ge "6.0")
+		{
+			$Path = "PowerShell"
+		} else {
+			$path = "WindowsPowerShell"
+		}
+
+		If ($Scope -eq "CurrentUser")
+		{
+			$LocalUserDir = Join-Path -Path $Personal -ChildPath $Path
+			return $LocalUserDir + "\Modules\"
+		}
+
+		If ($Scope -eq "AllUsers")
+		{
+			$AllUsersDir = Join-Path -Path $ProgramFiles -ChildPath $Path
+			return $AllUsersDir + "\Modules\"
+		}
 	}
 
-	#$localUserDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), path);
-	$LocalUserDir = Join-Path -Path $Personal -ChildPath $Path
-	$AllUsersDir = Join-Path -Path $ProgramFiles -ChildPath $Path
-
-	Return $LocalUserDir, $AllUsersDir
+	#Unix / OSX
+	#$LocalUserDir = Join-Path -Path $Env:Home -ChildPath ".local", "share", "powershell"
+	#$AllUsersDir = Join-Path -Path "/usr" -ChildPath "local", "share", "powershell"
+	#Return $LocalUserDir, $AllUsersDir
 }
-
-#Unix / OSX
-$LocalUserDir = Join-Path -Path $Env:Home -ChildPath ".local", "share", "powershell"
-$AllUsersDir = Join-Path -Path "/usr" -ChildPath "local", "share", "powershell"
-Return $LocalUserDir, $AllUsersDir
-}
-#>
-
-
 
 ##############################################################################
 # Get-M365StandardModules
@@ -231,13 +256,8 @@ Function Uninstall-M365Module {
 					If ($FileMode -eq $true) 
 					{
 						Write-Host "Using FileMode. Remove all AZ.* Modules" -ForegroundColor Yellow
-						If ($Scope -eq "CurrentUser")
-						{
-							$ModulesPath = (Split-Path $PROFILE) + "\Modules\"
-							Get-ChildItem -Path $ModulesPath -Filter "AZ.*" -Recurse | Remove-Item -Force -Recurse
-						} else {
-							#Tbd
-						}
+						$ModulesPath = Get-M365ModulePath -Scope $Scope
+						Get-ChildItem -Path $ModulesPath -Filter "AZ.*" -Recurse | Remove-Item -Force -Recurse
 					}
 				}
 			}
@@ -252,15 +272,9 @@ Function Uninstall-M365Module {
 				If ($FileMode -eq $true) 
 				{
 					Write-Host "Using FileMode. Remove all Microsoft.Graph.* Modules" -ForegroundColor Yellow
-					If ($Scope -eq "CurrentUser")
-					{
-						$ModulesPath = (Split-Path $PROFILE) + "\Modules\"
-						Get-ChildItem -Path $ModulesPath -Filter "Microsoft.Graph.*" -Recurse | Remove-Item -Force -Recurse
-					} else {
-						#Tbd
-					}
+					$ModulesPath = Get-M365ModulePath -Scope $Scope
+					Get-ChildItem -Path $ModulesPath -Filter "Microsoft.Graph.*" -Recurse | Remove-Item -Force -Recurse
 				}
-				
 			}
 
 			#If Microsoft.Graph.Beta also Uninstall all Microsoft.Graph.Beta.* Modules
@@ -272,17 +286,20 @@ Function Uninstall-M365Module {
 				#FileMode
 				If ($FileMode -eq $true) 
 				{
-					Write-Host "Using FileMode. Remove all Microsoft.Graph.Beta.* Modules" -ForegroundColor Yellow
-					If ($Scope -eq "CurrentUser")
-					{
-						$ModulesPath = (Split-Path $PROFILE) + "\Modules\"
-						Get-ChildItem -Path $ModulesPath -Filter "Microsoft.Graph.Beta.*" -Recurse | Remove-Item -Force -Recurse
-					} else {
-						#Tbd
-					}
+					Write-Host "Using FileMode. Remove all Microsoft.Graph.Beta* Modules" -ForegroundColor Yellow
+					$ModulesPath = Get-M365ModulePath -Scope $Scope
+					Get-ChildItem -Path $ModulesPath -Filter "Microsoft.Graph.Beta*" -Recurse | Remove-Item -Force -Recurse
 				}
 			}
 		} else {
+			#Module Notfound
+			If ($FileMode -eq $true) 
+			{
+				Write-Host "Using FileMode. Remove all $Module Modules" -ForegroundColor Yellow
+				$ModulesPath = Get-M365ModulePath -Scope $Scope
+				Get-ChildItem -Path $ModulesPath -Filter "$Module" -Recurse | Remove-Item -Force -Recurse
+			}
+			
 			#If AZ also Uninstall all AZ.* Modules
 			If ($Module -eq "AZ")
 			{
@@ -292,14 +309,9 @@ Function Uninstall-M365Module {
 				#FileMode
 				If ($FileMode -eq $true) 
 				{
-					Write-Host "Using FileMode. Remove all Microsoft.Graph.Beta.* Modules" -ForegroundColor Yellow
-					If ($Scope -eq "CurrentUser")
-					{
-						$ModulesPath = (Split-Path $PROFILE) + "\Modules\"
-						Get-ChildItem -Path $ModulesPath -Filter "Microsoft.Graph.Beta.*" -Recurse | Remove-Item -Force -Recurse
-					} else {
-						#Tbd
-					}
+					Write-Host "Using FileMode. Remove all AZ.* Modules" -ForegroundColor Yellow
+					$ModulesPath = Get-M365ModulePath -Scope $Scope
+					Get-ChildItem -Path $ModulesPath -Filter "AZ.*" -Recurse | Remove-Item -Force -Recurse
 				}
 			}
 
@@ -313,13 +325,8 @@ Function Uninstall-M365Module {
 				If ($FileMode -eq $true) 
 				{
 					Write-Host "Using FileMode. Remove all Microsoft.Graph.* Modules" -ForegroundColor Yellow
-					If ($Scope -eq "CurrentUser")
-					{
-						$ModulesPath = (Split-Path $PROFILE) + "\Modules\"
-						Get-ChildItem -Path $ModulesPath -Filter "Microsoft.Graph.*" -Recurse | Remove-Item -Force -Recurse
-					} else {
-						#Tbd
-					}
+					$ModulesPath = Get-M365ModulePath -Scope $Scope
+					Get-ChildItem -Path $ModulesPath -Filter "Microsoft.Graph.*" -Recurse | Remove-Item -Force -Recurse
 				}
 			}
 
@@ -332,15 +339,9 @@ Function Uninstall-M365Module {
 				#FileMode
 				If ($FileMode -eq $true) 
 				{
-					Write-Host "Using FileMode. Remove all Microsoft.Graph.Beta.* Modules" -ForegroundColor Yellow
-					If ($Scope -eq "CurrentUser") 
-					{
-						$ModulesPath = (Split-Path $PROFILE) + "\Modules\"
-						Get-ChildItem -Path $ModulesPath -Filter "Microsoft.Graph.Beta.*" -Recurse | Remove-Item -Force -Recurse
-					} else {
-						#$ModulesPath = (Split-Path $PROFILE) + "\Modules\"
-						#Get-ChildItem -Path $ModulesPath -Filter "Microsoft.Graph.Beta.*" -Recurse | Remove-Item -Force -Recurse
-					}
+					Write-Host "Using FileMode. Remove all Microsoft.Graph.Beta* Modules" -ForegroundColor Yellow
+					$ModulesPath = Get-M365ModulePath -Scope $Scope
+					Get-ChildItem -Path $ModulesPath -Filter "Microsoft.Graph.Beta*" -Recurse | Remove-Item -Force -Recurse
 				}
 			}
 		}
@@ -495,9 +496,6 @@ Function Install-M365Module {
 	If ($process.count -gt 1) {
 		Write-Host "PowerShell or Visual Studio Code running? Please close it, Modules in use can't be updated..." -ForegroundColor Yellow
 		$process
-		#Press any key to continue
-		#Write-Host 'Press any key to continue...';
-		#$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
 
 		#count back from 5 to 1 and start the update
 		5..1 | ForEach-Object {
