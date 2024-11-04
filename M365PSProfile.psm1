@@ -371,12 +371,33 @@ Function Disconnect-All {
 	#>
 
 	Get-PSSession | Remove-PSSession
-	Disconnect-SPOService -ErrorAction SilentlyContinue
-	Disconnect-MicrosoftTeams -ErrorAction SilentlyContinue
-	Disconnect-ExchangeOnline -confirm:$false -ErrorAction SilentlyContinue
-	Disconnect-MgGraph -ErrorAction SilentlyContinue
-	Disconnect-PnPOnline -ErrorAction SilentlyContinue
 
+	<#
+	try {
+		Disconnect-SPOService -ErrorAction SilentlyContinue
+	} catch {
+		#Write-Host "Disconnect-SPOService failed" -ForegroundColor Yellow
+	}
+	#>
+
+	If (Get-Module -Name "Microsoft.Online.SharePoint.PowerShell") 
+	{
+		Disconnect-SPOService -ErrorAction SilentlyContinue
+	}
+	
+	Disconnect-MicrosoftTeams -ErrorAction SilentlyContinue
+	If (Get-Module -Name "ExchangeOnlineManagement") 
+	{
+		Disconnect-ExchangeOnline -confirm:$false -ErrorAction SilentlyContinue
+	}
+	
+	Disconnect-MgGraph -ErrorAction SilentlyContinue | Out-Null
+	If (Get-Module -Name "PnP.PowerShell") 
+	{
+		Disconnect-PnPOnline -ErrorAction SilentlyContinue
+	}
+
+	Disconnect-MgGraph -ErrorAction SilentlyContinue | Out-Null
 }
 
 #############################################################################

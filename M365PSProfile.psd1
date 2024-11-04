@@ -115,6 +115,7 @@ V0.7.1
 - Bugfix: Removed unnecessary variable $InstalledModuleVersion in "module is not installed" area
 - Added Parameter -FileMode to uninstall Modules using the Filesystem
 - Bumped Requirement for Microsoft.PowerShell.PSResourceGet to 1.0.6
+- Improved the Disconnect-All Function
 V0.7.0
 - Added Version to the Install-M365Module Function
 - Added optional Parameter -Repository (default PSGallery) if using multiple Repositorys by @diecknet
