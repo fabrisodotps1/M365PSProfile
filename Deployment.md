@@ -1,3 +1,16 @@
+## Testing
+
+```pwsh
+Import-Module C:\Git_WorkingDir\M365PSProfile\M365PSProfile.psd1
+Get-Command -Module M365PSProfile
+Get-M365StandardModule
+Uninstall-M365Module
+Install-M365Module
+Add-M365PSProfile
+Disconnect-All
+Set-WindowTitle -Title "M365PSProfile"
+```
+
 ## Add Tag
 
 Adding Tags in git
