@@ -1,3 +1,10 @@
+## Script Analyzer
+
+```pwsh
+Install-PSResource -Name PSScriptAnalyzer
+Invoke-ScriptAnalyzer -Path C:\GIT_WorkingDir\M365PSProfile\M365PSProfile.psm1 -ExcludeRule PSAvoidUsingWriteHost
+```
+
 ## Testing
 
 ```pwsh
