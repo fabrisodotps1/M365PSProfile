@@ -18,12 +18,18 @@ Disconnect-All
 Set-WindowTitle -Title "M365PSProfile"
 ```
 
-## Add Tag
+## Add GIT Tag
 
 Adding Tags in git
 
-```
+```pwsh
+# List Tags
+git tag
+
+# Add Tag
 git tag v0.7.1
+
+# Push Tag to Repo
 git push origin --tags
 ```
 
