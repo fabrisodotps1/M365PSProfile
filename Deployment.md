@@ -40,6 +40,8 @@ Create a Pull Request to Main and Approve
 ## Deploy to Release Folder
 
 ```pwsh
+cd C:\GIT_WorkingDir\M365PSProfile\
+
 $CurrentDirectory = (Get-Location).Path
 $Path = (Get-Location).Path + "\Release"
 
@@ -62,6 +64,8 @@ Copy-Item $PSFiles -Destination $Path
 Deploy Files from the Release Directory to the PowerShell Gallery
 
 ```pwsh
+cd C:\GIT_WorkingDir\M365PSProfile\
+
 $Path = (Get-Location).Path + "\Release\"
 $APIKey = "YourSecretApiKey"
 Publish-PSResource -Path $Path -ApiKey $APIKey -Repository PSGallery
