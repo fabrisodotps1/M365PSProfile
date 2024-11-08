@@ -167,6 +167,13 @@ For Uninstalling there are three Options
 ```pwsh
 #Uninstalls the Standard M365 Modules
 Uninstall-M365Module
+
+#Uninstalls the Standard M365 Modules using the FileMode
+Uninstall-M365Module -FileMode
+
+#Uninstall MicrosoftTeams Module using FileMode
+Uninstall-M365Module -Module MicrosoftTeams -FileMode
+
 ```
 
 2) Uninstall the PSProfile

@@ -8,7 +8,7 @@
 RootModule = 'M365PSProfile.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.7.0'
+ModuleVersion = '0.8.0'
 
 # Supported PSEditions
 CompatiblePSEditions = @('Core', 'Desktop')
@@ -49,7 +49,7 @@ PowerShellVersion = '5.1'
 
 # Modules that must be imported into the global environment prior to importing this module
 # RequiredModules = @()
-RequiredModules = @(@{ModuleName = 'Microsoft.PowerShell.PSResourceGet'; GUID = 'e4e0bda1-0703-44a5-b70d-8fe704cd0643'; ModuleVersion = '1.0.5'; })
+RequiredModules = @(@{ModuleName = 'Microsoft.PowerShell.PSResourceGet'; GUID = 'e4e0bda1-0703-44a5-b70d-8fe704cd0643'; ModuleVersion = '1.0.6'; })
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()
@@ -111,11 +111,11 @@ PrivateData = @{
 		ReleaseNotes = '
 ---------------------------------------------------------------------------------------------
 Whats new in this release:
-V0.7.0
-- Added Version to the Install-M365Module Function
-- Added optional Parameter -Repository (default PSGallery) if using multiple Repositorys by @diecknet
-- The Function Add-M365PSProfile now adds the needed commands to the $Profile by @diecknet and @bohrenan
-- Changed from "Press any key to continue..." to a Counter from 5 to 1 when other PS Processes are running
+V0.8.0
+- Bugfix: Removed unnecessary variable $InstalledModuleVersion in "module is not installed" area
+- Added Parameter -FileMode to uninstall Modules using the Filesystem
+- Bumped Requirement for Microsoft.PowerShell.PSResourceGet to 1.0.6
+- Improved the Disconnect-All Function
 ---------------------------------------------------------------------------------------------
 '
 	} # End of PSData hashtable
