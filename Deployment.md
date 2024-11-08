@@ -27,7 +27,7 @@ Adding Tags in git
 git tag
 
 # Add Tag
-git tag v0.7.1
+git tag -a v0.8.0 -m "Release v0.8.0"
 
 # Push Tag to Repo
 git push origin --tags
