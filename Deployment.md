@@ -18,6 +18,10 @@ Disconnect-All
 Set-WindowTitle -Title "M365PSProfile"
 ```
 
+## Pull Request to Main
+
+Create a Pull Request to Main and Approve
+
 ## Add GIT Tag
 
 Adding Tags in git
@@ -33,9 +37,9 @@ git tag -a v0.8.0 -m "Release v0.8.0"
 git push origin --tags
 ```
 
-## Pull Request to Main
+## Create Release
 
-Create a Pull Request to Main and Approve
+Create Release from GitHub Portal based on Tag
 
 ## Deploy to Release Folder
 
