@@ -52,7 +52,7 @@ $Path = (Get-Location).Path + "\Release"
 #Delete Folder Release if it exist
 If (Test-Path -Path $Path)
 {
-	Remove-Item -Path $Path -Recurse -confirm:$false
+    Remove-Item -Path $Path -Recurse -confirm:$false
 }
 
 #Create Folder Release
