@@ -149,7 +149,8 @@ These are the Modules that are installed if you don't use an Array with the -Mod
 | WhiteboardAdmin | Manage Whiteboards |
 | Microsoft.Graph | Microsoft.Graph Modules https://graph.microsoft.com/v1.0 |
 | Microsoft.Graph.Beta | Microsoft.Graph Modules https://graph.microsoft.com/beta |
-| PSMSALNet| PowerShell 7.2 MSAL.NET wrapper|
+| MicrosoftPlaces | Microsoft Places |
+| PSMSALNet| PowerShell 7.4 MSAL.NET wrapper|
 | MSIdentityTools | Additional Functions for Identity |
 
 or you can use this command to list the default Modules

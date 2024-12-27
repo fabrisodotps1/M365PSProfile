@@ -19,6 +19,7 @@
 	"WhiteboardAdmin",
 	"Microsoft.Graph",
 	"Microsoft.Graph.Beta",
+	"MicrosoftPlaces",
 	"MSIdentityTools",
 	"PSMSALNet"
 )
