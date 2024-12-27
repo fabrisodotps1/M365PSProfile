@@ -8,7 +8,7 @@
 RootModule = 'M365PSProfile.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.8.0'
+ModuleVersion = '0.9.0'
 
 # Supported PSEditions
 CompatiblePSEditions = @('Core', 'Desktop')
@@ -111,6 +111,9 @@ PrivateData = @{
 		ReleaseNotes = '
 ---------------------------------------------------------------------------------------------
 Whats new in this release:
+V0.9.0
+- Added MicrosoftPlaces Module to the Standard Modules (Get-M365StandardModule) 
+
 V0.8.0
 - Bugfix: Removed unnecessary variable $InstalledModuleVersion in "module is not installed" area
 - Added Parameter -FileMode to uninstall Modules using the Filesystem
