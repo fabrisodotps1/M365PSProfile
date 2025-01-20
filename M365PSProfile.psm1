@@ -513,7 +513,7 @@ Function Install-M365Module {
 	if($Repository -eq "PSGallery") {
 		$PSGallery = Get-PSResourceRepository -Name PSGallery
 		If ($PSGallery.Trusted -eq $false) {
-			Write-Host "Warning: PSGallery is not Trusted" -ForegroundColor Yellow
+			Write-Host "Warning: PSGallery is not Trusted (Get-PSResourceRepository -Name PSGallery)" -ForegroundColor Yellow
 		}
 	}
 
