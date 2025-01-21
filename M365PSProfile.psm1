@@ -241,7 +241,14 @@ Function Uninstall-M365Module {
 			} else {
 				# Uninstall all versions of the module
 				Write-Host "Uninstall Module: $Module $($InstalledModules.Version.ToString())" -ForegroundColor Yellow
-				Uninstall-PSResource -Name $Module -Scope $Scope -SkipDependencyCheck -WarningAction SilentlyContinue
+				Uninstall-PSResource -Name $Module -Scope $Scope -SkipDependencyCheck -ErrorAction SilentlyContinue
+
+				If ($FileMode -eq $true)
+				{
+					Write-Host "Using FileMode. Remove all $Module Modules" -ForegroundColor Yellow
+					$ModulesPath = Get-M365ModulePath -Scope $Scope
+					Get-ChildItem -Path $ModulesPath -Filter "$Module" -Recurse | Remove-Item -Force -Recurse
+				}
 			}
 
 			#If AZ also Uninstall all AZ.* Modules
@@ -514,6 +521,8 @@ Function Install-M365Module {
 		$PSGallery = Get-PSResourceRepository -Name PSGallery
 		If ($PSGallery.Trusted -eq $false) {
 			Write-Host "Warning: PSGallery is not Trusted (Get-PSResourceRepository -Name PSGallery)" -ForegroundColor Yellow
+			Write-Host "Set PSGallery to Trusted (Set-PSResourceRepository -Name PSGallery -Trusted:$true)" -ForegroundColor Yellow
+			Set-PSResourceRepository -Name PSGallery -Trusted:$true
 		}
 	}
 

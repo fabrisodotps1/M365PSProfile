@@ -1,9 +1,8 @@
-## Backlog
+# Backlog
 
 Here are some of the Ideas how we can even further improve this Module
 
 - Get-M365ModulePath - Add Code for Linux
-- Get-M365StandardModule - Add MicrosoftPlaces
 - Add-M365PSProfile - Add Parameter to support diffrent Profiletypes
   - All Users, All Hosts
   - All Users, Current Host

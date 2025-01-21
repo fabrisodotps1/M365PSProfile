@@ -112,7 +112,8 @@ PrivateData = @{
 ---------------------------------------------------------------------------------------------
 Whats new in this release:
 V0.9.0
-- Added MicrosoftPlaces Module to the Standard Modules (Get-M365StandardModule) 
+- Added MicrosoftPlaces Module to the Standard Modules (Get-M365StandardModule)
+- Bugfix: Uninstall-M365Module -FileMode did not cover all aspects
 
 V0.8.0
 - Bugfix: Removed unnecessary variable $InstalledModuleVersion in "module is not installed" area
