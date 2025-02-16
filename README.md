@@ -69,6 +69,7 @@ Add-M365PSProfile
 
 If you have already a PowerShell Profile you need to add at least one line to your PowerShell Profile
 
+> Note: It does not work in VSCode on Purpose.
 
 ```pwsh
 Import-Module -Name M365PSProfile
