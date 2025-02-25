@@ -243,8 +243,21 @@ Function Uninstall-M365Module {
 				## DEBUG TRY CATCH
 				Try {
 					Write-Host "Uninstall Module: $Module $($InstalledModules.Version.ToString())" -ForegroundColor Yellow
-					Uninstall-PSResource -Name $Module -Scope $Scope -SkipDependencyCheck -ErrorAction SilentlyContinue
+					Uninstall-PSResource -Name $Module -Scope $Scope -SkipDependencyCheck -ErrorAction Stop
 				} catch {
+					[Microsoft.PowerShell.PSResourceGet.Cmdlets.UninstallPSResource]
+					#[ErrorDeletingDirectory,Microsoft.PowerShell.PSResourceGet.Cmdlets.UninstallPSResource]
+					If ($FileMode -eq $true)
+					{
+						Write-Host "Using FileMode. Remove all $Module Modules" -ForegroundColor Yellow
+						$ModulesPath = Get-M365ModulePath -Scope $Scope
+						Get-ChildItem -Path $ModulesPath -Filter "$Module" -Recurse | Remove-Item -Force -Recurse
+					} else {
+						Write-Host "Error Removing Module" -ForegroundColor Red
+					}
+					
+					#DEBUG
+					<#
 					if ($_.CategoryInfo.Category -eq [System.Management.Automation.ErrorCategory]::PermissionDenied)
 					{
 						Write-Host "Permission denied error" -ForegroundColor Cyan
@@ -252,6 +265,7 @@ Function Uninstall-M365Module {
 					{
 						Write-Host "Other error" -ForegroundColor Cyan
 					}
+					#>
 				}
 
 				If ($FileMode -eq $true)
