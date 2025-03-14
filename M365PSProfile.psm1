@@ -609,18 +609,26 @@ Function Install-M365Module {
 		Write-Host "Uninstall Module $Module $Version" -ForegroundColor Yellow
 		Uninstall-PSResource -Name $Module -Scope $Scope -Version $Version -SkipDependencyCheck
 	} else {
-		#Only one Version found
-		[System.Version]$InstalledModuleVersion = $($InstalledModules.Version.ToString())
-
-		#Get Module from PowerShell Gallery (or another repository if specified)
-		$PSGalleryModule = Find-PSResource -Name $Module -Repository $Repository
-		$PSGalleryVersion = $PSGalleryModule.Version.ToString()
-
-		#Version Check
-		If ($PSGalleryVersion -gt $InstalledModuleVersion)
+		If ($InstalledModules.Count -eq 0)
 		{
-			Write-Host "Install newest Module $Module $PSGalleryVersion" -ForegroundColor Yellow
-			Install-PSResource $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue -Repository $Repository
+			#PSResourceGet Module not found
+			Write-Host "Install PSResourceGet: Install-Module -Name Microsoft.PowerShell.PSResourceGet -Scope CurrentUser" -ForegroundColor Red
+			#Write-Host "Module $Module not found. Try to install..." -ForegroundColor Yellow
+			#Install-PSResource -Name $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue -Repository $Repository
+		} else {
+			#Only one Version found
+			[System.Version]$InstalledModuleVersion = $($InstalledModules.Version.ToString())
+
+			#Get Module from PowerShell Gallery (or another repository if specified)
+			$PSGalleryModule = Find-PSResource -Name $Module -Repository $Repository
+			$PSGalleryVersion = $PSGalleryModule.Version.ToString()
+
+			#Version Check
+			If ($PSGalleryVersion -gt $InstalledModuleVersion)
+			{
+				Write-Host "Install newest Module $Module $PSGalleryVersion" -ForegroundColor Yellow
+				Install-PSResource $Module -Scope $Scope -TrustRepository -WarningAction SilentlyContinue -Repository $Repository
+			}
 		}
 	}
 
