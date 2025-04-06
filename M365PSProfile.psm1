@@ -286,7 +286,7 @@ Function Uninstall-M365Module {
 				Foreach ($AZModule in $InstalledAZModules)
 				{
 					Write-Host "Uninstall Module: $($AZModule.Name) $($AZModule.Version.ToString())" -ForegroundColor Yellow
-					Uninstall-PSResource -Name $AZModule.Name -Scope $Scope -SkipDependencyCheck -WarningAction SilentlyContinue
+					Uninstall-PSResource -Name $AZModule.Name -Scope $Scope -SkipDependencyCheck -WarningAction SilentlyContinue #-ErrorAction SilentlyContinue
 
 					#FileMode
 					If ($FileMode -eq $true)
@@ -367,7 +367,7 @@ Function Uninstall-M365Module {
 			If ($Module -eq "AZ")
 			{
 				Write-Host "NO AZ Root Module. Uninstall AZ.* Modules" -ForegroundColor Yellow
-				Get-InstalledPSResource -Name "AZ.*" -Scope $Scope -ErrorAction SilentlyContinue | Uninstall-PSResource -Scope $Scope -SkipDependencyCheck
+				Get-InstalledPSResource -Name "AZ.*" -Scope $Scope -ErrorAction SilentlyContinue | Uninstall-PSResource -Scope $Scope -SkipDependencyCheck #-ErrorAction SilentlyContinue
 
 				#FileMode
 				If ($FileMode -eq $true)
