@@ -239,41 +239,14 @@ Function Uninstall-M365Module {
 			if (($IsAdmin -eq $false) -and ($Scope -eq "AllUsers")) {
 				Write-Host "WARNING: PS must be running <As Administrator> to uninstall the Module" -ForegroundColor Red
 			} else {
-				# Uninstall all versions of the module
-				## DEBUG TRY CATCH
-				Try {
+				If ($FileMode -eq $true)
+				{
+					Write-Host "Using FileMode. Remove all $Module Modules" -ForegroundColor Yellow
+					$ModulesPath = Get-M365ModulePath -Scope $Scope
+					Get-ChildItem -Path $ModulesPath -Filter "$Module" -Recurse | Remove-Item -Force -Recurse
+				} else {
 					Write-Host "Uninstall Module: $Module $($InstalledModules.Version.ToString())" -ForegroundColor Yellow
 					Uninstall-PSResource -Name $Module -Scope $Scope -SkipDependencyCheck -ErrorAction Stop
-
-					If ($FileMode -eq $true)
-					{
-						Write-Host "Using FileMode. Remove all $Module Modules" -ForegroundColor Yellow
-						$ModulesPath = Get-M365ModulePath -Scope $Scope
-						Get-ChildItem -Path $ModulesPath -Filter "$Module" -Recurse | Remove-Item -Force -Recurse
-					}
-
-				} catch {
-					#[Microsoft.PowerShell.PSResourceGet.Cmdlets.UninstallPSResource]
-					#[ErrorDeletingDirectory,Microsoft.PowerShell.PSResourceGet.Cmdlets.UninstallPSResource]
-					If ($FileMode -eq $true)
-					{
-						Write-Host "Using FileMode. Remove all $Module Modules" -ForegroundColor Yellow
-						$ModulesPath = Get-M365ModulePath -Scope $Scope
-						Get-ChildItem -Path $ModulesPath -Filter "$Module" -Recurse | Remove-Item -Force -Recurse
-					} else {
-						Write-Host "Error Removing Module" -ForegroundColor Red
-					}
-					
-					#DEBUG
-					<#
-					if ($_.CategoryInfo.Category -eq [System.Management.Automation.ErrorCategory]::PermissionDenied)
-					{
-						Write-Host "Permission denied error" -ForegroundColor Cyan
-					} else
-					{
-						Write-Host "Other error" -ForegroundColor Cyan
-					}
-					#>
 				}
 			}
 
@@ -285,15 +258,15 @@ Function Uninstall-M365Module {
 				$InstalledAZModules = Get-InstalledPSResource -Name "AZ.*" -Scope $Scope -ErrorAction SilentlyContinue
 				Foreach ($AZModule in $InstalledAZModules)
 				{
-					Write-Host "Uninstall Module: $($AZModule.Name) $($AZModule.Version.ToString())" -ForegroundColor Yellow
-					Uninstall-PSResource -Name $AZModule.Name -Scope $Scope -SkipDependencyCheck -WarningAction SilentlyContinue #-ErrorAction SilentlyContinue
-
 					#FileMode
 					If ($FileMode -eq $true)
 					{
 						Write-Host "Using FileMode. Remove all AZ.* Modules" -ForegroundColor Yellow
 						$ModulesPath = Get-M365ModulePath -Scope $Scope
 						Get-ChildItem -Path $ModulesPath -Filter "AZ.*" -Recurse | Remove-Item -Force -Recurse
+					} else {
+						Write-Host "Uninstall Module: $($AZModule.Name) $($AZModule.Version.ToString())" -ForegroundColor Yellow
+						Uninstall-PSResource -Name $AZModule.Name -Scope $Scope -SkipDependencyCheck -WarningAction SilentlyContinue #-ErrorAction SilentlyContinue	
 					}
 				}
 			}
@@ -301,22 +274,6 @@ Function Uninstall-M365Module {
 			#If Microsoft.Graph also Uninstall all Microsoft.Graph.* Modules
 			If ($Module -eq "Microsoft.Graph")
 			{
-				## DEBUG TRY CATCH
-				Try {
-					Write-Host "Uninstall Microsoft.Graph.* Modules" -ForegroundColor Yellow
-					Get-InstalledPSResource -Name "Microsoft.Graph.*" -Scope $Scope -ErrorAction SilentlyContinue | Where-Object {$_.Name -notmatch "Microsoft.Graph.Beta"} | Uninstall-PSResource -Scope $Scope -SkipDependencyCheck
-				} catch {
-					[Microsoft.PowerShell.PSResourceGet.Cmdlets.UninstallPSResource]
-					If ($FileMode -eq $true)
-					{
-						Write-Host "Using FileMode. Remove all Microsoft.Graph.* Modules" -ForegroundColor Yellow
-						$ModulesPath = Get-M365ModulePath -Scope $Scope
-						Get-ChildItem -Path $ModulesPath -Filter "Microsoft.Graph.*" -Recurse | Remove-Item -Force -Recurse
-					} else {
-						Write-Host "Error Removing Module" -ForegroundColor Red
-					}
-				}
-
 
 				#FileMode
 				If ($FileMode -eq $true)
@@ -324,36 +281,27 @@ Function Uninstall-M365Module {
 					Write-Host "Using FileMode. Remove all Microsoft.Graph.* Modules" -ForegroundColor Yellow
 					$ModulesPath = Get-M365ModulePath -Scope $Scope
 					Get-ChildItem -Path $ModulesPath -Filter "Microsoft.Graph.*" -Recurse | Remove-Item -Force -Recurse
+				} else {
+					Write-Host "Uninstall Microsoft.Graph.* Modules" -ForegroundColor Yellow
+					Get-InstalledPSResource -Name "Microsoft.Graph.*" -Scope $Scope -ErrorAction SilentlyContinue | Where-Object {$_.Name -notmatch "Microsoft.Graph.Beta"} | Uninstall-PSResource -Scope $Scope -SkipDependencyCheck
 				}
 			}
 
 			#If Microsoft.Graph.Beta also Uninstall all Microsoft.Graph.Beta.* Modules
 			If ($Module -eq "Microsoft.Graph.Beta")
 			{
-				## DEBUG TRY CATCH
-				Try {
-					Write-Host "Uninstall Microsoft.Graph.Beta.* Modules" -ForegroundColor Yellow
-					Get-InstalledPSResource -Name "Microsoft.Graph.Beta*" -Scope $Scope -ErrorAction SilentlyContinue | Uninstall-PSResource -Scope $Scope -SkipDependencyCheck
-				} catch {
-					[Microsoft.PowerShell.PSResourceGet.Cmdlets.UninstallPSResource]
-					If ($FileMode -eq $true)
-					{
-						Write-Host "Using FileMode. Remove all Microsoft.Graph.Beta* Modules" -ForegroundColor Yellow
-						$ModulesPath = Get-M365ModulePath -Scope $Scope
-						Get-ChildItem -Path $ModulesPath -Filter "Microsoft.Graph.Beta*" -Recurse | Remove-Item -Force -Recurse
-					} else {
-						Write-Host "Error Removing Module" -ForegroundColor Red
-					}
-				}
-
 				#FileMode
 				If ($FileMode -eq $true)
 				{
 					Write-Host "Using FileMode. Remove all Microsoft.Graph.Beta* Modules" -ForegroundColor Yellow
 					$ModulesPath = Get-M365ModulePath -Scope $Scope
 					Get-ChildItem -Path $ModulesPath -Filter "Microsoft.Graph.Beta*" -Recurse | Remove-Item -Force -Recurse
+				} else {
+					Write-Host "Uninstall Microsoft.Graph.Beta.* Modules" -ForegroundColor Yellow
+					Get-InstalledPSResource -Name "Microsoft.Graph.Beta*" -Scope $Scope -ErrorAction SilentlyContinue | Uninstall-PSResource -Scope $Scope -SkipDependencyCheck
 				}
 			}
+
 		} else {
 			#Module Notfound
 			If ($FileMode -eq $true)
@@ -366,45 +314,45 @@ Function Uninstall-M365Module {
 			#If AZ also Uninstall all AZ.* Modules
 			If ($Module -eq "AZ")
 			{
-				Write-Host "NO AZ Root Module. Uninstall AZ.* Modules" -ForegroundColor Yellow
-				Get-InstalledPSResource -Name "AZ.*" -Scope $Scope -ErrorAction SilentlyContinue | Uninstall-PSResource -Scope $Scope -SkipDependencyCheck #-ErrorAction SilentlyContinue
-
 				#FileMode
 				If ($FileMode -eq $true)
 				{
 					Write-Host "Using FileMode. Remove all AZ.* Modules" -ForegroundColor Yellow
 					$ModulesPath = Get-M365ModulePath -Scope $Scope
 					Get-ChildItem -Path $ModulesPath -Filter "AZ.*" -Recurse | Remove-Item -Force -Recurse
+				} else {
+					Write-Host "NO AZ Root Module. Uninstall AZ.* Modules" -ForegroundColor Yellow
+					Get-InstalledPSResource -Name "AZ.*" -Scope $Scope -ErrorAction SilentlyContinue | Uninstall-PSResource -Scope $Scope -SkipDependencyCheck #-ErrorAction SilentlyContinue	
 				}
 			}
 
 			#If Microsoft.Graph also Uninstall all Microsoft.Graph.* Modules
 			If ($Module -eq "Microsoft.Graph")
 			{
-				Write-Host "NO Microsoft.Graph Root Module. Uninstall Microsoft.Graph.* Modules" -ForegroundColor Yellow
-				Get-InstalledPSResource -Name "Microsoft.Graph.*" -Scope $Scope -ErrorAction SilentlyContinue | Where-Object {$_.Name -notmatch "Microsoft.Graph.Beta"} | Uninstall-PSResource -Scope $Scope -SkipDependencyCheck #-ErrorAction SilentlyContinue
-
 				#FileMode
 				If ($FileMode -eq $true)
 				{
 					Write-Host "Using FileMode. Remove all Microsoft.Graph.* Modules" -ForegroundColor Yellow
 					$ModulesPath = Get-M365ModulePath -Scope $Scope
 					Get-ChildItem -Path $ModulesPath -Filter "Microsoft.Graph.*" -Recurse | Remove-Item -Force -Recurse
+				} else {
+					Write-Host "NO Microsoft.Graph Root Module. Uninstall Microsoft.Graph.* Modules" -ForegroundColor Yellow
+					Get-InstalledPSResource -Name "Microsoft.Graph.*" -Scope $Scope -ErrorAction SilentlyContinue | Where-Object {$_.Name -notmatch "Microsoft.Graph.Beta"} | Uninstall-PSResource -Scope $Scope -SkipDependencyCheck #-ErrorAction SilentlyContinue	
 				}
 			}
 
 			#If Microsoft.Graph.Beta also Uninstall all Microsoft.Graph.Beta.* Modules
 			If ($Module -eq "Microsoft.Graph.Beta")
 			{
-				Write-Host "NO Microsoft.Graph.Beta Module. Uninstall Microsoft.Graph.Beta.* Modules" -ForegroundColor Yellow
-				Get-InstalledPSResource -Name "Microsoft.Graph.Beta*" -Scope $Scope -ErrorAction SilentlyContinue | Uninstall-PSResource -Scope $Scope -SkipDependencyCheck #-ErrorAction SilentlyContinue
-
 				#FileMode
 				If ($FileMode -eq $true)
 				{
 					Write-Host "Using FileMode. Remove all Microsoft.Graph.Beta* Modules" -ForegroundColor Yellow
 					$ModulesPath = Get-M365ModulePath -Scope $Scope
 					Get-ChildItem -Path $ModulesPath -Filter "Microsoft.Graph.Beta*" -Recurse | Remove-Item -Force -Recurse
+				} else {
+					Write-Host "NO Microsoft.Graph.Beta Module. Uninstall Microsoft.Graph.Beta.* Modules" -ForegroundColor Yellow
+					Get-InstalledPSResource -Name "Microsoft.Graph.Beta*" -Scope $Scope -ErrorAction SilentlyContinue | Uninstall-PSResource -Scope $Scope -SkipDependencyCheck #-ErrorAction SilentlyContinue	
 				}
 			}
 		}
