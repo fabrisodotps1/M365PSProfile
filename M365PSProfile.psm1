@@ -261,7 +261,7 @@ Function Uninstall-M365Module {
 					#FileMode
 					If ($FileMode -eq $true)
 					{
-						Write-Host "Using FileMode. Remove all AZ.* Modules" -ForegroundColor Yellow
+						Write-Host "Using FileMode. Remove Module: $($AZModule.Name)" -ForegroundColor Yellow
 						$ModulesPath = Get-M365ModulePath -Scope $Scope
 						Get-ChildItem -Path $ModulesPath -Filter "AZ.*" -Recurse | Remove-Item -Force -Recurse
 					} else {
