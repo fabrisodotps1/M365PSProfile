@@ -542,10 +542,12 @@ Function Install-M365Module {
 	}
 
 	Write-Host "Checking Modules..."
+	Import-Module Microsoft.PowerShell.PSResourceGet -Version 1.0.6
 	#Check Microsoft.PowerShell.PSResourceGet
 	#Can't uninstall loaded DLL's so you have to uninstall next time you start PowerShell
 	#[System.AppDomain]::CurrentDomain.GetAssemblies() | where {$_.Location -match "Microsoft.PowerShell.PSResourceGet"}
 
+	<#
 	$Module = "Microsoft.PowerShell.PSResourceGet"
 	[Array]$InstalledModules = Get-InstalledPSResource -Name $Module -Scope $Scope -ErrorAction SilentlyContinue | Sort-Object Version -Descending
 
@@ -579,6 +581,7 @@ Function Install-M365Module {
 			}
 		}
 	}
+	#>
 
 	Foreach ($Module in $Modules) {
 		#Get Array of installed Modules
