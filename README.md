@@ -178,6 +178,14 @@ Uninstall-M365Module -Module MicrosoftTeams -FileMode
 
 ```
 
+#### Issue
+
+Currently there seems an Issue with PSResourceGet at uninstalling PowerShell Modules on redirected OneDrive Folders [GitHub Issue](https://github.com/PowerShell/PSResourceGet/issues/1793) (Parent Directory Access is denied)
+
+You can use the -FileMode Parameter to remove the Module
+
+![Image](M365PSProfile_07.png)
+
 2) Uninstall the PSProfile
 
 >Note that PowerShell 5 and 7 have separate PowerShell Profiles

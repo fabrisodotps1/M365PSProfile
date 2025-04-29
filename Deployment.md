@@ -1,7 +1,7 @@
 ## Script Analyzer
 
 ```pwsh
-Install-PSResource -Name PSScriptAnalyzer
+Install-PSResource -Name PSScriptAnalyzer -Scope CurrentUser
 Invoke-ScriptAnalyzer -Path C:\GIT_WorkingDir\M365PSProfile\M365PSProfile.psm1 -ExcludeRule PSAvoidUsingWriteHost
 ```
 
@@ -44,7 +44,10 @@ Create Release from GitHub Portal based on Tag
 ## Deploy to Release Folder
 
 ```pwsh
-cd C:\GIT_WorkingDir\M365PSProfile\
+##############################################################################
+# Deploy to Release Folder
+##############################################################################
+Set-Location -Path "C:\GIT_WorkingDir\M365PSProfile\"
 
 $CurrentDirectory = (Get-Location).Path
 $Path = (Get-Location).Path + "\Release"
@@ -68,9 +71,11 @@ Copy-Item $PSFiles -Destination $Path
 Deploy Files from the Release Directory to the PowerShell Gallery
 
 ```pwsh
-cd C:\GIT_WorkingDir\M365PSProfile\
-
+##############################################################################
+# Deploy to PowerShell Gallery
+##############################################################################
+Set-Location -Path "C:\GIT_WorkingDir\M365PSProfile\"
+$APIKey = Read-Host "YourSecretApiKey"
 $Path = (Get-Location).Path + "\Release\"
-$APIKey = "YourSecretApiKey"
 Publish-PSResource -Path $Path -ApiKey $APIKey -Repository PSGallery
 ```
