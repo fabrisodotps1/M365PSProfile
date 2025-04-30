@@ -106,6 +106,7 @@ PowerShell 7
 ### PowerShell Profiles
 
 How do PowerShell Profiles work?
+
 - MS Learn [PowerShell Profiles](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-7.4)
 
 Basically there exist four Types
@@ -148,8 +149,8 @@ These are the Modules that are installed if you don't use an Array with the -Mod
 | M365PSProfile | Keep your M365 Modules up to date |
 | MSCommerce | Manage M365 Self Service Purchase |
 | WhiteboardAdmin | Manage Whiteboards |
-| Microsoft.Graph | Microsoft.Graph Modules https://graph.microsoft.com/v1.0 |
-| Microsoft.Graph.Beta | Microsoft.Graph Modules https://graph.microsoft.com/beta |
+| Microsoft.Graph | [Microsoft.Graph](https://graph.microsoft.com/v1.0) |
+| Microsoft.Graph.Beta | [Microsoft.Graph.Beta](https://graph.microsoft.com/beta) |
 | MicrosoftPlaces | Microsoft Places |
 | PSMSALNet| PowerShell 7.4 MSAL.NET wrapper|
 | MSIdentityTools | Additional Functions for Identity |
@@ -164,7 +165,9 @@ Get-M365StandardModule
 
 For Uninstalling there are three Options
 
-1) Uninstall the Standard Modules
+#### 1. Uninstall the Standard Modules
+
+You can use the -FileMode Parameter to remove the Module
 
 ```pwsh
 #Uninstalls the Standard M365 Modules
@@ -175,18 +178,13 @@ Uninstall-M365Module -FileMode
 
 #Uninstall MicrosoftTeams Module using FileMode
 Uninstall-M365Module -Module MicrosoftTeams -FileMode
-
 ```
 
-#### Issue
-
-Currently there seems an Issue with PSResourceGet at uninstalling PowerShell Modules on redirected OneDrive Folders [GitHub Issue](https://github.com/PowerShell/PSResourceGet/issues/1793) (Parent Directory Access is denied)
-
-You can use the -FileMode Parameter to remove the Module
+>Note: Currently there seems an Issue with PSResourceGet at uninstalling PowerShell Modules on redirected OneDrive Folders [GitHub Issue](https://github.com/PowerShell/PSResourceGet/issues/1793) (Parent Directory Access is denied)
 
 ![Image](M365PSProfile_07.png)
 
-2) Uninstall the PSProfile
+#### 2. Uninstall the PSProfile
 
 >Note that PowerShell 5 and 7 have separate PowerShell Profiles
 
@@ -207,7 +205,8 @@ Get-Content $Profile
 Remove-Item $Profile
 ```
 
-3) Uninstall the Module
+#### 3. Uninstall the Module
+
 You can uninstall the M365PSProfile Module. Make sure you have removed the Lines in Option 2
 
 ```pwsh
