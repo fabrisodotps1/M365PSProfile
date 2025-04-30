@@ -232,6 +232,14 @@ Function Uninstall-M365Module {
 	}
 
 	foreach ($Module in $Modules) {
+
+		#Unload Module
+		If ($Module -ne "M365PSProfile")
+		{
+			Get-Module -Name $Module | Remove-Module -Force -ErrorAction SilentlyContinue
+		}
+
+		#Check if Module is Installed
 		[Array]$InstalledModules = Get-InstalledPSResource -Name $Module -Scope $Scope -ErrorAction SilentlyContinue | Sort-Object Version -Descending
 
 		if ($InstalledModules) {
