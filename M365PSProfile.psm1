@@ -402,8 +402,6 @@ Function Disconnect-All {
 	{
 		Disconnect-PnPOnline -ErrorAction SilentlyContinue
 	}
-
-
 }
 
 #############################################################################
