@@ -232,6 +232,14 @@ Function Uninstall-M365Module {
 	}
 
 	foreach ($Module in $Modules) {
+
+		#Unload Module
+		If ($Module -ne "M365PSProfile")
+		{
+			Get-Module -Name $Module | Remove-Module -Force -ErrorAction SilentlyContinue
+		}
+
+		#Check if Module is Installed
 		[Array]$InstalledModules = Get-InstalledPSResource -Name $Module -Scope $Scope -ErrorAction SilentlyContinue | Sort-Object Version -Descending
 
 		if ($InstalledModules) {
@@ -377,33 +385,23 @@ Function Disconnect-All {
 	#>
 
 	Get-PSSession | Remove-PSSession
-
-	<#
-	try {
-		Disconnect-SPOService -ErrorAction SilentlyContinue
-	} catch {
-		#Write-Host "Disconnect-SPOService failed" -ForegroundColor Yellow
-	}
-	#>
+	Disconnect-MicrosoftTeams -ErrorAction SilentlyContinue
+	Disconnect-MgGraph -ErrorAction SilentlyContinue | Out-Null
 
 	If (Get-Module -Name "Microsoft.Online.SharePoint.PowerShell")
 	{
 		Disconnect-SPOService -ErrorAction SilentlyContinue
 	}
 
-	Disconnect-MicrosoftTeams -ErrorAction SilentlyContinue
 	If (Get-Module -Name "ExchangeOnlineManagement")
 	{
 		Disconnect-ExchangeOnline -confirm:$false -ErrorAction SilentlyContinue
 	}
 
-	Disconnect-MgGraph -ErrorAction SilentlyContinue | Out-Null
 	If (Get-Module -Name "PnP.PowerShell")
 	{
 		Disconnect-PnPOnline -ErrorAction SilentlyContinue
 	}
-
-	Disconnect-MgGraph -ErrorAction SilentlyContinue | Out-Null
 }
 
 #############################################################################
