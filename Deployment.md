@@ -1,7 +1,7 @@
 ## Script Analyzer
 
 ```pwsh
-Install-PSResource -Name PSScriptAnalyzer
+Install-PSResource -Name PSScriptAnalyzer -Scope CurrentUser
 Invoke-ScriptAnalyzer -Path C:\GIT_WorkingDir\M365PSProfile\M365PSProfile.psm1 -ExcludeRule PSAvoidUsingWriteHost
 ```
 
@@ -31,7 +31,7 @@ Adding Tags in git
 git tag
 
 # Add Tag
-git tag -a v0.8.0 -m "Release v0.8.0"
+git tag -a v0.9.0 -m "Release v0.9.0"
 
 # Push Tag to Repo
 git push origin --tags
@@ -44,7 +44,10 @@ Create Release from GitHub Portal based on Tag
 ## Deploy to Release Folder
 
 ```pwsh
-cd C:\GIT_WorkingDir\M365PSProfile\
+##############################################################################
+# Deploy to Release Folder
+##############################################################################
+Set-Location -Path "C:\GIT_WorkingDir\M365PSProfile\"
 
 $CurrentDirectory = (Get-Location).Path
 $Path = (Get-Location).Path + "\Release"
@@ -52,7 +55,7 @@ $Path = (Get-Location).Path + "\Release"
 #Delete Folder Release if it exist
 If (Test-Path -Path $Path)
 {
-	Remove-Item -Path $Path -Recurse -confirm:$false
+    Remove-Item -Path $Path -Recurse -confirm:$false
 }
 
 #Create Folder Release
@@ -68,9 +71,11 @@ Copy-Item $PSFiles -Destination $Path
 Deploy Files from the Release Directory to the PowerShell Gallery
 
 ```pwsh
-cd C:\GIT_WorkingDir\M365PSProfile\
-
+##############################################################################
+# Deploy to PowerShell Gallery
+##############################################################################
+Set-Location -Path "C:\GIT_WorkingDir\M365PSProfile\"
+$APIKey = Read-Host "YourSecretApiKey"
 $Path = (Get-Location).Path + "\Release\"
-$APIKey = "YourSecretApiKey"
 Publish-PSResource -Path $Path -ApiKey $APIKey -Repository PSGallery
 ```
