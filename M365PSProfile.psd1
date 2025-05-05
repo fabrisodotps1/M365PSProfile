@@ -49,7 +49,7 @@ PowerShellVersion = '5.1'
 
 # Modules that must be imported into the global environment prior to importing this module
 # RequiredModules = @()
-RequiredModules = @(@{ModuleName = 'Microsoft.PowerShell.PSResourceGet'; GUID = 'e4e0bda1-0703-44a5-b70d-8fe704cd0643'; ModuleVersion = '1.0.6'; })
+RequiredModules = @(@{ModuleName = 'Microsoft.PowerShell.PSResourceGet'; GUID = 'e4e0bda1-0703-44a5-b70d-8fe704cd0643'; ModuleVersion = '1.1.1'; })
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()
@@ -114,6 +114,7 @@ Whats new in this release:
 V0.9.0
 - Added MicrosoftPlaces Module to the Standard Modules (Get-M365StandardModule)
 - Bugfix: Uninstall-M365Module -FileMode did not cover all aspects
+- Updated to Microsoft.PowerShell.PSResourceGet 1.1.1
 ---------------------------------------------------------------------------------------------
 '
 } # End of PSData hashtable
