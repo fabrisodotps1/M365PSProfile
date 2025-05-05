@@ -114,15 +114,9 @@ Whats new in this release:
 V0.9.0
 - Added MicrosoftPlaces Module to the Standard Modules (Get-M365StandardModule)
 - Bugfix: Uninstall-M365Module -FileMode did not cover all aspects
-
-V0.8.0
-- Bugfix: Removed unnecessary variable $InstalledModuleVersion in "module is not installed" area
-- Added Parameter -FileMode to uninstall Modules using the Filesystem
-- Bumped Requirement for Microsoft.PowerShell.PSResourceGet to 1.0.6
-- Improved the Disconnect-All Function
 ---------------------------------------------------------------------------------------------
 '
-	} # End of PSData hashtable
+} # End of PSData hashtable
 
 } # End of PrivateData hashtable
 
