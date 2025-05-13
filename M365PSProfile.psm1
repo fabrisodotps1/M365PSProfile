@@ -691,9 +691,23 @@ If (-not(Test-Path -Path $Profile))
 ###############################################################################
 # Function Enable-PIM
 ###############################################################################
+#Add -Groups Parameter to get the PIM Groups
+#Connect-MgGraph -Scopes PrivilegedEligibilitySchedule.Read.AzureADGroup,RoleAssignmentSchedule.ReadWrite.Directory -NoWelcome
+#Connect-MgGraph -Scopes PrivilegedEligibilitySchedule.ReadWrite.AzureADGroup,RoleAssignmentSchedule.ReadWrite.Directory -NoWelcome
+#https://graph.microsoft.com/v1.0/identityGovernance/privilegedAccess/group/eligibilitySchedules?`$filter=principalid eq '6db8cdd5-8e93-462d-9907-994406c07f60'
+#$PIMGroups = Invoke-MgGraphRequest -URI $uri -Method "GET" -ContentType "application/json"
+#$PIMGroupDisplayName = (Get-MgGroup -GroupId 932aab78-78d8-428f-a931-7f064a9a491e).DisplayName
+#PrivilegedEligibilitySchedule.Read.AzureADGroup	PrivilegedEligibilitySchedule.ReadWrite.AzureADGroup
+#$uri = "https://graph.microsoft.com/v1.0/identityGovernance/privilegedAccess/group/eligibilitySchedules?$filter=principalid eq '6db8cdd5-8e93-462d-9907-994406c07f60'"
+#Invoke-mgGraphRequest -URI $uri -Method "GET" -ContentType "application/json"
 Function Enable-PIM
 {
+	[CmdletBinding()]
+	param(
+		 [switch]$Groups
+	)
 
+	#Check if MgGraph is connected and has the right scope
 	$Context = Get-MgContext -ErrorAction SilentlyContinue
 	If ($Null -ne $Context)
 	{
@@ -713,43 +727,91 @@ Function Enable-PIM
 	Write-Host "Your Account: $($Context.Account)" -ForegroundColor Cyan
 	$currentUser = (Get-MgUser -UserId $context.Account).Id
 
-	# Get all available roles
-	Write-Host "Getting Eligible Roles"
-	$myRoles = Get-MgRoleManagementDirectoryRoleEligibilitySchedule -ExpandProperty RoleDefinition -All -Filter "principalId eq '$currentuser'"
-	#$DisplayNames =  $myRoles.RoleDefinition.DisplayName
-
-	$Int =0 
-	Foreach ($Role in $MyRoles)
+    if ($Groups.IsPresent) 
 	{
-		$Int = $Int + 1
-		$RoleDisplayName = $Role.RoleDefinition.DisplayName
-		Write-Host "$($int). $RoleDisplayName"
-	}
+		#Get PIM Groups
+		Write-Host "Getting PIM Groups"
 
-	# Prompt the user to select a number
-	$selectedNumber = Read-Host "Select a number to proceed"
+		$INT = 0
+		$URI = "https://graph.microsoft.com/v1.0/identityGovernance/privilegedAccess/group/eligibilitySchedules?`$filter=principalid eq '" + $currentUser + 	"'"
+		$PIMGroups = Invoke-MgGraphRequest -URI $uri -Method "GET" -ContentType "application/json"
+		Foreach ($PIMGroup in $PIMGroups.Value)
+		{
+			$Int = $Int + 1
+			Write-Verbose "GroupID: $($PIMGroup.GroupId)"
+			$PIMGroupDisplayName = (Get-MgGroup -GroupId $PIMGroup.GroupId).DisplayName
+			Write-Host "$($int). $PIMGroupDisplayName"
+		}
 
-	$Role = $myRoles[$SelectedNumber -1]
-	$Justification = Read-Host "Justification"
+		# Prompt the user to select a number
+		$selectedNumber = Read-Host "Select a number to proceed"
 
-	# Setup parameters for activation
-	$params = @{
-		Action = "selfActivate"
-		PrincipalId = $Role.PrincipalId
-		RoleDefinitionId = $Role.RoleDefinitionId
-		DirectoryScopeId = $Role.DirectoryScopeId
-		Justification = $Justification
-		ScheduleInfo = @{
-			StartDateTime = Get-Date
-			Expiration = @{
-				Type = "AfterDuration"
-				Duration = "PT8H"
+		$SelectedPIMGroup = $PIMGroups.Value[$SelectedNumber -1]
+		$Justification = Read-Host "Justification"
+
+		$params = @{
+			accessId = "member"
+			principalId = $currentUser
+			groupId = $SelectedPIMGroup.GroupId
+			action = "selfActivate"
+			scheduleInfo = @{
+				startDateTime = Get-Date
+				expiration = @{
+					type = "afterDuration"
+					Duration = "PT8H"
+				}
+			}
+		justification = $Justification
+		}
+
+		#Debug
+		#Write-Debug "Params: $params"
+		$params
+
+		# Activate the Group
+		New-MgIdentityGovernancePrivilegedAccessGroupEligibilityScheduleRequest -BodyParameter $params
+    
+    } else {
+		# Get all available roles
+		Write-Host "Getting Eligible Roles"
+		$myRoles = Get-MgRoleManagementDirectoryRoleEligibilitySchedule -ExpandProperty RoleDefinition -All -Filter "principalId eq '$currentuser'"
+		#$DisplayNames =  $myRoles.RoleDefinition.DisplayName
+
+		$Int =0 
+		Foreach ($Role in $MyRoles)
+		{
+			$Int = $Int + 1
+			$RoleDisplayName = $Role.RoleDefinition.DisplayName
+			Write-Host "$($int). $RoleDisplayName"
+		}
+
+		# Prompt the user to select a number
+		$selectedNumber = Read-Host "Select a number to proceed"
+
+		$Role = $myRoles[$SelectedNumber -1]
+		$Justification = Read-Host "Justification"
+
+		# Setup parameters for activation
+		$params = @{
+			Action = "selfActivate"
+			PrincipalId = $Role.PrincipalId
+			RoleDefinitionId = $Role.RoleDefinitionId
+			DirectoryScopeId = $Role.DirectoryScopeId
+			Justification = $Justification
+			ScheduleInfo = @{
+				StartDateTime = Get-Date
+				Expiration = @{
+					Type = "AfterDuration"
+					Duration = "PT8H"
+				}
 			}
 		}
-	}
 
-	# Activate the role
-	New-MgRoleManagementDirectoryRoleAssignmentScheduleRequest -BodyParameter $params
+		Write-Debug "Params: $params"
+
+		# Activate the role
+		New-MgRoleManagementDirectoryRoleAssignmentScheduleRequest -BodyParameter $params
+	}
 }
 
 ###############################################################################
@@ -760,6 +822,7 @@ Function Get-PIMStatus
 	[CmdletBinding()]
 	param()
 
+	#Check if MgGraph is connected and has the right scope
 	$Context = Get-MgContext -ErrorAction SilentlyContinue
 	If ($Null -ne $Context)
 	{
