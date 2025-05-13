@@ -77,6 +77,8 @@ Import-Module -Name M365PSProfile
 Install-M365Module
 ```
 
+![Image](M365PSProfile_06.png)
+
 If you have specific Modules that you want to keep up to date, use the -Modules Parameter with an Array of ModuleNames
 
 ```pwsh
