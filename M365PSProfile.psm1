@@ -820,7 +820,9 @@ Function Enable-PIM
 Function Get-PIMStatus
 {
 	[CmdletBinding()]
-	param()
+	param(
+		 [switch]$Groups
+	)
 
 	#Check if MgGraph is connected and has the right scope
 	$Context = Get-MgContext -ErrorAction SilentlyContinue
@@ -842,22 +844,66 @@ Function Get-PIMStatus
 	Write-Host "Your Account: $($Context.Account)" -ForegroundColor Cyan
 	$currentUser = (Get-MgUser -UserId $context.Account).Id
 
-	# Get all available roles
-	Write-Host "Getting Eligible Roles"
-	$myRoles = Get-MgRoleManagementDirectoryRoleEligibilitySchedule -ExpandProperty RoleDefinition -All -Filter "principalId eq '$currentuser'"
-	#$DisplayNames =  $myRoles.RoleDefinition.DisplayName
-
-	$Int =0 
-	Foreach ($Role in $MyRoles)
+    if ($Groups.IsPresent) 
 	{
-		$Int = $Int + 1
-		$Filter = "Roledefinitionid eq '" + $Role.Roledefinitionid +"'"
-		Write-Verbose "Filter: $Filter"
-		$RoleStatus = Get-MgRoleManagementDirectoryRoleAssignmentScheduleInstance -Filter $Filter -Top 1
-		$RoleDisplayName = $Role.RoleDefinition.DisplayName
-		$AssignmentType = $RoleStatus.AssignmentType
-		$StartDateTime = $RoleStatus.StartDateTime
-		$EndDateTime = $RoleStatus.EndDateTime
-		Write-Host "$($int). $RoleDisplayName Status: $AssignmentType Start: $StartDateTime End: $EndDateTime"
+		#Get PIM Groups
+	} else {
+
+		# Get all available roles
+		Write-Host "Getting Eligible Roles"
+		$myRoles = Get-MgRoleManagementDirectoryRoleEligibilitySchedule -ExpandProperty RoleDefinition -All -Filter "principalId eq '$currentuser'"
+		#$DisplayNames =  $myRoles.RoleDefinition.DisplayName
+
+		$Int =0 
+		Foreach ($Role in $MyRoles)
+		{
+			$Int = $Int + 1
+			$Filter = "Roledefinitionid eq '" + $Role.Roledefinitionid +"'"
+			Write-Verbose "Filter: $Filter"
+			$RoleStatus = Get-MgRoleManagementDirectoryRoleAssignmentScheduleInstance -Filter $Filter -Top 1
+			$RoleDisplayName = $Role.RoleDefinition.DisplayName
+			$AssignmentType = $RoleStatus.AssignmentType
+			$StartDateTime = $RoleStatus.StartDateTime
+			$EndDateTime = $RoleStatus.EndDateTime
+			Write-Host "$($int). $RoleDisplayName Status: $AssignmentType Start: $StartDateTime End: $EndDateTime"
+		}
+	}
+}
+
+###############################################################################
+# Disable-PIM
+###############################################################################
+Function Disable-PIM
+{
+	[CmdletBinding()]
+	param(
+		 [switch]$Groups
+	)
+
+	#Check if MgGraph is connected and has the right scope
+	$Context = Get-MgContext -ErrorAction SilentlyContinue
+	If ($Null -ne $Context)
+	{
+		If ($Context.Scopes -match "RoleAssignmentSchedule.ReadWrite.Directory")
+		{
+			#
+		} else {
+			Write-Host "Disconnect-MgGraph missing Scope: RoleAssignmentSchedule.ReadWrite.Directory"
+			Disconnect-MgGraph
+		}
+	} else {
+		Connect-MgGraph -Scopes "RoleAssignmentSchedule.ReadWrite.Directory" -NoWelcome
+	}
+
+	#Get Current User
+	$context = Get-MgContext
+	Write-Host "Your Account: $($Context.Account)" -ForegroundColor Cyan
+	$currentUser = (Get-MgUser -UserId $context.Account).Id
+
+    if ($Groups.IsPresent) 
+	{
+		#Get PIM Groups
+	} else {
+
 	}
 }
