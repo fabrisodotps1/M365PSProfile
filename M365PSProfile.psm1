@@ -687,3 +687,114 @@ If (-not(Test-Path -Path $Profile))
 		Write-Host  "You have a PowerShell Profile. You can add the M365PSProfile Update check with Add-M365PSProfile" -ForegroundColor Yellow
 	}
 }
+
+###############################################################################
+# Function Enable-PIM
+###############################################################################
+Function Enable-PIM
+{
+
+	$Context = Get-MgContext -ErrorAction SilentlyContinue
+	If ($Null -ne $Context)
+	{
+		If ($Context.Scopes -match "RoleAssignmentSchedule.ReadWrite.Directory")
+		{
+			#
+		} else {
+			Write-Host "Disconnect-MgGraph missing Scope: RoleAssignmentSchedule.ReadWrite.Directory"
+			Disconnect-MgGraph
+		}
+	} else {
+		Connect-MgGraph -Scopes "RoleAssignmentSchedule.ReadWrite.Directory" -NoWelcome
+	}
+
+	#Get Current User
+	$context = Get-MgContext
+	Write-Host "Your Account: $($Context.Account)" -ForegroundColor Cyan
+	$currentUser = (Get-MgUser -UserId $context.Account).Id
+
+	# Get all available roles
+	Write-Host "Getting Eligible Roles"
+	$myRoles = Get-MgRoleManagementDirectoryRoleEligibilitySchedule -ExpandProperty RoleDefinition -All -Filter "principalId eq '$currentuser'"
+	#$DisplayNames =  $myRoles.RoleDefinition.DisplayName
+
+	$Int =0 
+	Foreach ($Role in $MyRoles)
+	{
+		$Int = $Int + 1
+		$RoleDisplayName = $Role.RoleDefinition.DisplayName
+		Write-Host "$($int). $RoleDisplayName"
+	}
+
+	# Prompt the user to select a number
+	$selectedNumber = Read-Host "Select a number to proceed"
+
+	$Role = $myRoles[$SelectedNumber -1]
+	$Justification = Read-Host "Justification"
+
+	# Setup parameters for activation
+	$params = @{
+		Action = "selfActivate"
+		PrincipalId = $Role.PrincipalId
+		RoleDefinitionId = $Role.RoleDefinitionId
+		DirectoryScopeId = $Role.DirectoryScopeId
+		Justification = $Justification
+		ScheduleInfo = @{
+			StartDateTime = Get-Date
+			Expiration = @{
+				Type = "AfterDuration"
+				Duration = "PT8H"
+			}
+		}
+	}
+
+	# Activate the role
+	New-MgRoleManagementDirectoryRoleAssignmentScheduleRequest -BodyParameter $params
+}
+
+###############################################################################
+# Function Get-PIMStatus
+###############################################################################
+Function Get-PIMStatus
+{
+	[CmdletBinding()]
+	param()
+
+	$Context = Get-MgContext -ErrorAction SilentlyContinue
+	If ($Null -ne $Context)
+	{
+		If ($Context.Scopes -match "RoleAssignmentSchedule.ReadWrite.Directory")
+		{
+			#
+		} else {
+			Write-Host "Disconnect-MgGraph missing Scope: RoleAssignmentSchedule.ReadWrite.Directory"
+			Disconnect-MgGraph
+		}
+	} else {
+		Connect-MgGraph -Scopes "RoleAssignmentSchedule.ReadWrite.Directory" -NoWelcome
+	}
+
+	#Get Current User
+	$context = Get-MgContext
+	Write-Host "Your Account: $($Context.Account)" -ForegroundColor Cyan
+	$currentUser = (Get-MgUser -UserId $context.Account).Id
+
+	# Get all available roles
+	Write-Host "Getting Eligible Roles"
+	$myRoles = Get-MgRoleManagementDirectoryRoleEligibilitySchedule -ExpandProperty RoleDefinition -All -Filter "principalId eq '$currentuser'"
+	#$DisplayNames =  $myRoles.RoleDefinition.DisplayName
+
+	$Int =0 
+	Foreach ($Role in $MyRoles)
+	{
+		$Int = $Int + 1
+		$Filter = "Roledefinitionid eq '" + $Role.Roledefinitionid +"'"
+		Write-Verbose "Filter: $Filter"
+		$RoleStatus = Get-MgRoleManagementDirectoryRoleAssignmentScheduleInstance -Filter $Filter -Top 1
+		$RoleDisplayName = $Role.RoleDefinition.DisplayName
+		$AssignmentType = $RoleStatus.AssignmentType
+		$StartDateTime = $RoleStatus.StartDateTime
+		$EndDateTime = $RoleStatus.EndDateTime
+		Write-Host "$($int). $RoleDisplayName Status: $AssignmentType Start: $StartDateTime End: $EndDateTime"
+	}
+}
