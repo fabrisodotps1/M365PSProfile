@@ -826,7 +826,15 @@ Function Enable-PIM
 
 		# Activate the Group
 		try {
-			$Request = New-MgIdentityGovernancePrivilegedAccessGroupEligibilityScheduleRequest -BodyParameter $params -ErrorAction Stop
+			$Error.Clear()
+			$Request = New-MgIdentityGovernancePrivilegedAccessGroupEligibilityScheduleRequest -BodyParameter $params #-ErrorAction Stop
+
+			# Check if the request was successful
+			if ($Error.Count -gt 0) {
+				Write-Host "❌ Failed to activate group $groupId."
+			} else {
+				Write-Host "✅ Activated group $groupId for user $UserUPN"
+			}
 
 			Do {
 				$RequestStatus = Get-MgRoleManagementDirectoryRoleAssignmentScheduleRequest -UnifiedRoleAssignmentScheduleRequestId $Request.Id
