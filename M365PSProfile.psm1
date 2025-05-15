@@ -822,10 +822,27 @@ Function Enable-PIM
 
 		#Debug
 		#Write-Debug "Params: $params"
-		$params
+		#$params
 
 		# Activate the Group
-		New-MgIdentityGovernancePrivilegedAccessGroupEligibilityScheduleRequest -BodyParameter $params
+		try {
+			$Request = New-MgIdentityGovernancePrivilegedAccessGroupEligibilityScheduleRequest -BodyParameter $params -ErrorAction Stop
+
+			Do {
+				$RequestStatus = Get-MgRoleManagementDirectoryRoleAssignmentScheduleRequest -UnifiedRoleAssignmentScheduleRequestId $Request.Id
+				Write-Host "Request Status: $($RequestStatus.Status)" -ForegroundColor Green
+				Start-Sleep -Seconds 5
+			} while ($RequestStatus.Status -ne "Provisioned")
+
+		} catch {
+			# Handle the error
+			Write-Host "Error: $($error[0].exception.message)" -ForegroundColor Red
+			#Write-Host "Error: $($error[0].FullyQualifiedErrorId)" -ForegroundColor Red
+			#Write-Host "Error: $($error[0].InvocationInfo.ScriptLineNumber)" -ForegroundColor Red
+			#Write-Host "Error: $($error[0].InvocationInfo.PositionMessage)" -ForegroundColor Red
+			#Write-Host "Error: $($error[0].InvocationInfo.Line)" -ForegroundColor Red
+			#Write-Host "Error: $($error[0].InvocationInfo.ScriptName)" -ForegroundColor Red
+		}
     
     } else {
 		# Get all available roles
@@ -866,7 +883,13 @@ Function Enable-PIM
 		Write-Debug "Params: $params"
 
 		# Activate the role
-		New-MgRoleManagementDirectoryRoleAssignmentScheduleRequest -BodyParameter $params
+		$Request = New-MgRoleManagementDirectoryRoleAssignmentScheduleRequest -BodyParameter $params
+
+		Do {
+			$RequestStatus = Get-MgRoleManagementDirectoryRoleAssignmentScheduleRequest -UnifiedRoleAssignmentScheduleRequestId $Request.Id
+			Write-Host "Request Status: $($RequestStatus.Status)" -ForegroundColor Green
+			Start-Sleep -Seconds 5
+		} while ($RequestStatus.Status -ne "Provisioned")
 	}
 }
 
