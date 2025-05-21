@@ -282,7 +282,7 @@ Function Uninstall-M365Module {
 						Get-ChildItem -Path $ModulesPath -Filter "AZ.*" -Recurse | Remove-Item -Force -Recurse
 					} else {
 						try {
-							Write-Host "Uninstall Module: $($AZModule.Name) $($AZModule.Version.ToString())" -ForegroundColor Yellow
+							#Write-Host "Uninstall Module: $($AZModule.Name) $($AZModule.Version.ToString())" -ForegroundColor Yellow
 							Uninstall-PSResource -Name $AZModule.Name -Scope $Scope -SkipDependencyCheck -WarningAction SilentlyContinue
 						} catch [System.ArgumentException] {
 							$FullyQualifiedErrorId = $error[0].FullyQualifiedErrorId
