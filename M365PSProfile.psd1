@@ -8,7 +8,7 @@
 RootModule = 'M365PSProfile.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.9.1'
+ModuleVersion = '0.9.2'
 
 # Supported PSEditions
 CompatiblePSEditions = @('Core', 'Desktop')
@@ -111,6 +111,9 @@ PrivateData = @{
         ReleaseNotes = '
 ---------------------------------------------------------------------------------------------
 Whats new in this release:
+V0.9.2
+- 
+
 V0.9.1
 - Changed: Replace Uninstall-PSResource with Uninstall-M365Module -FileMode to cover all aspects of uninstallation
 - Changed: Multiple Modules will be uninstalled after 5 seconds delay with User Warning

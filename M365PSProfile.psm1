@@ -27,6 +27,16 @@
 )
 
 ##############################################################################
+# PSDefaultParameterValues
+##############################################################################
+$PSDefaultParameterValues = @{
+    'Find-Module:Repository'            = 'PSGallery'   # Useful if you have private test repos
+    'Install-Module:Repository'         = 'PSGallery'   # Useful if you have private test repos
+    'Find-PSResource:Repository'        = 'PSGallery'   # Useful if you have private test repos
+    'Install-PSResource:Repository'     = 'PSGallery'   # Useful if you have private test repos
+}
+
+##############################################################################
 # Get-M365ModulePath
 # Returns the Path for the Modules
 ##############################################################################
@@ -180,6 +190,8 @@ Function Add-M365PSProfile {
 
     $ProfilePath = $PROFILE.$ProfileType
 
+
+    $Newline = [System.Environment]::NewLine
     $M365PSProfileContent = @"
 
 #M365PSProfile: Install or updates the default Modules (what we think every M365 Admin needs) in the CurrentUser Scope

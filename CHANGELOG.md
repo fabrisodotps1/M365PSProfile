@@ -1,3 +1,9 @@
+# Changelog
+
+## V0.9.2
+
+- Added $PSDefaultParameterValues
+
 ## V0.9.1
 
 - Changed: Replace Uninstall-PSResource with Uninstall-M365Module -FileMode to cover all aspects of uninstallation

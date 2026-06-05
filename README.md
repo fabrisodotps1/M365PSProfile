@@ -112,7 +112,7 @@ How do PowerShell Profiles work?
 
 - MS Learn [PowerShell Profiles](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-7.4)
 
-Basically there exist four Types
+Basically there exist four Types and the Preference is from top to bottom
 
 - All Users, All Hosts
 - All Users, Current Host
@@ -120,7 +120,6 @@ Basically there exist four Types
 - Current user, Current Host
 
 Be aware that there are diffrent Profile Files for PowerShell 5 and 7.
-For Example "Current user, Current Host" on Windows
 
 ```pwsh
 #PowerShell 5.1
@@ -157,7 +156,7 @@ These are the Modules that are installed if you don't use an Array with the -Mod
 | Microsoft.Graph.Beta | Microsoft.Entra |
 | Microsoft.Graph.Beta | Microsoft.Entra .Beta |
 | MicrosoftPlaces | Microsoft Places |
-| PSMSALNet| PowerShell 7.4 MSAL.NET wrapper|
+| PSMSALNet | PowerShell 7.4 MSAL.NET wrapper |
 | MSIdentityTools | Additional Functions for Identity |
 
 or you can use this command to list the default Modules
