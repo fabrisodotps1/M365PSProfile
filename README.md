@@ -119,7 +119,7 @@ Basically there exist four Types
 - Current User, All Hosts
 - Current user, Current Host
 
-Be aware that there are diffrent Profile Files for PowerShell 5 and 7.
+Be aware that there are different Profile Files for PowerShell 5 and 7.
 For Example "Current user, Current Host" on Windows
 
 ```pwsh
