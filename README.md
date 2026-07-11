@@ -119,7 +119,7 @@ Basically there exist four Types and the Preference is from top to bottom
 - Current User, All Hosts
 - Current user, Current Host
 
-Be aware that there are diffrent Profile Files for PowerShell 5 and 7.
+Be aware that there are different Profile Files for PowerShell 5 and 7.
 
 ```pwsh
 #PowerShell 5.1
