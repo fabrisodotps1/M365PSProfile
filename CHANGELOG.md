@@ -3,6 +3,8 @@
 ## V0.9.2
 
 - Added $PSDefaultParameterValues
+- Fixed Detection of Microsoft.PowerShell.PSResourceGet in AllUsers Scope
+- Fixed Minor Issue in Write-Host
 
 ## V0.9.1
 
