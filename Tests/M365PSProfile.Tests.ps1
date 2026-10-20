@@ -63,7 +63,7 @@ Describe 'M365PSProfile' {
 
         It 'Can import the local module manifest' {
             if ($SkipImportBecause) {
-                Set-ItResult -Skipped -Because $SkipImportBecause
+                Skip -Because $SkipImportBecause
                 return
             }
 
@@ -73,7 +73,7 @@ Describe 'M365PSProfile' {
 
         It 'Exports expected commands after import' {
             if ($SkipImportBecause) {
-                Set-ItResult -Skipped -Because $SkipImportBecause
+                Skip -Because $SkipImportBecause
                 return
             }
 
@@ -84,7 +84,7 @@ Describe 'M365PSProfile' {
 
         It 'Get-M365StandardModule returns a non-empty array' {
             if ($SkipImportBecause) {
-                Set-ItResult -Skipped -Because $SkipImportBecause
+                Skip -Because $SkipImportBecause
                 return
             }
 
@@ -97,7 +97,7 @@ Describe 'M365PSProfile' {
 
         It 'Each exported function has help available' {
             if ($SkipImportBecause) {
-                Set-ItResult -Skipped -Because $SkipImportBecause
+                Skip -Because $SkipImportBecause
                 return
             }
 
@@ -108,3 +108,4 @@ Describe 'M365PSProfile' {
         }
     }
 }
+
