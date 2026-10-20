@@ -708,7 +708,7 @@ Function Install-M365Module {
         $PSGallery = Get-PSResourceRepository -Name PSGallery
         If ($PSGallery.Trusted -eq $false) {
             Write-Host "Warning: PSGallery is not Trusted (Get-PSResourceRepository -Name PSGallery)" -ForegroundColor Yellow
-            Write-Host "Set PSGallery to Trusted (Set-PSResourceRepository -Name PSGallery -Trusted:$true)" -ForegroundColor Yellow
+            Write-Host "Set PSGallery to Trusted (Set-PSResourceRepository -Name PSGallery -Trusted:`$true)" -ForegroundColor Yellow
             Set-PSResourceRepository -Name PSGallery -Trusted:$true
         }
     }
@@ -748,6 +748,14 @@ Function Install-M365Module {
                     Write-Host "Checking Module: $Module $($InstalledModules[0].Version.ToString())" -ForegroundColor Green
                 }
         } else {
+            Write-Host "Checking Module: $Module $($InstalledModules[0].Version.ToString())" -ForegroundColor Green
+        }
+    } else {
+        [Array]$InstalledModules = Get-InstalledPSResource -Name $Module -Scope "AllUsers" -ErrorAction SilentlyContinue | Sort-Object Version -Descending -ErrorAction SilentlyContinue
+        If ($Null -eq $InstalledModules)
+        {
+            # Since PowerShell v7.6.0 the PSResourceGet Module is included in PowerShell. If it is not found in the CurrentUser or AllUsers Scope, it should be loaded as a system module.
+            [Array]$InstalledModules = Get-Module -Name Microsoft.PowerShell.PSResourceGet -ListAvailable -ErrorAction SilentlyContinue | Sort-Object Version -Descending -ErrorAction SilentlyContinue
             Write-Host "Checking Module: $Module $($InstalledModules[0].Version.ToString())" -ForegroundColor Green
         }
     }
