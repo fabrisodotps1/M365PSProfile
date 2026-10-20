@@ -587,7 +587,41 @@ Function Set-WindowTitle {
 }
 
 ##############################################################################
-# Main Program
+# Get the Manifest of a PowerShell Module
+# Get Supported PowerShell Version for a Module
+##############################################################################
+Function Test-SupportedPSVersion {
+
+    param(
+    [parameter(mandatory = $true)][string]$Module,
+    [parameter(mandatory = $false)][string]$Scope,
+    [parameter(mandatory = $false)][string]$ModuleVersion
+    )
+
+    $M365ModulePath = Get-M365ModulePath -Scope $Scope
+    $ManifestPath = Join-Path -Path $M365ModulePath -ChildPath "$Module\$Module.psd1"
+    $ModuleManifest = Import-PowerShellDataFile -Path $ManifestPath -ErrorAction SilentlyContinue
+    IF ($null -ne $ModuleManifest)
+    {
+        [version]$RequiredPSVersion = [version]$ModuleManifest.PowerShellVersion
+
+        # Get Current PowerShell Version
+        [version]$CurrentPSVersion = $PSVersionTable.PSVersion
+        If ($CurrentPSVersion -lt $RequiredPSVersion)
+        {
+            return $False
+        } else {
+            return $True
+        }
+    } else {
+        # Return true if the module manifest could not be loaded
+        return $true
+    }
+}
+
+##############################################################################
+# Install-M365Modules
+# Install the Modules in -Modules Parameter
 ##############################################################################
 
 Function Install-M365Module {
@@ -843,6 +877,7 @@ Function Install-M365Module {
 ##############################################################################
 # Import Module
 ##############################################################################
+# Check if PowerShell Profile exists and if it contains Install-M365Module
 If (-not(Test-Path -Path $Profile))
 {
     Write-Host "No PowerShell Profile exists. You can add the M365PSProfile Update check with Add-M365PSProfile" -ForegroundColor Yellow
